@@ -129,7 +129,7 @@ class BaZi():
             if zhi_ in datas.empties[zhus[2]]:
                 empty = '空'
             dayunBig.append(
-                {"year": int(value[1]), "dayun": dayuns[seq], "first": ten_deities[me][gan_], "second": second_zhi})
+                {"age":int(value[0]),"year": int(value[1]), "dayun": dayuns[seq], "first": ten_deities[me][gan_], "second": second_zhi})
             dayunYears[str(int(value[1]))] = []
             out = "{1:<4d}{2:<5s}{3} {4}:{5}{8}{6:{0}<6s}{12}{7}{8}{9} - {10:{0}<15s} {11}".format(
                 chr(12288), int(value[0]), '', dayuns[seq], datas.ten_deities[me][gan_], gan_, check_gan(gan_, gans),
@@ -163,7 +163,7 @@ class BaZi():
                 if zhi2_ in datas.empties[zhus[2]]:
                     empty = '空'
                 dayunYears[str(int(value[1]))].append(
-                    {"year": value[1] + i, "dayun": gan2_ + zhi2_, "first": ten_deities[me][gan2_],
+                    {"age":int(value[0]) + i,"year": value[1] + i, "dayun": gan2_ + zhi2_, "first": ten_deities[me][gan2_],
                      "second": sub_second_zhi})
                 out = "{1:>3d} {2:<5d}{3} {4}:{5}{8}{6:{0}<6s}{12}{7}{8}{9} - {10:{0}<15s} {11}".format(
                     chr(12288), int(value[0]) + i, value[1] + i, gan2_ + zhi2_, datas.ten_deities[me][gan2_], gan2_,
