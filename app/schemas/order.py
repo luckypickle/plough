@@ -23,6 +23,7 @@ class OrderCreate(OrderBase):
     location: Optional[str]
     master_id: Optional[int]
     amount: Optional[int]
+    shareRate: Optional[int]
     create_time: Optional[str]
     pay_type: Optional[str] = "wx"
 
