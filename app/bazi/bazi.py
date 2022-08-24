@@ -116,8 +116,8 @@ class BaZi():
             second_zhi = ''
             for gan in datas.zhi5[zhi_]:
                 zhi5_ = zhi5_ + "{}{}{}　".format(gan, datas.gan5[gan], datas.ten_deities[me][gan])
-                if second_zhi == "":
-                    second_zhi = datas.ten_deities[me][gan]
+                #if second_zhi == "":
+                second_zhi = datas.ten_deities[me][gan]
             zhi__ = set()  # 大运地支关系
             for item in zhis:
 
@@ -150,8 +150,8 @@ class BaZi():
                 sub_second_zhi = ''
                 for gan in zhi5[zhi2_]:
                     zhi6_ = zhi6_ + "{}{}{}　".format(gan, gan5[gan], datas.ten_deities[me][gan])
-                    if sub_second_zhi == "":
-                        sub_second_zhi = datas.ten_deities[me][gan]
+                    #if sub_second_zhi == "":
+                    sub_second_zhi = datas.ten_deities[me][gan]
                 # 大运地支关系
                 zhi__ = set()  # 大运地支关系
                 for item in zhis2:
