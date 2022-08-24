@@ -47,7 +47,10 @@ def login_access_token(
             verified=verified
         )
         if not master:
-            raise HTTPException(status_code=400, detail="Incorrect username or password")
+            if verified:
+                raise HTTPException(status_code=400, detail="No valid master")
+            else:
+                raise HTTPException(status_code=400, detail="Incorrect username or password")
         elif not crud.master.is_active(master):
             raise HTTPException(status_code=400, detail="Inactive master")
         entity = master
