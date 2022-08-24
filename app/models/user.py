@@ -20,4 +20,5 @@ class User(Base):
     is_active = Column(Boolean(), default=True)
     is_superuser = Column(Boolean(), default=False)
     orders = relationship("Order", back_populates="owner")
+    history = relationship("History", back_populates="owner")
     create_time = Column(DateTime, server_default=func.now(), index=True, comment="创建时间")

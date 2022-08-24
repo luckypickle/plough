@@ -1,5 +1,5 @@
 from typing import Any, List
-
+import json
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
@@ -130,10 +130,12 @@ def create_user_open(
 def get_divination(
     *,
     db: Session = Depends(deps.get_db),
+    name: str = '',
     year: int,
     month: int,
     day: int,
     hour: int,
+    minute: int = 0,
     sex: int,
     current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
@@ -141,7 +143,33 @@ def get_divination(
     Get divination.
     """
     bazi = BaZi(year, month, day, hour, sex)
-    return bazi.get_detail()
+    divination = bazi.get_detail()
+    total = crud.history.get_count_by_owner(db, current_user.id)
+    history = schemas.HistoryCreate(
+        owner_id=current_user.id,
+        name=name,
+        birthday=f"{year}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:00",
+        sex=sex,
+        location='',
+        status=0,
+        divination=json.dumps(divination)
+    )
+    crud.history.create_owner_divination(db, history=history)
+    return divination
+
+@router.get("/history", response_model=Any)
+def get_history(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """
+    Get divination history.
+    """
+    history = crud.history.get_multi_by_owner(db=db, owner_id=current_user.id, skip=skip, limit=limit)
+    return history
+
 
 @router.get("/{user_id}", response_model=schemas.User)
 def read_user_by_id(

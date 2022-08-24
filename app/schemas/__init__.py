@@ -7,3 +7,4 @@ from .mpcode import MPCode, MPCodeCreate, MPCodeInDB, MPCodeUpdate
 from .product import Product, ProductCreate, ProductUpdate, ProductForOrder
 from .comment import Comment, CommentCreate, CommentUpdate
 from .version import Version, VersionCreate, VersionUpdate
+from .history import History, HistoryCreate, HistoryUpdate

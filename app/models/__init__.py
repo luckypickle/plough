@@ -4,3 +4,4 @@ from .master import Master
 from .product import Product
 from .comment import Comment
 from .version import Version
+from .history import History

@@ -83,6 +83,7 @@ def master_get_divination(
     month: int,
     day: int,
     hour: int,
+    minute: int = 0,
     sex: int,
     current_master: models.Master = Depends(deps.get_current_active_master)
 ) -> Any:
