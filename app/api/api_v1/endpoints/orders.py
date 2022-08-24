@@ -1,6 +1,7 @@
 import logging
 import json
 import time
+import datetime
 from random import sample
 from string import ascii_letters, digits
 from typing import Any, List
@@ -8,6 +9,7 @@ from typing import Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi import BackgroundTasks
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from wechatpayv3 import WeChatPay, WeChatPayType
 
 from app import crud, models, schemas
@@ -16,7 +18,6 @@ from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 
 router = APIRouter()
-
 
 
 
@@ -125,6 +126,7 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
             order = crud.order.get(db=db, id=order_id)
             if order:
                 order.status = 1
+                order.pay_time = datetime.datetime.now(),
                 db.add(order),
                 db.commit()
                 db.refresh(order)
@@ -193,7 +195,6 @@ def create_order(
         }}
     else:
         return {'code': -1, 'result': {'reason': result.get('code')}}
-
 
 
 @router.put("/{id}", response_model=schemas.OrderUpdate)
