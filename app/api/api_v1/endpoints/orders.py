@@ -6,6 +6,7 @@ from random import sample
 from string import ascii_letters, digits
 from typing import Any, List
 
+import pytz
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi import BackgroundTasks
 from sqlalchemy.orm import Session
@@ -44,6 +45,9 @@ def read_orders(
         for p in products:
             if p.id == o.product_id:
                 product = p.name
+
+        x = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        p = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         ret_obj.orders.append(schemas.Order(
             id=o.id,
             product_id=o.product_id,
@@ -59,8 +63,8 @@ def read_orders(
             master_id=o.master_id,
             divination=o.divination,
             reason=o.reason,
-            create_time=str(o.create_time),
-            pay_time=str(o.pay_time),
+            create_time=x,
+            pay_time=p,
             arrange_status=o.arrange_status,
             status=o.status,
             master=o.master.name,
@@ -92,6 +96,8 @@ def read_orders_master(
         for p in products:
             if p.id == o.product_id:
                 product = p.name
+        x = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        p = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         ret_obj.orders.append(schemas.Order(
             id=o.id,
             product_id=o.product_id,
@@ -107,8 +113,8 @@ def read_orders_master(
             master_id=o.master_id,
             divination=o.divination,
             reason=o.reason,
-            create_time=str(o.create_time),
-            pay_time=str(o.pay_time),
+            create_time=x,
+            pay_time=p,
             arrange_status=o.arrange_status,
             status=o.status,
             master=o.master.name,
@@ -248,6 +254,8 @@ def master_update_order(
         raise HTTPException(status_code=400, detail="Not need divination")
     order = crud.order.updateDivination(db=db, db_obj=order, obj_in=order_in)
     product = crud.product.get(db=db, id=order.product_id)
+    x = order.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+    p = order.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
     return schemas.Order(
         id=order.id,
         product_id=order.product_id,
@@ -263,8 +271,8 @@ def master_update_order(
         master_id=order.master_id,
         divination=order.divination,
         reason=order.reason,
-        create_time=str(order.create_time),
-        pay_time=str(order.pay_time),
+        create_time=x,
+        pay_time=p,
         status=order.status,
         arrange_status=order.arrange_status,
         master=order.master.name,
@@ -293,6 +301,8 @@ def read_order_by_id(
     for p in products:
         if p.id == order.product_id:
             product = p.name
+    x = order.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+    p = order.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
     return schemas.Order(
         id=order.id,
         product_id=order.product_id,
@@ -308,8 +318,8 @@ def read_order_by_id(
         master_id=order.master_id,
         divination=order.divination,
         reason=order.reason,
-        create_time=str(order.create_time),
-        pay_time=str(order.pay_time),
+        create_time=x,
+        pay_time=p,
         status=order.status,
         arrange_status=order.arrange_status,
         master=order.master.name,

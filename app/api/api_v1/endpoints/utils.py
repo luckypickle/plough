@@ -1,12 +1,13 @@
 from typing import Any, List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends,HTTPException
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
 from app import models, schemas, crud
 from app.api import deps
 # from app.core.celery_app import celery_app
 from app.utils import send_test_email
+from app.bazi.citys import cal_zone
 
 router = APIRouter()
 
@@ -44,6 +45,20 @@ def get_latest_version(
     """
     version = crud.version.get_by_product(db=db, product=product)
     return version
+
+@router.get("/cityzone")
+def get_latest_version(
+    province: str,
+    city: str,
+    db: Session = Depends(deps.get_db),
+) -> Any:
+    """
+    Get latest version.
+    """
+
+    return cal_zone(province,city)
+
+
 
 @router.post("/retrieve-version/", response_model=List[schemas.Version])
 def release_version(
