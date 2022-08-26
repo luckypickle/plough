@@ -1,5 +1,6 @@
 from typing import Any, List
 import json
+import pytz
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
@@ -136,11 +137,54 @@ def get_divination(
     day: int,
     hour: int,
     minute: int = 0,
-    sex: int,
+    sex: int = 0,
+    location: str = '',
     current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """
     Get divination.
+    """
+    bazi = BaZi(year, month, day, hour, sex)
+    divination = bazi.get_detail()
+    return divination
+
+# @router.get("/sizhu2year", response_model=Any)
+# def get_year_from_sizhu(
+#     *,
+#     db: Session = Depends(deps.get_db),
+#     name: str = '',
+#     year: int,
+#     month: int,
+#     day: int,
+#     hour: int,
+#     minute: int = 0,
+#     sex: int,
+# ) -> Any:
+#     """
+#     Get divination.
+#     """
+#     bazi = BaZi(year, month, day, hour, sex)
+#     divination = bazi.get_detail()
+#     return divination
+
+
+
+@router.get("/divination2", response_model=Any)
+def get_saved_divination(
+    *,
+    db: Session = Depends(deps.get_db),
+    name: str = '',
+    year: int,
+    month: int,
+    day: int,
+    hour: int,
+    minute: int = 0,
+    sex: int = 0,
+    location: str = '',
+    current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """
+    Get divination and save to database.
     """
     bazi = BaZi(year, month, day, hour, sex)
     divination = bazi.get_detail()
@@ -150,14 +194,14 @@ def get_divination(
         name=name,
         birthday=f"{year}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:00",
         sex=sex,
-        location='',
+        location=location,
         status=0,
         divination=json.dumps(divination)
     )
     crud.history.create_owner_divination(db, history=history)
     return divination
 
-@router.get("/history", response_model=Any)
+@router.get("/history", response_model=List[schemas.History])
 def get_history(
     skip: int = 0,
     limit: int = 100,
@@ -168,7 +212,17 @@ def get_history(
     Get divination history.
     """
     history = crud.history.get_multi_by_owner(db=db, owner_id=current_user.id, skip=skip, limit=limit)
-    return history
+    rets = []
+    for h in history:
+        rets.append(schemas.History(
+            name=h.name,
+            birthday=h.birthday,
+            sex=h.sex,
+            location=h.location,
+            divination=h.divination,
+            create_time=h.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        ))
+    return rets
 
 
 @router.get("/{user_id}", response_model=schemas.User)
