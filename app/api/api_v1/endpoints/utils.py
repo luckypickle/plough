@@ -51,13 +51,14 @@ def get_latest_version(
 def get_latest_version(
     province: str,
     city: str,
+    area:str,
     db: Session = Depends(deps.get_db),
 ) -> Any:
     """
     Get latest version.
     """
 
-    return cal_zone(province,city)
+    return cal_zone(province,city,area)
 
 year_jieqi = {}
 
