@@ -200,3 +200,21 @@ class BaZi():
         print("格局:", ge, '\t', end=' ')
 
         return detail
+
+def getYearJieQi(year):
+    day = datetime.datetime(year, 1, 1)
+    start = False
+    jieqicount = 0
+    ret = []
+    for i in range(400):
+        day_ = sxtwl.fromSolar(int(day.year), int(day.month), int(day.day))
+        if day_.hasJieQi() and day_.getJieQi() % 2 == 1:
+            if int(day_.getJieQi()) == 3:
+                start = True
+            if start:
+                ret.append("%d/%d"%(int(day.month),int(day.day)))
+                jieqicount += 1
+            if jieqicount == 12:
+                break
+        day = day + datetime.timedelta(days=1)
+    return ret

@@ -8,6 +8,7 @@ from app.api import deps
 # from app.core.celery_app import celery_app
 from app.utils import send_test_email
 from app.bazi.citys import cal_zone
+from app.bazi.bazi import getYearJieQi
 
 router = APIRouter()
 
@@ -57,6 +58,20 @@ def get_latest_version(
     """
 
     return cal_zone(province,city)
+
+year_jieqi = {}
+
+@router.get("/yearJieQi")
+def get_year_jie_qi(
+        year:int
+) ->Any:
+    if str(year) not in year_jieqi:
+        ret = getYearJieQi(year)
+        year_jieqi[str(year)] =ret
+    else:
+        ret=  year_jieqi[str(year)]
+    return ret
+
 
 
 
