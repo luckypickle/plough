@@ -5,24 +5,12 @@ datas ={'北京市_市辖区_': {'area': '', 'city': '市辖区', 'country': '�
 
 
 
-ddd = {}
-
-for k,v in datas.items():
-    key = v["province"]+"_"+v["city"]+"_"+v["area"]
-    if key not in ddd:
-        ddd[key] = v
-
-print(ddd
-      )
-
 
 def cal_zone(province,city,area):
-    zone = 8
+    zone = 0
     key = province+"_"+city+"_"+area
     if key in datas:
         lng = float(datas[key]["lng"])
-        zone = int(lng / 15)
-        if lng %15 >7.5:
-            zone+=1
+        zone = (int(lng) - 120) *4
     return zone
 
