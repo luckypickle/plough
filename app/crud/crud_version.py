@@ -25,7 +25,7 @@ class CRUDVersion(CRUDBase[Version, VersionCreate, VersionUpdate]):
             memo=obj_in.memo,
             url=obj_in.url,
             release_time=int(time.time()),
-            status=1
+            status=int(obj_in.status)
         )
         db.add(db_obj)
         db.commit()

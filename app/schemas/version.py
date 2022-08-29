@@ -13,7 +13,7 @@ class VersionBase(BaseModel):
 
 # Properties to receive via API on creation
 class VersionCreate(VersionBase):
-    pass
+    status: Optional[int] = None
 
 # Properties to receive via API on update
 class VersionUpdate(VersionBase):
