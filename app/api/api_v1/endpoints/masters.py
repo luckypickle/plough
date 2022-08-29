@@ -32,7 +32,8 @@ def read_masters(
                 name=m.name,
                 desc=m.desc,
                 id=m.id,
-                price=m.price
+                price=m.price,
+                avatar=m.avatar
             ))
     return ret_obj
 

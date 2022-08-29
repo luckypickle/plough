@@ -25,6 +25,7 @@ class MasterForOrder(BaseModel):
     desc: Optional[str] = None
     id: Optional[int] = None
     price: Optional[int] = None
+    avatar: Optional[str] = None
 
 class MasterRegister(MasterBase):
     verify_code: Optional[str] = None
