@@ -15,7 +15,11 @@ class CRUDHistory(CRUDBase[History, HistoryCreate, HistoryUpdate]):
         return db.query(History).filter(History.owner_id==owner_id, History.status==0).count()
 
     def get_multi_by_owner(self, db: Session, owner_id: int, skip: int, limit: int) -> History:
-        return db.query(History).filter(History.owner_id==owner_id, History.status==0).all()
+        return db.query(History)\
+            .filter(History.owner_id==owner_id, History.status==0)\
+            .order_by(History.id.desc())\
+            .offset(skip).limit(limit)\
+            .all()
 
     def create_owner_divination(self, db: Session, history: HistoryCreate) -> Any:
         total = db.query(History).filter(History.owner_id==history.owner_id, History.status==0).count()

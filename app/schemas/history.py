@@ -22,6 +22,7 @@ class HistoryUpdate(HistoryBase):
 
 class HistoryInDBBase(HistoryBase):
     id: Optional[int] = None
+    create_time: Optional[str] = None
     status: Optional[int] = None
 
     class Config:
