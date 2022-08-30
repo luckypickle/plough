@@ -60,7 +60,7 @@ class OrderInDBBase(OrderCreate):
     create_time: Optional[str] = None
     pay_time: Optional[str] = None
     arrange_status: Optional[int] = None
-    status: Optional[int] = OrderStatus.init.value
+    status: Optional[int] = OrderStatus.init
     is_open: Optional[int] = 0
 
     class Config:
