@@ -11,14 +11,17 @@ class VersionBase(BaseModel):
     memo: Optional[str] = None
     url: Optional[str] = None
 
+
 # Properties to receive via API on creation
 class VersionCreate(VersionBase):
     status: Optional[int] = None
+
 
 # Properties to receive via API on update
 class VersionUpdate(VersionBase):
     release_time: Optional[int] = None
     status: Optional[int] = None
+
 
 class VersionInDBBase(VersionBase):
     id: Optional[int] = None
@@ -32,4 +35,3 @@ class VersionInDBBase(VersionBase):
 # Additional properties to return via API
 class Version(VersionInDBBase):
     pass
-

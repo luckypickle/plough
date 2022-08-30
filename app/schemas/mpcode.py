@@ -11,13 +11,16 @@ class MPCodeBase(BaseModel):
     expire_time: Optional[int] = None
     status: Optional[int] = None
 
+
 # Properties to receive via API on creation
 class MPCodeCreate(MPCodeBase):
     pass
 
+
 # Properties to receive via API on update
 class MPCodeUpdate(MPCodeBase):
     pass
+
 
 class MPCodeInDBBase(MPCodeBase):
     id: Optional[int] = None

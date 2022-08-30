@@ -12,13 +12,16 @@ class HistoryBase(BaseModel):
     location: Optional[str] = ''
     divination: Optional[str] = ''
 
+
 # Properties to receive via API on creation
 class HistoryCreate(HistoryBase):
     status: Optional[int] = 0
 
+
 # Properties to receive via API on update
 class HistoryUpdate(HistoryBase):
     pass
+
 
 class HistoryInDBBase(HistoryBase):
     id: Optional[int] = None
@@ -32,4 +35,3 @@ class HistoryInDBBase(HistoryBase):
 # Additional properties to return via API
 class History(HistoryInDBBase):
     pass
-
