@@ -76,6 +76,58 @@ def read_orders(
     return ret_obj
 
 
+
+@router.get("/openOrders", response_model=schemas.OrderQuery)
+def read_orders(
+        db: Session = Depends(deps.get_db),
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_user),
+) -> Any:
+    """
+    Retrieve open orders [all user].
+    """
+
+    total, orders = crud.order.get_open_orders(db,skip=skip, limit=limit)
+    # FIXME, not check count
+    ret_obj = schemas.OrderQuery(total=0, orders=[])
+    ret_obj.total = total
+    products = crud.product.get_multi(db=db)
+    for o in orders:
+        for p in products:
+            if p.id == o.product_id:
+                product = p.name
+
+        create_time = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        pay_time = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        ret_obj.orders.append(schemas.Order(
+            id=o.id,
+            product_id=o.product_id,
+            product=product,
+            order_number=o.order_number,
+            name=o.name,
+            sex=o.sex,
+            birthday=o.birthday,
+            location=o.location,
+            amount=o.amount,
+            shareRate=o.shareRate,
+            owner_id=o.owner_id,
+            master_id=o.master_id,
+            divination=o.divination,
+            reason=o.reason,
+            create_time=create_time,
+            pay_time=pay_time,
+            arrange_status=o.arrange_status,
+            status=o.status,
+            master=o.master.name,
+            master_avatar=o.master.avatar,
+            owner=o.owner.user_name,
+            is_open=o.is_open
+        ))
+    return ret_obj
+
+
+
 @router.get("/master", response_model=schemas.OrderQuery)
 def read_orders_master(
         db: Session = Depends(deps.get_db),
