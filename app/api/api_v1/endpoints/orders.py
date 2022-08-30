@@ -80,7 +80,6 @@ def read_orders(
 @router.get("/openOrders", response_model=schemas.OrderQuery)
 def read_orders(
         db: Session = Depends(deps.get_db),
-        status: int = -1,
         skip: int = 0,
         limit: int = 100,
         current_user: models.User = Depends(deps.get_current_user),
