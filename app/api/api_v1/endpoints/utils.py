@@ -1,6 +1,6 @@
 from typing import Any, List
 
-from fastapi import APIRouter, Depends,HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
 from app import models, schemas, crud
@@ -15,8 +15,8 @@ router = APIRouter()
 
 @router.post("/test-celery/", response_model=schemas.Msg, status_code=201)
 def test_celery(
-    msg: schemas.Msg,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        msg: schemas.Msg,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Test Celery worker.
@@ -27,8 +27,8 @@ def test_celery(
 
 @router.post("/test-email/", response_model=schemas.Msg, status_code=201)
 def test_email(
-    email_to: EmailStr,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        email_to: EmailStr,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Test emails.
@@ -36,10 +36,11 @@ def test_email(
     send_test_email(email_to=email_to)
     return {"msg": "Test email sent"}
 
+
 @router.get("/get-latest-version", response_model=schemas.Version, status_code=201)
 def get_latest_version(
-    product: str,
-    db: Session = Depends(deps.get_db),
+        product: str,
+        db: Session = Depends(deps.get_db),
 ) -> Any:
     """
     Get latest version.
@@ -47,41 +48,42 @@ def get_latest_version(
     version = crud.version.get_by_product(db=db, product=product)
     return version
 
+
 @router.get("/cityzone")
 def get_latest_version(
-    province: str,
-    city: str,
-    area:str,
-    db: Session = Depends(deps.get_db),
+        province: str,
+        city: str,
+        area: str,
+        db: Session = Depends(deps.get_db),
 ) -> Any:
     """
     Get latest version.
     """
 
-    return cal_zone(province,city,area)
+    return cal_zone(province, city, area)
+
 
 year_jieqi = {}
 
+
 @router.get("/yearJieQi")
 def get_year_jie_qi(
-        year:int
-) ->Any:
+        year: int
+) -> Any:
     if str(year) not in year_jieqi:
         ret = getYearJieQi(year)
-        year_jieqi[str(year)] =ret
+        year_jieqi[str(year)] = ret
     else:
-        ret=  year_jieqi[str(year)]
+        ret = year_jieqi[str(year)]
     return ret
-
-
 
 
 @router.post("/retrieve-version/", response_model=List[schemas.Version])
 def release_version(
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        skip: int = 0,
+        limit: int = 100,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Retrieve version.
@@ -89,11 +91,12 @@ def release_version(
     versions = crud.version.get_multi(db=db, skip=skip, limit=limit)
     return versions
 
+
 @router.post("/release-version/", response_model=schemas.Version)
 def release_version(
-    obj_in: schemas.VersionCreate,
-    db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        obj_in: schemas.VersionCreate,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Release a new version.
@@ -101,13 +104,14 @@ def release_version(
     version = crud.version.release_version(db=db, obj_in=obj_in)
     return version
 
+
 @router.put("/{version_id}", response_model=schemas.Version)
 def update_version(
-    *,
-    db: Session = Depends(deps.get_db),
-    version_id: int,
-    obj_in: schemas.VersionUpdate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        *,
+        db: Session = Depends(deps.get_db),
+        version_id: int,
+        obj_in: schemas.VersionUpdate,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Update a release version.

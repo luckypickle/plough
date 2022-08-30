@@ -3,6 +3,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
+
 class OrderStatus(Enum):
     init: int = 0
     checked: int = 1
@@ -13,6 +14,7 @@ class OrderStatus(Enum):
 # Shared properties
 class OrderBase(BaseModel):
     pass
+
 
 # Properties to receive on item creation
 class OrderCreate(OrderBase):
@@ -36,8 +38,10 @@ class OrderUpdate(OrderCreate):
     open: Optional[int]
 
 
+
 class OrderUpdateDivination(OrderBase):
     divination: Optional[str] = None
+
 
 # Properties shared by models stored in DB
 class OrderInDBBase(OrderCreate):
@@ -69,9 +73,11 @@ class Order(OrderInDBBase):
     owner: Optional[str] = None
     product: Optional[str] = None
 
+
 class OrderQuery(BaseModel):
     total: int = 0
     orders: List[Order]
+
 
 # Properties properties stored in DB
 class OrderInDB(OrderInDBBase):

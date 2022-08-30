@@ -17,7 +17,8 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
     def get_by_phone(self, db: Session, *, phone: str) -> Optional[Master]:
         return db.query(Master).filter(Master.phone == phone).first()
 
-    def get_multi_with_conditions(self, db: Session, *, status: int, skip: int = 0, limit: int = 100) -> Optional[Master]:
+    def get_multi_with_conditions(self, db: Session, *, status: int, skip: int = 0, limit: int = 100) -> Optional[
+        Master]:
         query = db.query(Master)
         if status >= 0:
             query = query.filter(Master.status == status)
@@ -25,7 +26,6 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
             query.count(),
             query.offset(skip).limit(limit).all()
         )
-        
 
     def create(self, db: Session, *, obj_in: MasterCreate) -> Master:
         master = self.get_by_phone(obj_in.phone)
@@ -72,7 +72,7 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
             return None
 
     def update(
-        self, db: Session, *, db_obj: Master, obj_in: Union[MasterUpdate, Dict[str, Any]]
+            self, db: Session, *, db_obj: Master, obj_in: Union[MasterUpdate, Dict[str, Any]]
     ) -> Master:
         if isinstance(obj_in, dict):
             update_data = obj_in

@@ -7,9 +7,11 @@ from pydantic import BaseModel, EmailStr
 class UserBase(BaseModel):
     phone: Optional[str] = None
 
+
 # Properties to receive via API on creation
 class UserCreate(UserBase):
     pass
+
 
 # Properties to show in Admin page
 class UserSummary(UserBase):
@@ -17,6 +19,7 @@ class UserSummary(UserBase):
     create_time: Optional[str] = None
     order_count: Optional[int] = None
     order_amount: Optional[int] = None
+
 
 # Properties to receive via API on update
 class UserUpdate(UserBase):

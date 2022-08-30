@@ -3,10 +3,12 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+
 class CommentStatus(Enum):
     init: int = 0
     checked: int = 1
     removed: int = 2
+
 
 # Shared properties
 class CommentBase(BaseModel):
@@ -14,13 +16,16 @@ class CommentBase(BaseModel):
     content: Optional[str] = None
     rate: Optional[int] = None
 
+
 # Properties to receive via API on creation
 class CommentCreate(CommentBase):
     pass
 
+
 # Properties to receive via API on update
 class CommentUpdate(CommentBase):
     status: Optional[int] = None
+
 
 class CommentInDBBase(CommentBase):
     id: Optional[int] = None

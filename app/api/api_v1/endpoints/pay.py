@@ -31,10 +31,11 @@ wxpay = WeChatPay(
     partner_mode=settings.PARTNER_MODE,
     proxy=None)
 
+
 @router.get("/wechat")
 def get_prepay_id(
-    db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_user),
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user),
 ):
     """
     Retrieve prepay_id.
@@ -65,4 +66,3 @@ def get_prepay_id(
         }}
     else:
         return {'code': -1, 'result': {'reason': result.get('code')}}
-

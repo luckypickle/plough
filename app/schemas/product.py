@@ -9,18 +9,22 @@ class ProductBase(BaseModel):
     desc: Optional[str] = None
     status: Optional[int] = None
 
+
 class ProductForOrder(BaseModel):
     name: Optional[str] = None
     id: Optional[int] = None
     desc: Optional[str] = None
 
+
 # Properties to receive via API on creation
 class ProductCreate(ProductBase):
     pass
 
+
 # Properties to receive via API on update
 class ProductUpdate(ProductBase):
     pass
+
 
 class ProductInDBBase(ProductBase):
     id: Optional[int] = None

@@ -19,11 +19,11 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return db.query(User).filter(User.email == email).first()
 
     def get_user_summary(
-        self, db: Session, *, skip: int = 0, limit: int = 100
+            self, db: Session, *, skip: int = 0, limit: int = 100
     ) -> List[UserSummary]:
         query = db.query(func.count(Order.id), func.sum(Order.amount), User.phone, User.create_time, User.id) \
-            .join(Order, Order.owner_id==User.id, isouter=True) \
-            .filter(User.is_superuser==False) \
+            .join(Order, Order.owner_id == User.id, isouter=True) \
+            .filter(User.is_superuser == False) \
             .group_by(User.phone, User.create_time, User.id)
         ret_obj = []
         total = query.count()
@@ -46,9 +46,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         valid_mpcode = False
         now = int(time.time())
         mpcode = db.query(MPCode).filter(
-            MPCode.phone==phone, 
-            MPCode.expire_time>=now,
-            MPCode.status==0).first()
+            MPCode.phone == phone,
+            MPCode.expire_time >= now,
+            MPCode.status == 0).first()
         if mpcode and mpcode.code == verify_code:
             valid_mpcode = True
         if not user and valid_mpcode:
@@ -87,7 +87,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return db_obj
 
     def update(
-        self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]
+            self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]
     ) -> User:
         if isinstance(obj_in, dict):
             update_data = obj_in

@@ -32,4 +32,5 @@ class CRUDVersion(CRUDBase[Version, VersionCreate, VersionUpdate]):
         db.refresh(db_obj)
         return db_obj
 
+
 version = CRUDVersion(Version)

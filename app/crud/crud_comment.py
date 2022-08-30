@@ -47,4 +47,5 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
         else:
             return None
 
+
 comment = CRUDComment(Comment)
