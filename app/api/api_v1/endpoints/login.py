@@ -46,7 +46,7 @@ def login_access_token(
             password=form_data.password,
             verified=verified
         )
-        if not master:
+        if master is None:
             if verified:
                 raise HTTPException(status_code=400, detail="No valid master")
             else:

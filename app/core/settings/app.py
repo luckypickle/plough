@@ -10,25 +10,39 @@ from app.core.settings.base import BaseAppSettings
 
 
 class AppSettings(BaseAppSettings):
-    MCHID=''
-    PRIVATE_KEY=''
-    CERT_SERIAL_NO=''
-    APIV3_KEY=''
-    APPID=''
-    NOTIFY_URL='https://www.xxxx.com/notify'
-    CERT_DIR='./cert'
-    PARTNER_MODE=False
+    MCHID = ''
+    PRIVATE_KEY = ''
+    CERT_SERIAL_NO = ''
+    APIV3_KEY = ''
+    APPID = ''
+    NOTIFY_URL = 'https://www.xxxx.com/notify'
+    CERT_DIR = './cert'
+    PARTNER_MODE = False
 
     FIRST_SUPERUSER = "admin@plough.com"
     FIRST_SUPERUSER_PASSWORD = "12345678"
     USERS_OPEN_REGISTRATION = True
     MASTERS_OPEN_REGISTRATION = True
     ACCESS_TOKEN_EXPIRE_MINUTES = 10
-    SMS_SECRET_ID=''
-    SMS_SECRET_KEY=''
-    SMS_TEMPLATE_ID=''
-    SMS_APP_ID=''
-    SMS_SIGNATURE=''
+    SMS_SECRET_ID = ''
+    SMS_SECRET_KEY = ''
+    SMS_TEMPLATE_ID = ''
+    SMS_APP_ID = ''
+    SMS_SIGNATURE = ''
+
+    EMAILS_ENABLED = True
+    EMAILS_FROM_NAME = ''
+    EMAILS_FROM_EMAIL = ''
+    SMTP_HOST = ''
+    SMTP_PORT = 25
+    SMTP_TLS = False
+    SMTP_USER = ''
+    SMTP_PASSWORD = ''
+    EMAIL_TEMPLATES_DIR = ''
+    PROJECT_NAME = ''
+    SERVER_HOST = ''
+    EMAIL_RESET_TOKEN_EXPIRE_HOURS = 3600
+
     mpcode_request_interval = 60
     debug: bool = False
     docs_url: str = "/docs"
