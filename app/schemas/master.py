@@ -3,6 +3,7 @@ from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
 
+
 class MasterStatus(Enum):
     inactive: int = 0
     active: int = 1
@@ -16,9 +17,11 @@ class MasterBase(BaseModel):
     name: Optional[str] = None
     avatar: Optional[str] = None
 
+
 # Properties to receive via API on creation
 class MasterCreate(MasterBase):
     pass
+
 
 class MasterForOrder(BaseModel):
     name: Optional[str] = None
@@ -26,6 +29,7 @@ class MasterForOrder(BaseModel):
     id: Optional[int] = None
     price: Optional[int] = None
     avatar: Optional[str] = None
+
 
 class MasterRegister(MasterBase):
     verify_code: Optional[str] = None
@@ -64,9 +68,11 @@ class MasterInDBBase(MasterBase):
 class Master(MasterInDBBase):
     pass
 
+
 class MasterQuery(BaseModel):
     total: int
     masters: List[Master]
+
 
 # Additional properties stored in DB
 class MasterInDB(MasterInDBBase):

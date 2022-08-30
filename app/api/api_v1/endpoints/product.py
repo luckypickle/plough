@@ -18,10 +18,10 @@ router = APIRouter()
 
 @router.get("/list", response_model=List[schemas.ProductForOrder])
 def read_product(
-    db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100,
-    current_user: models.User = Depends(deps.get_current_active_user),
+        db: Session = Depends(deps.get_db),
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve products.
@@ -36,12 +36,13 @@ def read_product(
         ))
     return ret_obj
 
+
 @router.get("/info", response_model=List[schemas.Product])
 def read_product(
-    db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        db: Session = Depends(deps.get_db),
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Retrieve products (admin only).
@@ -49,13 +50,14 @@ def read_product(
     products = crud.product.get_multi(db, skip=skip, limit=limit)
     return products
 
+
 @router.post("/", response_model=schemas.Product)
 def create_product(
-    *,
-    db: Session = Depends(deps.get_db),
-    obj_in: schemas.ProductCreate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
-    settings: AppSettings = Depends(get_app_settings)
+        *,
+        db: Session = Depends(deps.get_db),
+        obj_in: schemas.ProductCreate,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
+        settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
     """
     Create new product. (superuser only)
@@ -69,13 +71,14 @@ def create_product(
     product = crud.product.create(db, obj_in=obj_in)
     return product
 
+
 @router.put("/{id}", response_model=schemas.Product)
 def update_product(
-    *,
-    db: Session = Depends(deps.get_db),
-    id: int,
-    obj_in: schemas.ProductUpdate,
-    current_user: models.User = Depends(deps.get_current_active_user),
+        *,
+        db: Session = Depends(deps.get_db),
+        id: int,
+        obj_in: schemas.ProductUpdate,
+        current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Update an product.

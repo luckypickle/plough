@@ -21,23 +21,24 @@ from app.core.settings.app import AppSettings
 router = APIRouter()
 
 
-
 @router.get("/", response_model=schemas.OrderQuery)
 def read_orders(
-    db: Session = Depends(deps.get_db),
-    status: int = -1,
-    skip: int = 0,
-    limit: int = 100,
-    current_user: models.User = Depends(deps.get_current_active_user),
+        db: Session = Depends(deps.get_db),
+        status: int = -1,
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve orders (User & SuperUser).
     """
     if crud.user.is_superuser(current_user):
-        total, orders = crud.order.get_multi_with_condition(db, role=0, role_id=current_user.id, status=status, skip=skip, limit=limit)
+        total, orders = crud.order.get_multi_with_condition(db, role=0, role_id=current_user.id, status=status,
+                                                            skip=skip, limit=limit)
     else:
-        total, orders = crud.order.get_multi_with_condition(db, role=1, role_id=current_user.id, status=status, skip=skip, limit=limit)
-    #FIXME, not check count
+        total, orders = crud.order.get_multi_with_condition(db, role=1, role_id=current_user.id, status=status,
+                                                            skip=skip, limit=limit)
+    # FIXME, not check count
     ret_obj = schemas.OrderQuery(total=0, orders=[])
     ret_obj.total = total
     products = crud.product.get_multi(db=db)
@@ -76,11 +77,11 @@ def read_orders(
 
 @router.get("/master", response_model=schemas.OrderQuery)
 def read_orders_master(
-    db: Session = Depends(deps.get_db),
-    status: int = -1,
-    skip: int = 0,
-    limit: int = 100,
-    current_master: models.Master = Depends(deps.get_current_active_master),
+        db: Session = Depends(deps.get_db),
+        status: int = -1,
+        skip: int = 0,
+        limit: int = 100,
+        current_master: models.Master = Depends(deps.get_current_active_master),
 ) -> Any:
     """
     Retrieve orders (Master).
@@ -88,7 +89,7 @@ def read_orders_master(
     total, orders = crud.order.get_multi_with_condition(
         db=db, role=2, role_id=current_master.id, status=status, skip=skip, limit=limit
     )
-    #FIXME, not check count
+    # FIXME, not check count
     products = crud.product.get_multi(db=db)
     ret_obj = schemas.OrderQuery(total=0, orders=[])
     ret_obj.total = total
@@ -123,6 +124,7 @@ def read_orders_master(
         ))
     return ret_obj
 
+
 def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
     for i in range(12):
         ret = wxpay.query(out_trade_no=out_trade_no, mchid=mchid)
@@ -139,14 +141,15 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
             break
         time.sleep(5)
 
+
 @router.post("/")
 def create_order(
-    *,
-    task: BackgroundTasks,
-    db: Session = Depends(deps.get_db),
-    order_in: schemas.OrderCreate,
-    current_user: models.User = Depends(deps.get_current_active_user),
-    settings: AppSettings = Depends(get_app_settings)
+        *,
+        task: BackgroundTasks,
+        db: Session = Depends(deps.get_db),
+        order_in: schemas.OrderCreate,
+        current_user: models.User = Depends(deps.get_current_active_user),
+        settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
     """
     Create new order.
@@ -205,11 +208,11 @@ def create_order(
 
 @router.put("/{id}", response_model=schemas.OrderUpdate)
 def update_order(
-    *,
-    db: Session = Depends(deps.get_db),
-    id: int,
-    order_in: schemas.OrderUpdate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        *,
+        db: Session = Depends(deps.get_db),
+        id: int,
+        order_in: schemas.OrderUpdate,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Update an order (superuser).
@@ -236,11 +239,11 @@ def update_order(
 
 @router.put("/master/{id}", response_model=schemas.Order)
 def master_update_order(
-    *,
-    db: Session = Depends(deps.get_db),
-    id: int,
-    order_in: schemas.OrderUpdateDivination,
-    current_master: models.User = Depends(deps.get_current_active_master),
+        *,
+        db: Session = Depends(deps.get_db),
+        id: int,
+        order_in: schemas.OrderUpdateDivination,
+        current_master: models.User = Depends(deps.get_current_active_master),
 ) -> Any:
     """
     Update an order by master.
@@ -283,10 +286,10 @@ def master_update_order(
 
 @router.get("/{id}", response_model=schemas.Order)
 def read_order_by_id(
-    *,
-    db: Session = Depends(deps.get_db),
-    id: int,
-    current_user: models.User = Depends(deps.get_current_active_user),
+        *,
+        db: Session = Depends(deps.get_db),
+        id: int,
+        current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Get order by ID.
@@ -296,7 +299,7 @@ def read_order_by_id(
         raise HTTPException(status_code=404, detail="Order not found")
     if not crud.user.is_superuser(current_user) and (order.owner_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
-    #FIXME, not check count
+    # FIXME, not check count
     products = crud.product.get_multi(db=db)
     for p in products:
         if p.id == order.product_id:
@@ -326,4 +329,3 @@ def read_order_by_id(
         master_avatar=order.master.avatar,
         owner=order.owner.user_name
     )
-

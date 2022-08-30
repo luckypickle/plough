@@ -18,10 +18,10 @@ router = APIRouter()
 
 @router.get("/list")
 def read_users(
-    db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        db: Session = Depends(deps.get_db),
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Retrieve users.
@@ -32,13 +32,14 @@ def read_users(
         "users": users
     }
 
+
 @router.post("/", response_model=schemas.User)
 def create_user(
-    *,
-    db: Session = Depends(deps.get_db),
-    user_in: schemas.UserCreate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
-    settings: AppSettings = Depends(get_app_settings)
+        *,
+        db: Session = Depends(deps.get_db),
+        user_in: schemas.UserCreate,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
+        settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
     """
     Create new user.
@@ -59,13 +60,13 @@ def create_user(
 
 @router.put("/me", response_model=schemas.User)
 def update_user_me(
-    *,
-    db: Session = Depends(deps.get_db),
-    password: str = Body(None),
-    full_name: str = Body(None),
-    user_name: str = Body(None),
-    email: EmailStr = Body(None),
-    current_user: models.User = Depends(deps.get_current_active_user),
+        *,
+        db: Session = Depends(deps.get_db),
+        password: str = Body(None),
+        full_name: str = Body(None),
+        user_name: str = Body(None),
+        email: EmailStr = Body(None),
+        current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Update own user.
@@ -86,8 +87,8 @@ def update_user_me(
 
 @router.get("/me", response_model=schemas.User)
 def read_user_me(
-    db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_user),
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Get current user.
@@ -97,13 +98,13 @@ def read_user_me(
 
 @router.post("/open", response_model=schemas.User)
 def create_user_open(
-    *,
-    db: Session = Depends(deps.get_db),
-    phone: str = Body(...),
-    password: str = Body(...),
-    user_name: str = Body(None),
-    email: EmailStr = Body(None),
-    settings: AppSettings = Depends(get_app_settings)
+        *,
+        db: Session = Depends(deps.get_db),
+        phone: str = Body(...),
+        password: str = Body(...),
+        user_name: str = Body(None),
+        email: EmailStr = Body(None),
+        settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
     """
     Create new user without the need to be logged in.
@@ -120,26 +121,27 @@ def create_user_open(
             detail="The user with this username already exists in the system",
         )
     user_in = schemas.UserCreate(
-        password=password, 
-        email=email, 
+        password=password,
+        email=email,
         user_name=user_name,
         phone=phone)
     user = crud.user.create(db, obj_in=user_in)
     return user
 
+
 @router.get("/divination", response_model=Any)
 def get_divination(
-    *,
-    db: Session = Depends(deps.get_db),
-    name: str = '',
-    year: int,
-    month: int,
-    day: int,
-    hour: int,
-    minute: int = 0,
-    sex: int = 0,
-    location: str = '',
-    current_user: models.User = Depends(deps.get_current_active_user)
+        *,
+        db: Session = Depends(deps.get_db),
+        name: str = '',
+        year: int,
+        month: int,
+        day: int,
+        hour: int,
+        minute: int = 0,
+        sex: int = 0,
+        location: str = '',
+        current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """
     Get divination.
@@ -147,6 +149,7 @@ def get_divination(
     bazi = BaZi(year, month, day, hour, sex)
     divination = bazi.get_detail()
     return divination
+
 
 # @router.get("/sizhu2year", response_model=Any)
 # def get_year_from_sizhu(
@@ -168,20 +171,19 @@ def get_divination(
 #     return divination
 
 
-
 @router.get("/divination2", response_model=Any)
 def get_saved_divination(
-    *,
-    db: Session = Depends(deps.get_db),
-    name: str = '',
-    year: int,
-    month: int,
-    day: int,
-    hour: int,
-    minute: int = 0,
-    sex: int = 0,
-    location: str = '',
-    current_user: models.User = Depends(deps.get_current_active_user)
+        *,
+        db: Session = Depends(deps.get_db),
+        name: str = '',
+        year: int,
+        month: int,
+        day: int,
+        hour: int,
+        minute: int = 0,
+        sex: int = 0,
+        location: str = '',
+        current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """
     Get divination and save to database.
@@ -201,12 +203,13 @@ def get_saved_divination(
     crud.history.create_owner_divination(db, history=history)
     return divination
 
+
 @router.get("/history", response_model=List[schemas.History])
 def get_history(
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_user)
+        skip: int = 0,
+        limit: int = 100,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """
     Get divination history.
@@ -227,9 +230,9 @@ def get_history(
 
 @router.get("/{user_id}", response_model=schemas.User)
 def read_user_by_id(
-    user_id: int,
-    current_user: models.User = Depends(deps.get_current_active_user),
-    db: Session = Depends(deps.get_db),
+        user_id: int,
+        current_user: models.User = Depends(deps.get_current_active_user),
+        db: Session = Depends(deps.get_db),
 ) -> Any:
     """
     Get a specific user by id.
@@ -246,11 +249,11 @@ def read_user_by_id(
 
 @router.put("/{user_id}", response_model=schemas.User)
 def update_user(
-    *,
-    db: Session = Depends(deps.get_db),
-    user_id: int,
-    user_in: schemas.UserUpdate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        *,
+        db: Session = Depends(deps.get_db),
+        user_id: int,
+        user_in: schemas.UserUpdate,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Update a user.
@@ -263,4 +266,3 @@ def update_user(
         )
     user = crud.user.update(db, db_obj=user, obj_in=user_in)
     return user
-

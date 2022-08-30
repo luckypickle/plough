@@ -16,10 +16,10 @@ router = APIRouter()
 
 @router.get("/", response_model=List[schemas.MasterForOrder])
 def read_masters(
-    db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100,
-    current_user: models.User = Depends(deps.get_current_active_user),
+        db: Session = Depends(deps.get_db),
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve master list for placing order.
@@ -37,13 +37,14 @@ def read_masters(
             ))
     return ret_obj
 
+
 @router.get("/list", response_model=schemas.MasterQuery)
 def read_masters(
-    db: Session = Depends(deps.get_db),
-    status: int = -1,
-    skip: int = 0,
-    limit: int = 100,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        db: Session = Depends(deps.get_db),
+        status: int = -1,
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Retrieve masters. (superuser only)
@@ -55,13 +56,14 @@ def read_masters(
     )
     return ret_obj
 
+
 @router.post("/", response_model=schemas.Master)
 def create_master(
-    *,
-    db: Session = Depends(deps.get_db),
-    obj_in: schemas.MasterCreate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
-    settings: AppSettings = Depends(get_app_settings)
+        *,
+        db: Session = Depends(deps.get_db),
+        obj_in: schemas.MasterCreate,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
+        settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
     """
     Create new master. (superuser only)
@@ -78,15 +80,15 @@ def create_master(
 
 @router.get("/divination", response_model=Any)
 def master_get_divination(
-    *,
-    db: Session = Depends(deps.get_db),
-    year: int,
-    month: int,
-    day: int,
-    hour: int,
-    minute: int = 0,
-    sex: int,
-    current_master: models.Master = Depends(deps.get_current_active_master)
+        *,
+        db: Session = Depends(deps.get_db),
+        year: int,
+        month: int,
+        day: int,
+        hour: int,
+        minute: int = 0,
+        sex: int,
+        current_master: models.Master = Depends(deps.get_current_active_master)
 ) -> Any:
     """
     Get divination.
@@ -97,12 +99,12 @@ def master_get_divination(
 
 @router.put("/me", response_model=schemas.Master)
 def update_master_me(
-    *,
-    db: Session = Depends(deps.get_db),
-    password: str = Body(None),
-    name: str = Body(None),
-    phone: str = Body(None),
-    current_master: models.Master = Depends(deps.get_current_active_master),
+        *,
+        db: Session = Depends(deps.get_db),
+        password: str = Body(None),
+        name: str = Body(None),
+        phone: str = Body(None),
+        current_master: models.Master = Depends(deps.get_current_active_master),
 ) -> Any:
     """
     Update own master.
@@ -121,8 +123,8 @@ def update_master_me(
 
 @router.get("/me", response_model=schemas.Master)
 def read_master_me(
-    db: Session = Depends(deps.get_db),
-    current_master: models.Master = Depends(deps.get_current_active_master),
+        db: Session = Depends(deps.get_db),
+        current_master: models.Master = Depends(deps.get_current_active_master),
 ) -> Any:
     """
     Get current master.
@@ -132,13 +134,13 @@ def read_master_me(
 
 @router.post("/open", response_model=schemas.Master)
 def create_master_open(
-    *,
-    db: Session = Depends(deps.get_db),
-    phone: str = Body(...),
-    verify_code: str = Body(...),
-    name: str = Body(None),
-    avatar: str = Body(None),
-    settings: AppSettings = Depends(get_app_settings)
+        *,
+        db: Session = Depends(deps.get_db),
+        phone: str = Body(...),
+        verify_code: str = Body(...),
+        name: str = Body(None),
+        avatar: str = Body(None),
+        settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
     """
     Create new master without the need to be logged in.
@@ -160,7 +162,7 @@ def create_master_open(
             detail="Invalid verify code",
         )
     data_in = schemas.MasterRegister(
-        verify_code=verify_code, 
+        verify_code=verify_code,
         name=name,
         avatar=avatar,
         phone=phone)
@@ -170,9 +172,9 @@ def create_master_open(
 
 @router.get("/{master_id}", response_model=schemas.Master)
 def read_master_by_id(
-    master_id: int,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
-    db: Session = Depends(deps.get_db),
+        master_id: int,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
+        db: Session = Depends(deps.get_db),
 ) -> Any:
     """
     Get a specific master by id.
@@ -188,11 +190,11 @@ def read_master_by_id(
 
 @router.put("/{master_id}", response_model=schemas.Master)
 def update_master(
-    *,
-    db: Session = Depends(deps.get_db),
-    master_id: int,
-    obj_in: schemas.MasterUpdate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        *,
+        db: Session = Depends(deps.get_db),
+        master_id: int,
+        obj_in: schemas.MasterUpdate,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Update a master. (superuser only)
@@ -205,4 +207,3 @@ def update_master(
         )
     master = crud.master.update(db, db_obj=master, obj_in=obj_in)
     return master
-

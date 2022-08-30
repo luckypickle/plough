@@ -16,9 +16,9 @@ router = APIRouter()
 
 @router.get("/query_by_order", response_model=schemas.Comment)
 def read_comment_by_order(
-    order_id: int,
-    db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_user),
+        order_id: int,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve comment by order.
@@ -26,13 +26,14 @@ def read_comment_by_order(
     comment = crud.comment.get_by_order_id(db, order_id=order_id)
     return comment
 
+
 @router.get("/query_by_master", response_model=List[schemas.Comment])
 def read_comment_by_master(
-    master_id: int,
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_user),
+        master_id: int,
+        skip: int = 0,
+        limit: int = 100,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve comment by master.
@@ -40,13 +41,14 @@ def read_comment_by_master(
     comments = crud.comment.get_by_master_id(db, master_id=master_id, skip=skip, limit=limit)
     return comments
 
+
 @router.get("/query_by_user", response_model=List[schemas.Comment])
 def read_comment_by_master(
-    user_id: int,
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_user),
+        user_id: int,
+        skip: int = 0,
+        limit: int = 100,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve comment by user.
@@ -54,13 +56,14 @@ def read_comment_by_master(
     comments = crud.comment.get_by_user_id(db, user_id=user_id, skip=skip, limit=limit)
     return comments
 
+
 @router.post("/", response_model=schemas.Comment)
 def create_comment(
-    *,
-    db: Session = Depends(deps.get_db),
-    obj_in: schemas.CommentCreate,
-    current_user: models.User = Depends(deps.get_current_active_user),
-    settings: AppSettings = Depends(get_app_settings)
+        *,
+        db: Session = Depends(deps.get_db),
+        obj_in: schemas.CommentCreate,
+        current_user: models.User = Depends(deps.get_current_active_user),
+        settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
     """
     Create new comment.
@@ -82,11 +85,11 @@ def create_comment(
 
 @router.put("/{comment_id}", response_model=schemas.Comment)
 def update_comment_by_id(
-    *,
-    db: Session = Depends(deps.get_db),
-    comment_id: int,
-    obj_in: schemas.CommentUpdate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        *,
+        db: Session = Depends(deps.get_db),
+        comment_id: int,
+        obj_in: schemas.CommentUpdate,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Update a master. (superuser only)
@@ -99,4 +102,3 @@ def update_comment_by_id(
         )
     comment = crud.comment.update_by_id(db=db, obj_in=obj_in, comment_id=comment_id)
     return comment
-
