@@ -10,7 +10,7 @@ class AppEnvTypes(Enum):
 
 
 class BaseAppSettings(BaseSettings):
-    app_env: str = AppEnvTypes.prod
+    app_env: AppEnvTypes = AppEnvTypes.prod
 
-    class Config:
-        env_file = ".env"
+    # class Config:
+    #     env_file = ".env"
