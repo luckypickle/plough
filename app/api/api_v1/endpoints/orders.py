@@ -46,8 +46,8 @@ def read_orders(
             if p.id == o.product_id:
                 product = p.name
 
-        x = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
-        p = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        create_time = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        pay_time = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         ret_obj.orders.append(schemas.Order(
             id=o.id,
             product_id=o.product_id,
@@ -63,13 +63,14 @@ def read_orders(
             master_id=o.master_id,
             divination=o.divination,
             reason=o.reason,
-            create_time=x,
-            pay_time=p,
+            create_time=create_time,
+            pay_time=pay_time,
             arrange_status=o.arrange_status,
             status=o.status,
             master=o.master.name,
             master_avatar=o.master.avatar,
-            owner=o.owner.user_name
+            owner=o.owner.user_name,
+            is_open=o.is_open
         ))
     return ret_obj
 
@@ -96,8 +97,8 @@ def read_orders_master(
         for p in products:
             if p.id == o.product_id:
                 product = p.name
-        x = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
-        p = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        create_time = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        pay_time = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         ret_obj.orders.append(schemas.Order(
             id=o.id,
             product_id=o.product_id,
@@ -113,8 +114,8 @@ def read_orders_master(
             master_id=o.master_id,
             divination=o.divination,
             reason=o.reason,
-            create_time=x,
-            pay_time=p,
+            create_time=create_time,
+            pay_time=pay_time,
             arrange_status=o.arrange_status,
             status=o.status,
             master=o.master.name,
@@ -138,6 +139,10 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                 db.refresh(order)
             break
         time.sleep(5)
+
+
+
+
 
 @router.post("/")
 def create_order(
@@ -301,8 +306,8 @@ def read_order_by_id(
     for p in products:
         if p.id == order.product_id:
             product = p.name
-    x = order.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
-    p = order.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+    create_time = order.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+    pay_time = order.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
     return schemas.Order(
         id=order.id,
         product_id=order.product_id,
@@ -318,8 +323,8 @@ def read_order_by_id(
         master_id=order.master_id,
         divination=order.divination,
         reason=order.reason,
-        create_time=x,
-        pay_time=p,
+        create_time=create_time,
+        pay_time=pay_time,
         status=order.status,
         arrange_status=order.arrange_status,
         master=order.master.name,

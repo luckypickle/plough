@@ -33,6 +33,8 @@ class OrderUpdate(OrderCreate):
     arrange_status: Optional[int]
     reason: Optional[str]
     status: Optional[int]
+    open: Optional[int]
+
 
 class OrderUpdateDivination(OrderBase):
     divination: Optional[str] = None
