@@ -12,33 +12,35 @@ from app.schemas.order import OrderCreate, OrderUpdate, OrderUpdateDivination, O
 
 
 class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
+    @staticmethod
     def create_with_owner(
-            self, db: Session, *, obj_in: OrderCreate, owner_id: int
+        db: Session, *, obj_in: OrderCreate, owner_id: int
     ) -> Order:
         obj_in_data = jsonable_encoder(obj_in)
-        db_obj = Order(
-            **obj_in_data,
-            owner_id=owner_id,
-            arrange_status=0,
-            status=OrderStatus.init.value,
-            order_number=''.join(sample(ascii_letters + digits, 16)))
+        db_obj = Order()
+        for k, v in obj_in_data.items():
+            setattr(db_obj, k, v)
+        db_obj.owner_id = owner_id,
+        db_obj.arrange_status = 0,
+        db_obj.status = OrderStatus.init,
+        db_obj.order_number = ''.join(sample(ascii_letters + digits, 16))
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
         return db_obj
 
-    def updateDivination(
-            self, db: Session, *, db_obj: Order, obj_in: OrderUpdateDivination
-    ) -> Order:
+    @staticmethod
+    def updateDivination(db: Session, *, db_obj: Order, obj_in: OrderUpdateDivination) -> Order:
         db_obj.divination = obj_in.divination
-        # db_obj.status = OrderStatus.checked.value
+        # db_obj.status = OrderStatus.checked
         db_obj.arrange_status = 1
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
         return db_obj
 
-    def get_summary(self, db: Session, role: int, role_id: int):
+    @staticmethod
+    def get_summary(db: Session, role: int, role_id: int):
         if role == 0:  # superuser
             orders = db.query(Order).all()
         elif role == 1:  # user
@@ -55,7 +57,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             role: int = 0,
             status: int = -1,
             skip: int = 0, limit: int = 100
-    ) -> List[Order]:
+    ) -> (int, List[Order]):
         query = db.query(self.model)
         conditions = []
         if role == 1:
@@ -67,11 +69,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         query = query.filter(*conditions)
         return (
             query.count(),
-            query
-                .order_by(Order.id.desc())
-                .offset(skip)
-                .limit(limit)
-                .all()
+            query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
         )
 
 

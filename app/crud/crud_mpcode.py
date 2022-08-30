@@ -22,7 +22,8 @@ class CRUDMPCode(CRUDBase[MPCode, MPCodeCreate, MPCodeUpdate]):
         db.refresh(db_obj)
         return db_obj
 
-    def verify_mpcode(self, db: Session, *, phone: str, verify_code: str) -> bool:
+    @staticmethod
+    def verify_mpcode(db: Session, *, phone: str, verify_code: str) -> bool:
         now = int(time.time())
         valid_codes = db.query(MPCode).filter(MPCode.phone == phone, MPCode.status == 0).all()
         for c in valid_codes:
@@ -36,18 +37,16 @@ class CRUDMPCode(CRUDBase[MPCode, MPCodeCreate, MPCodeUpdate]):
 
     def get_unused_code(self, db: Session, *, phone: str) -> List[MPCode]:
         return (
-            db.query(self.model)
-                .filter(MPCode.phone == phone, MPCode.status == 0)
-                .all()
+            db.query(self.model).filter(MPCode.phone == phone, MPCode.status == 0).all()
         )
 
     def get_by_owner_phone_request_time(
             self, db: Session, *, phone: str, request_time: int
     ) -> List[MPCode]:
         return (
-            db.query(self.model)
-                .filter(MPCode.phone == phone, MPCode.request_time > request_time, MPCode.status == 0)
-                .all()
+            db.query(self.model).filter(MPCode.phone == phone,
+                                        MPCode.request_time > request_time,
+                                        MPCode.status == 0).all()
         )
 
 

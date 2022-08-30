@@ -11,6 +11,7 @@ from app.schemas.product import ProductUpdate, ProductCreate
 
 
 class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
+    @staticmethod
     def get_by_name(self, db: Session, *, name: str) -> Optional[Product]:
         return db.query(Product).filter(Product.name == name).first()
 
