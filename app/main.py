@@ -5,9 +5,11 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.core.config import get_app_settings
 from app.api.api_v1.api import api_router
-#from .dependencies import get_query_token, get_token_header
-#from .internal import admin
-#from .routers import items, users
+
+
+# from .dependencies import get_query_token, get_token_header
+# from .internal import admin
+# from .routers import items, users
 
 def get_application() -> FastAPI:
     settings = get_app_settings()
@@ -26,6 +28,7 @@ def get_application() -> FastAPI:
         )
     application.include_router(api_router, prefix=settings.api_prefix)
     return application
+
 
 app = get_application()
 
