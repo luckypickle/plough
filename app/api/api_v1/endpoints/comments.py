@@ -74,7 +74,7 @@ def create_comment(
             status_code=403,
             detail="Order not found",
         )
-    if current_user.id != order.user_id:
+    if current_user.id != order.owner_id:
         raise HTTPException(
             status_code=403,
             detail="User is not order owner",
