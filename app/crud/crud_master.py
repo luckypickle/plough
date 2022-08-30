@@ -37,7 +37,7 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
 
     def create(self, db: Session, *, obj_in: MasterCreate) -> Optional[Master]:
         master = self.get_by_phone(obj_in.phone)
-        if not master or master.status == MasterStatus.refused:
+        if not master or master.status == MasterStatus.refused.value:
             db_obj = Master()
             db_obj.hashed_password = get_password_hash("12345678"),
             db_obj.name = obj_in.name,
@@ -45,7 +45,7 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
             db_obj.rate = 40,
             db_obj.phone = obj_in.phone,
             db_obj.price = 0,
-            db_obj.status = MasterStatus.inactive
+            db_obj.status = MasterStatus.inactive.value
             db.add(db_obj)
             db.commit()
             db.refresh(db_obj)
@@ -64,7 +64,7 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
     @staticmethod
     def register(db: Session, *, obj_in: MasterRegister) -> Optional[Master]:
         master = CRUDMaster.get_by_phone(db=db, phone=obj_in.phone)
-        if not master or master.status == MasterStatus.refused:
+        if not master or master.status == MasterStatus.refused.value:
             db_obj = Master()
             db_obj.hashed_password = get_password_hash("12345678"),
             db_obj.name = obj_in.name,

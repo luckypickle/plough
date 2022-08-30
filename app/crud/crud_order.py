@@ -22,7 +22,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             setattr(db_obj, k, v)
         db_obj.owner_id = owner_id,
         db_obj.arrange_status = 0,
-        db_obj.status = OrderStatus.init,
+        db_obj.status = OrderStatus.init.value,
         db_obj.order_number = ''.join(sample(ascii_letters + digits, 16))
         db.add(db_obj)
         db.commit()
