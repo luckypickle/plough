@@ -72,5 +72,18 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
         )
 
+    def get_open_orders(
+            self, db: Session, *,
+            skip: int = 0, limit: int = 100
+    ) -> (int, List[Order]):
+        query = db.query(self.model)
+        conditions = []
+        conditions.append(Order.is_open==1)
+        query = query.filter(*conditions)
+        return (
+            query.count(),
+            query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
+        )
+
 
 order = CRUDOrder(Order)

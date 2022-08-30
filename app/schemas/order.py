@@ -61,6 +61,7 @@ class OrderInDBBase(OrderCreate):
     pay_time: Optional[str] = None
     arrange_status: Optional[int] = None
     status: Optional[int] = OrderStatus.init.value
+    is_open: Optional[int] = 0
 
     class Config:
         orm_mode = True
