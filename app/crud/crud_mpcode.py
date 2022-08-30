@@ -11,9 +11,9 @@ from app.schemas.mpcode import MPCodeCreate, MPCodeUpdate
 
 
 class CRUDMPCode(CRUDBase[MPCode, MPCodeCreate, MPCodeUpdate]):
-    #FIXME, no lock for fetching code in parallel
+    # FIXME, no lock for fetching code in parallel
     def create(
-        self, db: Session, *, obj_in: MPCodeCreate
+            self, db: Session, *, obj_in: MPCodeCreate
     ) -> MPCode:
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = self.model(**obj_in_data)
@@ -24,7 +24,7 @@ class CRUDMPCode(CRUDBase[MPCode, MPCodeCreate, MPCodeUpdate]):
 
     def verify_mpcode(self, db: Session, *, phone: str, verify_code: str) -> bool:
         now = int(time.time())
-        valid_codes = db.query(MPCode).filter(MPCode.phone==phone, MPCode.status==0).all()
+        valid_codes = db.query(MPCode).filter(MPCode.phone == phone, MPCode.status == 0).all()
         for c in valid_codes:
             if c.expire_time >= now:
                 c.status = 1
@@ -37,17 +37,17 @@ class CRUDMPCode(CRUDBase[MPCode, MPCodeCreate, MPCodeUpdate]):
     def get_unused_code(self, db: Session, *, phone: str) -> List[MPCode]:
         return (
             db.query(self.model)
-            .filter(MPCode.phone==phone, MPCode.status==0)
-            .all()
+                .filter(MPCode.phone == phone, MPCode.status == 0)
+                .all()
         )
 
     def get_by_owner_phone_request_time(
-        self, db: Session, *, phone: str, request_time: int
+            self, db: Session, *, phone: str, request_time: int
     ) -> List[MPCode]:
         return (
             db.query(self.model)
-            .filter(MPCode.phone==phone, MPCode.request_time>request_time, MPCode.status==0)
-            .all()
+                .filter(MPCode.phone == phone, MPCode.request_time > request_time, MPCode.status == 0)
+                .all()
         )
 
 

@@ -13,11 +13,11 @@ from app.schemas.order import OrderCreate, OrderUpdate, OrderUpdateDivination, O
 
 class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
     def create_with_owner(
-        self, db: Session, *, obj_in: OrderCreate, owner_id: int
+            self, db: Session, *, obj_in: OrderCreate, owner_id: int
     ) -> Order:
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = Order(
-            **obj_in_data, 
+            **obj_in_data,
             owner_id=owner_id,
             arrange_status=0,
             status=OrderStatus.init.value,
@@ -28,7 +28,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         return db_obj
 
     def updateDivination(
-        self, db: Session, *, db_obj: Order, obj_in: OrderUpdateDivination
+            self, db: Session, *, db_obj: Order, obj_in: OrderUpdateDivination
     ) -> Order:
         db_obj.divination = obj_in.divination
         # db_obj.status = OrderStatus.checked.value
@@ -39,39 +39,40 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         return db_obj
 
     def get_summary(self, db: Session, role: int, role_id: int):
-        if role == 0: #superuser
+        if role == 0:  # superuser
             orders = db.query(Order).all()
-        elif role == 1: #user
-            orders = db.query(Order).filter(Order.owner_id==role_id).all()
-        elif role == 2: #master
-            orders = db.query(Order).filter(Order.master_id==role_id).all()
+        elif role == 1:  # user
+            orders = db.query(Order).filter(Order.owner_id == role_id).all()
+        elif role == 2:  # master
+            orders = db.query(Order).filter(Order.master_id == role_id).all()
         else:
             orders = []
         return len(orders)
 
     def get_multi_with_condition(
-        self, db: Session, *, 
-        role_id: int,
-        role: int = 0,
-        status: int = -1,
-        skip: int = 0, limit: int = 100
+            self, db: Session, *,
+            role_id: int,
+            role: int = 0,
+            status: int = -1,
+            skip: int = 0, limit: int = 100
     ) -> List[Order]:
         query = db.query(self.model)
         conditions = []
         if role == 1:
-            conditions.append(Order.owner_id==role_id)
+            conditions.append(Order.owner_id == role_id)
         elif role == 2:
-            conditions.append(Order.master_id==role_id)
+            conditions.append(Order.master_id == role_id)
         if status >= 0:
-            conditions.append(Order.status==status)
+            conditions.append(Order.status == status)
         query = query.filter(*conditions)
         return (
             query.count(),
             query
-            .order_by(Order.id.desc())
-            .offset(skip)
-            .limit(limit)
-            .all()
+                .order_by(Order.id.desc())
+                .offset(skip)
+                .limit(limit)
+                .all()
         )
+
 
 order = CRUDOrder(Order)

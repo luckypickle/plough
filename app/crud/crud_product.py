@@ -15,5 +15,4 @@ class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
         return db.query(Product).filter(Product.name == name).first()
 
 
-
 product = CRUDProduct(Product)
