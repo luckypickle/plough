@@ -57,7 +57,7 @@ def read_comment_by_master(
     return comments
 
 
-@router.post("/", response_model=schemas.Comment)
+@router.post("/create", response_model=schemas.Comment)
 def create_comment(
         *,
         db: Session = Depends(deps.get_db),
