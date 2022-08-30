@@ -90,7 +90,7 @@ def read_orders_master(
     total, orders = crud.order.get_multi_with_condition(
         db=db, role=2, role_id=current_master.id, status=status, skip=skip, limit=limit
     )
-    #FIXME, not check count
+    # FIXME, not check count
     products = crud.product.get_multi(db=db)
     ret_obj = schemas.OrderQuery(total=0, orders=[])
     ret_obj.total = total
@@ -125,6 +125,7 @@ def read_orders_master(
         ))
     return ret_obj
 
+
 def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
     for i in range(12):
         ret = wxpay.query(out_trade_no=out_trade_no, mchid=mchid)
@@ -140,6 +141,7 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                 db.refresh(order)
             break
         time.sleep(5)
+
 
 @router.post("/")
 def create_order(
@@ -300,6 +302,7 @@ def read_order_by_id(
         raise HTTPException(status_code=400, detail="Not enough permissions")
     # FIXME, not check count
     products = crud.product.get_multi(db=db)
+    product = None
     for p in products:
         if p.id == order.product_id:
             product = p.name
@@ -328,4 +331,3 @@ def read_order_by_id(
         master_avatar=order.master.avatar,
         owner=order.owner.user_name
     )
-

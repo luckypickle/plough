@@ -38,7 +38,6 @@ class OrderUpdate(OrderCreate):
     open: Optional[int]
 
 
-
 class OrderUpdateDivination(OrderBase):
     divination: Optional[str] = None
 
@@ -60,7 +59,7 @@ class OrderInDBBase(OrderCreate):
     create_time: Optional[str] = None
     pay_time: Optional[str] = None
     arrange_status: Optional[int] = None
-    status: Optional[int] = OrderStatus.init.value
+    status: Optional[int] = OrderStatus.init
 
     class Config:
         orm_mode = True
