@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String,func,DateTime
+
 from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 
@@ -13,3 +14,4 @@ class Comment(Base):
     content = Column(String)
     rate = Column(Integer, nullable=False)
     status = Column(Integer, nullable=False)
+    create_time = Column(DateTime, server_default=func.now(), index=True, comment="创建时间")

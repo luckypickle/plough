@@ -10,7 +10,7 @@ from app.api import deps
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 from app.bazi import BaZi
-
+import pytz
 router = APIRouter()
 
 
@@ -27,7 +27,7 @@ def read_comment_by_order(
     return comment
 
 
-@router.get("/query_by_master", response_model=List[schemas.Comment])
+@router.get("/query_by_master", response_model=schemas.CommentQuery)
 def read_comment_by_master(
         master_id: int,
         skip: int = 0,
@@ -38,8 +38,27 @@ def read_comment_by_master(
     """
     Retrieve comment by master.
     """
-    comments = crud.comment.get_by_master_id(db, master_id=master_id, skip=skip, limit=limit)
-    return comments
+    (total_rate,total,comments) = crud.comment.get_by_master_id(db, master_id=master_id, skip=skip, limit=limit)
+    ret_obj = schemas.CommentQuery(rate="",total=0, comments=[])
+    if total_rate is None:
+        total_rate=0
+    if total==0:
+        ret_obj.rate="0"
+    else:
+        ret_obj.rate = "%.2f"%(float(total_rate)/total)
+    ret_obj.total=total
+    for one_com in comments:
+        create_time = one_com.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        ret_obj.comments.append(schemas.Comment(
+            id=one_com.id,
+            status=one_com.status,
+            order_id=one_com.order_id,
+        content=one_com.content,
+        rate=one_com.rate,
+            create_time=create_time
+        ))
+
+    return ret_obj
 
 
 @router.get("/query_by_user", response_model=List[schemas.Comment])
@@ -79,7 +98,9 @@ def create_comment(
             status_code=403,
             detail="User is not order owner",
         )
+
     comment = crud.comment.create(db, obj_in=obj_in, master_id=order.master_id, user_id=order.owner_id)
+    crud.order.updateOrderRate(db, order_id=order.id, rate=obj_in.rate)
     return comment
 
 

@@ -40,6 +40,15 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         return db_obj
 
     @staticmethod
+    def updateOrderRate(db: Session, *,order_id:int, rate: int) -> Order:
+        db_obj = Order()
+        db_obj.id=order_id
+        db_obj.shareRate=rate
+        db.commit()
+        db.refresh(db_obj)
+
+
+    @staticmethod
     def get_summary(db: Session, role: int, role_id: int):
         if role == 0:  # superuser
             orders = db.query(Order).all()

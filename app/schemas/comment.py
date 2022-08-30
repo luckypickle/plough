@@ -1,5 +1,6 @@
 from enum import Enum
-from typing import Optional
+from typing import Optional,List
+
 
 from pydantic import BaseModel
 
@@ -15,6 +16,7 @@ class CommentBase(BaseModel):
     order_id: Optional[int] = None
     content: Optional[str] = None
     rate: Optional[int] = None
+
 
 
 # Properties to receive via API on creation
@@ -37,9 +39,16 @@ class CommentInDBBase(CommentBase):
 
 # Additional properties to return via API
 class Comment(CommentInDBBase):
-    pass
+    create_time: Optional[str] = None
+
 
 
 # Additional properties stored in DB
 class CommentInDB(CommentInDBBase):
     pass
+
+
+class CommentQuery(BaseModel):
+    total:int =0
+    rate:str = ""
+    comments:List[Comment]

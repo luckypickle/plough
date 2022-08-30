@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app.crud.base import CRUDBase
 from app.crud.crud_master import CRUDMaster
@@ -16,7 +17,10 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
 
     @staticmethod
     def get_by_master_id(db: Session, master_id: int, skip: int = 0, limit: int = 100) -> Optional[Comment]:
-        return db.query(Comment).filter(Comment.master_id == master_id).all()
+        sql =db.query(Comment).filter(Comment.master_id == master_id)
+        sum_sql =db.query(func.sum(Comment.rate)).filter(Comment.master_id == master_id)
+
+        return (sum_sql.scalar(),sql.count(),sql.offset(skip).limit(limit).all())
 
     @staticmethod
     def get_by_user_id(db: Session, user_id: int, skip: int = 0, limit: int = 100) -> Optional[Comment]:
