@@ -85,8 +85,8 @@ def read_comment_by_master(
 
 @router.get("/list",response_model=List[schemas.Comment])
 def get_list(
-        startTime:Optional[int],
-        endTime:Optional[int],
+        startTime:int =0,
+        endTime:int=999999999,
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(deps.get_db),
