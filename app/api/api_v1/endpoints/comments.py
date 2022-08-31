@@ -104,6 +104,8 @@ def create_comment(
     if comment is not  None:
         order_in={"comment_rate":obj_in.rate}
         crud.order.update(db=db, db_obj=order, obj_in=order_in)
+        db.commit()
+        comment.create_time = comment.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
     else:
         comment = schemas.Comment()
     #crud.order.updateOrderRate(db, order_id=order.id, rate=obj_in.rate)
