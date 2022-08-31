@@ -50,13 +50,14 @@ def read_comment_by_master(
         ret_obj.rate = "%.2f"%(float(total_rate)/total)
     ret_obj.total=total
     for one_com in comments:
-        create_time = one_com.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        #create_time = one_com.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        create_time = one_com.create_time.strftime("%Y-%m-%d %H:%M:%S")
         ret_obj.comments.append(schemas.Comment(
             id=one_com.id,
             status=one_com.status,
             order_id=one_com.order_id,
-        content=one_com.content,
-        rate=one_com.rate,
+            content=one_com.content,
+            rate=one_com.rate,
             create_time=create_time
         ))
 
