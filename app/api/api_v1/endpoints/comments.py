@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List,Optional
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -85,6 +85,8 @@ def read_comment_by_master(
 
 @router.get("/list",response_model=List[schemas.Comment])
 def get_list(
+        startTime:Optional[int],
+        endTime:Optional[int],
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(deps.get_db),
@@ -93,6 +95,7 @@ def get_list(
     '''
     super user get all comments
     '''
+
     comments = crud.comment.get_all(db,  skip=skip, limit=limit)
     ret = []
     for one_comm in comments:
