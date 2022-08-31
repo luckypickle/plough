@@ -24,6 +24,7 @@ def read_comment_by_order(
     Retrieve comment by order.
     """
     comment = crud.comment.get_by_order_id(db, order_id=order_id)
+    comment.create_time = comment.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
     return comment
 
 
