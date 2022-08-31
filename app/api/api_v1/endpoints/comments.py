@@ -24,7 +24,8 @@ def read_comment_by_order(
     Retrieve comment by order.
     """
     comment = crud.comment.get_by_order_id(db, order_id=order_id)
-    comment.create_time = comment.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+    if comment is not None:
+        comment.create_time = comment.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
     return comment
 
 
@@ -74,7 +75,11 @@ def read_comment_by_master(
     Retrieve comment by user.
     """
     comments = crud.comment.get_by_user_id(db, user_id=user_id, skip=skip, limit=limit)
-    return comments
+    ret = []
+    for one_comm in comments:
+        one_comm.create_time=one_comm.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        ret.append(one_comm)
+    return ret
 
 
 @router.post("/create", response_model=schemas.Comment)
@@ -130,4 +135,6 @@ def update_comment_by_id(
             detail="Order not found",
         )
     comment = crud.comment.update_by_id(db=db, obj_in=obj_in, comment_id=comment_id)
+    if comment is not None:
+        comment.create_time = comment.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
     return comment

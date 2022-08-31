@@ -71,7 +71,8 @@ def read_orders(
             master=o.master.name,
             master_avatar=o.master.avatar,
             owner=o.owner.user_name,
-            is_open=o.is_open
+            is_open=o.is_open,
+            comment_rate=o.comment_rate
         ))
     return ret_obj
 
@@ -122,7 +123,8 @@ def read_orders(
             master=o.master.name,
             master_avatar=o.master.avatar,
             owner=o.owner.user_name,
-            is_open=o.is_open
+            is_open=o.is_open,
+            comment_rate=o.comment_rate
         ))
     return ret_obj
 
@@ -175,7 +177,8 @@ def read_orders_master(
             status=o.status,
             master=o.master.name,
             master_avatar=o.master.avatar,
-            owner=o.owner.user_name
+            owner=o.owner.user_name,
+            comment_rate=o.comment_rate
         ))
     return ret_obj
 
@@ -335,7 +338,8 @@ def master_update_order(
         arrange_status=order.arrange_status,
         master=order.master.name,
         master_avatar=order.master.avatar,
-        owner=order.owner.user_name
+        owner=order.owner.user_name,
+        comment_rate=order.comment_rate
     )
 
 
@@ -383,5 +387,6 @@ def read_order_by_id(
         arrange_status=order.arrange_status,
         master=order.master.name,
         master_avatar=order.master.avatar,
-        owner=order.owner.user_name
+        owner=order.owner.user_name,
+        comment_rate=order.comment_rate
     )
