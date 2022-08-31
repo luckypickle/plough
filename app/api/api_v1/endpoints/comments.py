@@ -51,6 +51,7 @@ def read_comment_by_master(
     ret_obj.total=total
     for one_com in comments:
         #create_time = one_com.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        print(one_com.create_time)
         create_time = one_com.create_time.strftime("%Y-%m-%d %H:%M:%S")
         ret_obj.comments.append(schemas.Comment(
             id=one_com.id,
