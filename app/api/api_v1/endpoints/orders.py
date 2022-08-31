@@ -128,7 +128,7 @@ def read_orders(
 
 
 
-@router.get("/master", response_model=schemas.OrderQuery)
+@router.get("/master", response_model=schemas.MasterOrderQuery)
 def read_orders_master(
         db: Session = Depends(deps.get_db),
         status: int = -1,
@@ -139,13 +139,15 @@ def read_orders_master(
     """
     Retrieve orders (Master).
     """
-    total, orders = crud.order.get_multi_with_condition(
+    total,total_reward, orders = crud.order.get_multi_and_sum_with_condition(
         db=db, role=2, role_id=current_master.id, status=status, skip=skip, limit=limit
     )
     # FIXME, not check count
     products = crud.product.get_multi(db=db)
-    ret_obj = schemas.OrderQuery(total=0, orders=[])
+    ret_obj = schemas.MasterOrderQuery(total=0,total_reward=0.0, orders=[])
     ret_obj.total = total
+    if total_reward is not None:
+        ret_obj.total_reward= total_reward/100
     for o in orders:
         for p in products:
             if p.id == o.product_id:

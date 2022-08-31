@@ -5,6 +5,7 @@ from string import ascii_letters, digits
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app.crud.base import CRUDBase
 from app.models.order import Order
@@ -68,8 +69,32 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         if status >= 0:
             conditions.append(Order.status == status)
         query = query.filter(*conditions)
+
         return (
             query.count(),
+            query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
+        )
+
+    def get_multi_and_sum_with_condition(
+            self, db: Session, *,
+            role_id: int,
+            role: int = 0,
+            status: int = -1,
+            skip: int = 0, limit: int = 100
+    ) -> (int, List[Order]):
+        query = db.query(self.model)
+        conditions = []
+        if role == 1:
+            conditions.append(Order.owner_id == role_id)
+        elif role == 2:
+            conditions.append(Order.master_id == role_id)
+        if status >= 0:
+            conditions.append(Order.status == status)
+        query = query.filter(*conditions)
+        sql = db.query(func.sum(Order.amount *func.COALESCE(Order.shareRate,0))).filter(Order.arrange_status==3).filter(*conditions)
+        return (
+            query.count(),
+            sql.scalar(),
             query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
         )
 

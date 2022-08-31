@@ -62,6 +62,7 @@ class OrderInDBBase(OrderCreate):
     status: Optional[int] = OrderStatus.init.value
     is_open: Optional[int] = 0
 
+
     class Config:
         orm_mode = True
 
@@ -72,12 +73,15 @@ class Order(OrderInDBBase):
     master_avatar: Optional[str] = None
     owner: Optional[str] = None
     product: Optional[str] = None
+    comment_rate: Optional[int] = None
 
 
 class OrderQuery(BaseModel):
     total: int = 0
     orders: List[Order]
 
+class MasterOrderQuery(OrderQuery):
+    total_reward: float = 0.0
 
 # Properties properties stored in DB
 class OrderInDB(OrderInDBBase):
