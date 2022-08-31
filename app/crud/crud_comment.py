@@ -13,7 +13,7 @@ from app.schemas.comment import CommentCreate, CommentUpdate, CommentStatus
 class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
     @staticmethod
     def get_by_order_id(db: Session, order_id: int) -> Optional[Comment]:
-        return db.query(Comment).filter(Comment.order_id == order_id).first()
+        return db.query(Comment).filter(Comment.status==0).filter(Comment.order_id == order_id).first()
 
     @staticmethod
     def get_by_master_id(db: Session, master_id: int, skip: int = 0, limit: int = 100) -> Optional[Comment]:
@@ -24,10 +24,10 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
 
     @staticmethod
     def get_by_user_id(db: Session, user_id: int, skip: int = 0, limit: int = 100) -> Optional[Comment]:
-        return db.query(Comment).filter(Comment.user_id == user_id).offset(skip).limit(limit).all()
+        return db.query(Comment).filter(Comment.status==0).filter(Comment.user_id == user_id).offset(skip).limit(limit).all()
     @staticmethod
     def get_all(db: Session,  skip: int = 0, limit: int = 100) -> Optional[Comment]:
-        return db.query(Comment).offset(skip).limit(limit).all()
+        return db.query(Comment).filter(Comment.status==0).offset(skip).limit(limit).all()
 
 
 
