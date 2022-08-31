@@ -6,6 +6,7 @@ from typing import Any, Dict, Optional, Union, List
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 
+from app import utils
 from app.core.security import get_password_hash, verify_password
 from app.crud.base import CRUDBase
 from app.db.base_class import Base
@@ -64,7 +65,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     @staticmethod
     def create_superuser(db: Session, *, obj_in: UserCreate) -> User:
-        rand_password = ''.join(random.sample('1234567890abcdefghijklmnopqrstufwxyz', 8))
+        rand_password = utils.random_password_number_lower_letters(8)
         db_obj = User()
         db_obj.hashed_password = get_password_hash(rand_password),
         db_obj.user_name = str(uuid.uuid4()),
@@ -79,7 +80,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     @staticmethod
     def create(db: Session, *, obj_in: UserCreate) -> User:
-        rand_password = ''.join(random.sample('1234567890abcdefghijklmnopqrstufwxyz', 8))
+        rand_password = utils.random_password_number_lower_letters(8)
         db_obj = User()
         db_obj.hashed_password = get_password_hash(rand_password),
         db_obj.user_name = str(uuid.uuid4()),
