@@ -25,7 +25,7 @@ def read_comment_by_order(
     """
     comment = crud.comment.get_by_order_id(db, order_id=order_id)
     if comment is not None:
-        comment.create_time = comment.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
     return comment
 
 
@@ -51,7 +51,7 @@ def read_comment_by_master(
     ret_obj.total=total
     for one_com in comments:
         #create_time = one_com.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
-        print(one_com.create_time)
+        #print(one_com.create_time)
         create_time = one_com.create_time.strftime("%Y-%m-%d %H:%M:%S")
         ret_obj.comments.append(schemas.Comment(
             id=one_com.id,
@@ -79,7 +79,7 @@ def read_comment_by_master(
     comments = crud.comment.get_by_user_id(db, user_id=user_id, skip=skip, limit=limit)
     ret = []
     for one_comm in comments:
-        one_comm.create_time=one_comm.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        one_comm.create_time=one_comm.create_time.strftime("%Y-%m-%d %H:%M:%S")
         ret.append(one_comm)
     return ret
 
@@ -112,7 +112,7 @@ def create_comment(
         order = crud.order.get(db, id=obj_in.order_id)
         order_in={"comment_rate":obj_in.rate}
         crud.order.update(db=db, db_obj=order, obj_in=order_in)
-        comment.create_time = comment.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
     else:
         comment = schemas.Comment()
     #crud.order.updateOrderRate(db, order_id=order.id, rate=obj_in.rate)
@@ -138,5 +138,5 @@ def update_comment_by_id(
         )
     comment = crud.comment.update_by_id(db=db, obj_in=obj_in, comment_id=comment_id)
     if comment is not None:
-        comment.create_time = comment.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
     return comment
