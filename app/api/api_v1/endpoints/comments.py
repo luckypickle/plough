@@ -101,8 +101,11 @@ def create_comment(
         )
 
     comment = crud.comment.create(db, obj_in=obj_in, master_id=order.master_id, user_id=order.owner_id)
-    order_in={"comment_rate":obj_in.rate}
-    crud.order.update(db=db, db_obj=order, obj_in=order_in)
+    if comment is not  None:
+        order_in={"comment_rate":obj_in.rate}
+        crud.order.update(db=db, db_obj=order, obj_in=order_in)
+    else:
+        comment = schemas.Comment()
     #crud.order.updateOrderRate(db, order_id=order.id, rate=obj_in.rate)
     return comment
 
