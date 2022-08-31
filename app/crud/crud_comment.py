@@ -24,7 +24,12 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
 
     @staticmethod
     def get_by_user_id(db: Session, user_id: int, skip: int = 0, limit: int = 100) -> Optional[Comment]:
-        return db.query(Comment).filter(Comment.user_id == user_id).all()
+        return db.query(Comment).filter(Comment.user_id == user_id).offset(skip).limit(limit).all()
+    @staticmethod
+    def get_all(db: Session,  skip: int = 0, limit: int = 100) -> Optional[Comment]:
+        return db.query(Comment).offset(skip).limit(limit).all()
+
+
 
     @staticmethod
     def create(db: Session, *, obj_in: CommentCreate, master_id: int, user_id: int) -> Optional[Comment]:

@@ -83,6 +83,24 @@ def read_comment_by_master(
         ret.append(one_comm)
     return ret
 
+@router.get("/list",response_model=List[schemas.Comment])
+def get_list(
+        skip: int = 0,
+        limit: int = 100,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_superuser),
+        settings: AppSettings = Depends(get_app_settings)) -> Any:
+    '''
+    super user get all comments
+    '''
+    comments = crud.comment.get_all(db,  skip=skip, limit=limit)
+    ret = []
+    for one_comm in comments:
+        one_comm.create_time = one_comm.create_time.strftime("%Y-%m-%d %H:%M:%S")
+        ret.append(one_comm)
+    return ret
+
+
 
 @router.post("/create", response_model=schemas.Comment)
 def create_comment(
@@ -117,6 +135,7 @@ def create_comment(
         comment = schemas.Comment()
     #crud.order.updateOrderRate(db, order_id=order.id, rate=obj_in.rate)
     return comment
+
 
 
 @router.put("/{comment_id}", response_model=schemas.Comment)
