@@ -66,11 +66,11 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
         master = CRUDMaster.get_by_phone(db=db, phone=obj_in.phone)
         if not master or master.status == MasterStatus.refused.value:
             db_obj = Master()
-            db_obj.hashed_password = get_password_hash("12345678"),
-            db_obj.name = obj_in.name,
-            db_obj.avatar = obj_in.avatar,
-            db_obj.rate = 40,
-            db_obj.phone = obj_in.phone,
+            db_obj.hashed_password = get_password_hash("12345678")
+            db_obj.name = obj_in.name
+            db_obj.avatar = obj_in.avatar
+            db_obj.rate = 40
+            db_obj.phone = obj_in.phone
             db_obj.status = MasterStatus.inactive.value
             db.add(db_obj)
             db.commit()

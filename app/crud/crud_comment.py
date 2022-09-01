@@ -50,11 +50,11 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
 
         if not comment or master.status == CommentStatus.removed.value:
             db_obj = Comment()
-            db_obj.order_id = obj_in.order_id,
-            db_obj.content = obj_in.content,
-            db_obj.rate = obj_in.rate,
-            db_obj.master_id = master_id,
-            db_obj.user_id = user_id,
+            db_obj.order_id = obj_in.order_id
+            db_obj.content = obj_in.content
+            db_obj.rate = obj_in.rate
+            db_obj.master_id = master_id
+            db_obj.user_id = user_id
             db_obj.status =CommentStatus.init.value
             db.add(db_obj)
             db.commit()
