@@ -21,12 +21,12 @@ class CRUDVersion(CRUDBase[Version, VersionCreate, VersionUpdate]):
     @staticmethod
     def release_version(db: Session, *, obj_in: VersionCreate) -> Optional[Version]:
         db_obj = Version()
-        db_obj.vstr = obj_in.vstr,
-        db_obj.product = obj_in.product,
-        db_obj.desc = obj_in.desc,
-        db_obj.memo = obj_in.memo,
-        db_obj.url = obj_in.url,
-        db_obj.release_time = int(time.time()),
+        db_obj.vstr = obj_in.vstr
+        db_obj.product = obj_in.product
+        db_obj.desc = obj_in.desc
+        db_obj.memo = obj_in.memo
+        db_obj.url = obj_in.url
+        db_obj.release_time = int(time.time())
         db_obj.status = int(obj_in.status)
         db.add(db_obj)
         db.commit()
