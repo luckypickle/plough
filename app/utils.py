@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path
+from random import random
 from typing import Any, Dict, Optional
 
 import emails
@@ -11,6 +12,9 @@ from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 
 settings: AppSettings = get_app_settings()
+
+Numbers = "1234567890"
+Alphabets = "abcdefghijklmnopqrstufwxyz"
 
 
 def send_email(
@@ -134,3 +138,19 @@ def send_verify_code(phone: str, verify_code: str):
 
     except TencentCloudSDKException as err:
         print(err)
+
+
+def random_password_number(length: int):
+    return ''.join(random.sample(Numbers, length))
+
+
+def random_password_number_lower_letters(length: int):
+    return ''.join(random.sample(Numbers + Alphabets, length))
+
+
+def random_password_number_upper_letters(length: int):
+    return ''.join(random.sample(Numbers + Alphabets.upper(), length))
+
+
+def random_password_number_letters(length: int):
+    return ''.join(random.sample(Numbers + Alphabets + Alphabets.upper(), length))

@@ -7,7 +7,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from app import crud, models, schemas
+from app import crud, models, schemas, utils
 from app.api import deps
 from app.core import security
 from app.core.config import get_app_settings
@@ -152,7 +152,7 @@ def request_mpcode(
                 retry_delta = m.request_time - valid_request_time
             need_generate = False
     if need_generate:
-        code = ''.join(random.sample('1234567890', 6))
+        code = utils.random_password_number(6)
         mpcodeCreate = schemas.MPCodeCreate(
             phone=phone, code=code,
             request_time=now, expire_time=now+300,
