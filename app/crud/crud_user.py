@@ -67,11 +67,11 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def create_superuser(db: Session, *, obj_in: UserCreate) -> User:
         rand_password = utils.random_password_number_lower_letters(8)
         db_obj = User()
-        db_obj.hashed_password = get_password_hash(rand_password),
-        db_obj.user_name = str(uuid.uuid4()),
-        db_obj.full_name = "",
-        db_obj.is_superuser = True,
-        db_obj.phone = obj_in.phone,
+        db_obj.hashed_password = get_password_hash(rand_password)
+        db_obj.user_name = str(uuid.uuid4())
+        db_obj.full_name = ""
+        db_obj.is_superuser = True
+        db_obj.phone = obj_in.phone
         db_obj.is_active = True
         db.add(db_obj)
         db.commit()
@@ -82,9 +82,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def create(db: Session, *, obj_in: UserCreate) -> User:
         rand_password = utils.random_password_number_lower_letters(8)
         db_obj = User()
-        db_obj.hashed_password = get_password_hash(rand_password),
-        db_obj.user_name = str(uuid.uuid4()),
-        db_obj.is_superuser = False,
+        db_obj.hashed_password = get_password_hash(rand_password)
+        db_obj.user_name = str(uuid.uuid4())
+        db_obj.is_superuser = False
         db_obj.phone = obj_in.phone
         db.add(db_obj)
         db.commit()
