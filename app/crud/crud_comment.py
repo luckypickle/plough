@@ -8,6 +8,11 @@ from app.crud.base import CRUDBase
 from app.crud.crud_master import CRUDMaster
 from app.models.comment import Comment
 from app.schemas.comment import CommentCreate, CommentUpdate, CommentStatus
+from app.models.order import Order
+from app.models.user import User
+from app.models.master import Master
+from app.models.product import Product
+
 
 
 class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
@@ -29,7 +34,14 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
     def get_all(db: Session,  skip: int = 0, limit: int = 100) -> Optional[Comment]:
         return db.query(Comment).filter(Comment.status==0).order_by(Comment.id.asc()).offset(skip).limit(limit).all()
 
+    @staticmethod
+    def get_all_merge_order(db:Session, skip:int=0,limit:int=100):
+        sql =  db.query(Comment.id,Comment.order_id,Comment.status,Comment.master_id,Comment.rate,Comment.content,Comment.user_id,
+                        Comment.create_time,User.phone,Master.name.label('master_name'),Product.name.label('product_name')).filter(Comment.order_id==Order.id).\
+            filter(Order.product_id==Product.id).filter(Order.owner_id==User.id).filter(Order.master_id==Master.id).\
+            filter(Comment.status==0)
 
+        return (sql.count(),sql.order_by(Comment.id.asc()).offset(skip).limit(limit).all())
 
     @staticmethod
     def create(db: Session, *, obj_in: CommentCreate, master_id: int, user_id: int) -> Optional[Comment]:

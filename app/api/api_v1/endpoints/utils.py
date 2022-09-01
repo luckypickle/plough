@@ -8,7 +8,7 @@ from app.api import deps
 # from app.core.celery_app import celery_app
 from app.utils import send_test_email
 from app.bazi.citys import cal_zone
-from app.bazi.bazi import getYearJieQi
+from app.bazi.bazi import getYearJieQi,get_birthday_by_bazi
 
 router = APIRouter()
 
@@ -75,6 +75,15 @@ def get_year_jie_qi(
         year_jieqi[str(year)] = ret
     else:
         ret = year_jieqi[str(year)]
+    return ret
+@router.get("/BirthdayByBazi")
+def get_year_jie_qi(
+        year: str,
+        month: str,
+        day:str,
+        time:str
+) -> Any:
+    ret = get_birthday_by_bazi(year,month,day,time)
     return ret
 
 

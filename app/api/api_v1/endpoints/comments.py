@@ -83,7 +83,7 @@ def read_comment_by_master(
         ret.append(one_comm)
     return ret
 
-@router.get("/list",response_model=List[schemas.Comment])
+@router.get("/list",response_model=schemas.CommentListQuery)
 def get_list(
         startTime:int =0,
         endTime:int=999999999,
@@ -96,11 +96,23 @@ def get_list(
     super user get all comments
     '''
 
-    comments = crud.comment.get_all(db,  skip=skip, limit=limit)
-    ret = []
+    total,comments = crud.comment.get_all_merge_order(db,  skip=skip, limit=limit)
+    ret = schemas.CommentListQuery(total=0,comments=[])
     for one_comm in comments:
-        one_comm.create_time = one_comm.create_time.strftime("%Y-%m-%d %H:%M:%S")
-        ret.append(one_comm)
+        # print(one_comm.create_time)
+        # print(one_comm[8])
+        create_time = one_comm.create_time.strftime("%Y-%m-%d %H:%M:%S")
+        ret.comments.append(schemas.CommentFullData(
+            create_time=create_time,
+            user_id=one_comm.phone,
+        master_name=one_comm.master_name,
+        product_name=one_comm.product_name,
+            id=one_comm.id,
+        status=one_comm.status,
+            rate=one_comm.rate,
+            content=one_comm.content,
+            order_id=one_comm.order_id
+                                                    ))
     return ret
 
 

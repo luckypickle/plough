@@ -201,6 +201,30 @@ class BaZi():
 
         return detail
 
+
+def cal_hour(hour):
+    if hour >=23 or hour<1:
+        return '子'
+    for k,v in zhi_time.items():
+        hour_list = v.split('-')
+        if hour>= int(hour_list[0]) and hour<int(hour_list[1]):
+            return k
+
+def get_birthday_by_bazi(year,month,day,hour):
+    jds = sxtwl.siZhu2Year(getGZ(year), getGZ(month), getGZ(day), getGZ(hour),
+                           1900, int(2100));
+    ret_data=[]
+
+    for jd in jds:
+        t = sxtwl.JD2DD(jd)
+        # print()
+        day=sxtwl.fromSolar(t.Y, t.M, t.D)
+        Lleap = "闰" if day.isLunarLeap() else ""
+        # print("农历:", end='')
+        # print("\t{}年{}{}月{}日 {}时".format(day.getLunarYear(), Lleap, day.getLunarMonth(), day.getLunarDay(),cal_hour(t.h)))
+        ret_data.append({"solar":"%d-%d-%d %d:%d" % (t.Y, t.M, t.D, t.h, t.m),"lunar":"{}年{}{}月{}日 {}时".format(day.getLunarYear(), Lleap, day.getLunarMonth(), day.getLunarDay(),cal_hour(t.h))})
+    return ret_data
+
 def getYearJieQi(year):
     day = datetime.datetime(year, 1, 1)
     start = False
@@ -218,3 +242,5 @@ def getYearJieQi(year):
                 break
         day = day + datetime.timedelta(days=1)
     return ret
+
+

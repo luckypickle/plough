@@ -47,6 +47,15 @@ class Comment(CommentInDBBase):
 class CommentInDB(CommentInDBBase):
     pass
 
+class CommentFullData(Comment):
+    user_id:Optional[str]=None
+    master_name:Optional[str]= None
+    product_name:Optional[str]=None
+
+class CommentListQuery(BaseModel):
+    total:int =0
+    comments:List[CommentFullData]
+
 
 class CommentQuery(BaseModel):
     total:int =0
