@@ -164,12 +164,12 @@ def update_comment_by_id(
     """
     Update a master. (superuser only)
     """
-    order = crud.order.get(db, id=obj_in.order_id)
-    if not order:
-        raise HTTPException(
-            status_code=403,
-            detail="Order not found",
-        )
+    # order = crud.order.get(db, id=obj_in.order_id)
+    # if not order:
+    #     raise HTTPException(
+    #         status_code=403,
+    #         detail="Order not found",
+    #     )
     comment = crud.comment.update_by_id(db=db, obj_in=obj_in, comment_id=comment_id)
     if comment is not None:
         comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
