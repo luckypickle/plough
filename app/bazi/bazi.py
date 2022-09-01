@@ -11,16 +11,21 @@ Zhis = collections.namedtuple("Zhis", "year month day time")
 
 
 class BaZi():
-    def __init__(self, year: int, month: int, day: int, hour: int, sex: int):
+    def __init__(self, year: int, month: int, day: int, hour: int, sex: int,lunar:int=0,run:int=0):
         self.year = int(year)
         self.month = int(month)
         self.day = int(day)
         self.hour = int(hour)
         self.sex = int(sex)
+        self.lunar = int(lunar)
+        self.run = run==1
 
     def get_detail(self):
         detail = {}
-        day = sxtwl.fromSolar(
+        if self.lunar == 1:
+            day = sxtwl.fromLunar(self.year, self.month, self.day,self.run)
+        else:
+            day = sxtwl.fromSolar(
             self.year, self.month, self.day)
         detail['solarDay'] = {
             'year': day.getSolarYear(),

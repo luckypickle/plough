@@ -182,13 +182,15 @@ def get_saved_divination(
         hour: int,
         minute: int = 0,
         sex: int = 0,
+        lunar:int = 0,
+        run:int =0,
         location: str = '',
         current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """
     Get divination and save to database.
     """
-    bazi = BaZi(year, month, day, hour, sex)
+    bazi = BaZi(year, month, day, hour, sex,lunar,run)
     divination = bazi.get_detail()
     total = crud.history.get_count_by_owner(db, current_user.id)
     history = schemas.HistoryCreate(
