@@ -27,7 +27,7 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
         return db.query(Comment).filter(Comment.status==0).filter(Comment.user_id == user_id).offset(skip).limit(limit).all()
     @staticmethod
     def get_all(db: Session,  skip: int = 0, limit: int = 100) -> Optional[Comment]:
-        return db.query(Comment).filter(Comment.status==0).offset(skip).limit(limit).all()
+        return db.query(Comment).filter(Comment.status==0).order_by(Comment.id.asc()).offset(skip).limit(limit).all()
 
 
 
