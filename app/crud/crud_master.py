@@ -90,7 +90,7 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
             hashed_password = get_password_hash(update_data["password"])
             del update_data["password"]
             update_data["hashed_password"] = hashed_password
-        return super(self).update(db, db_obj=db_obj, obj_in=update_data)
+        return super(CRUDMaster).update(db, db_obj=db_obj, obj_in=update_data)
 
     @staticmethod
     def is_active(master: Master) -> bool:
