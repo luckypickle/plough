@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path
-from random import random
+from random import random,sample
 from typing import Any, Dict, Optional
 
 import emails
@@ -141,16 +141,16 @@ def send_verify_code(phone: str, verify_code: str):
 
 
 def random_password_number(length: int):
-    return ''.join(random.sample(Numbers, length))
+    return ''.join(sample(Numbers, length))
 
 
 def random_password_number_lower_letters(length: int):
-    return ''.join(random.sample(Numbers + Alphabets, length))
+    return ''.join(sample(Numbers + Alphabets, length))
 
 
 def random_password_number_upper_letters(length: int):
-    return ''.join(random.sample(Numbers + Alphabets.upper(), length))
+    return ''.join(sample(Numbers + Alphabets.upper(), length))
 
 
 def random_password_number_letters(length: int):
-    return ''.join(random.sample(Numbers + Alphabets + Alphabets.upper(), length))
+    return ''.join(sample(Numbers + Alphabets + Alphabets.upper(), length))
