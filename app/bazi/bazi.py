@@ -230,6 +230,11 @@ def get_birthday_by_bazi(year,month,day,hour):
         ret_data.append({"solar":"%d-%d-%d %d:%d" % (t.Y, t.M, t.D, t.h, t.m),"lunar":"{}年{}{}月{}日 {}时".format(day.getLunarYear(), Lleap, day.getLunarMonth(), day.getLunarDay(),cal_hour(t.h))})
     return ret_data
 
+def convert_lunar_to_solar(year,month,day,isRun):
+    day = sxtwl.fromLunar(year,month,day,isRun==1)
+
+    return (day.getSolarYear(),day.getSolarMonth(),day.getSolarDay())
+
 def getYearJieQi(year):
     day = datetime.datetime(year, 1, 1)
     start = False

@@ -193,6 +193,8 @@ def get_saved_divination(
     bazi = BaZi(year, month, day, hour, sex,lunar,run)
     divination = bazi.get_detail()
     total = crud.history.get_count_by_owner(db, current_user.id)
+    if lunar==1:
+        year,month,day = BaZi.convert_lunar_to_solar(year,month,day,run)
     history = schemas.HistoryCreate(
         owner_id=current_user.id,
         name=name,
