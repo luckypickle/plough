@@ -102,7 +102,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             hashed_password = get_password_hash(update_data["password"])
             del update_data["password"]
             update_data["hashed_password"] = hashed_password
-        return super().update(db, db_obj=db_obj, obj_in=update_data)
+        return super(CRUDUser, self).update(db, db_obj=db_obj, obj_in=update_data)
 
     # login with phone
     @staticmethod
