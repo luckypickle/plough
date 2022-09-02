@@ -12,6 +12,7 @@ from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 from app.utils import send_new_account_email
 from app.bazi import BaZi
+from app.bazi.bazi import  convert_lunar_to_solar
 
 router = APIRouter()
 
@@ -194,7 +195,7 @@ def get_saved_divination(
     divination = bazi.get_detail()
     total = crud.history.get_count_by_owner(db, current_user.id)
     if lunar==1:
-        year,month,day = BaZi.convert_lunar_to_solar(year,month,day,run)
+        year,month,day = convert_lunar_to_solar(year,month,day,run)
     history = schemas.HistoryCreate(
         owner_id=current_user.id,
         name=name,
