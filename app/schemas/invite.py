@@ -12,6 +12,8 @@ class InviteBase(BaseModel):
     first_order_time: Optional[datetime.datetime] = None
 # Properties to receive via API on creation
 class InviteCreate(InviteBase):
+    prev_invite: Optional[int] = None
+    prev_prev_invite: Optional[int] = None
     pass
 
 
