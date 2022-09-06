@@ -270,6 +270,15 @@ def delete_order_favorite( db: Session = Depends(deps.get_db),
 
     return "success"
 
+def get_user_level(registed_count):
+    if registed_count == 0:
+        return 0
+    return 0
+def get_reward_amount(level,amount,prev):
+    if prev:
+        return 0
+    else:
+        return 1
 def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
     for i in range(12):
         ret = wxpay.query(out_trade_no=out_trade_no, mchid=mchid)
@@ -285,7 +294,40 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                 db.refresh(order)
             break
         time.sleep(5)
+    order = crud.order.get(db=db, id=order_id)
 
+    if order is not None:
+        if order.status == 1:
+            invite_obj = crud.invite.get_invite_info(db,user_id=order.owner_id)
+            if invite_obj.order_status == 1:
+                invite_obj.order_status = 2
+                invite_obj.first_order_time = order.pay_time
+                db.add(invite_obj),
+                db.commit()
+                db.refresh(invite_obj)
+                prev_amount = 0
+                prev_prev_amount = 0
+                prev_invite_obj = crud.invite.get_invite_info(db,user_id=invite_obj.prev_user_id)
+                if prev_invite_obj is not None:
+                    prev_invite_obj.current_level = get_user_level(crud.invite.get_prev_count(db,user_id=invite_obj.prev_user_id))
+                    db.add(prev_invite_obj),
+                    db.commit()
+                    db.refresh(prev_invite_obj)
+                    prev_amount = get_reward_amount(prev_invite_obj.current_level,order.amount,False)
+                    prev_prev_invite_obj = crud.invite.get_invite_info(db,user_id=invite_obj.prev_prev_user_id)
+                    if prev_prev_invite_obj is not None:
+                        prev_prev_amount = get_reward_amount(prev_invite_obj.current_level, order.amount, True)
+                reward_obj = models.Reward(
+                    order_id=order.id,
+                    user_id = order.owner_id,
+                    order_amount=order.amount,
+                    prev_user_id=invite_obj.prev_user_id,
+                    prev_prev_user_id=invite_obj.prev_prev_user_id,
+                    prev_amount = prev_amount,
+                    prev_prev_amount = prev_prev_amount,
+                    order_time = order.pay_time
+                )
+                crud.reward.create(db,obj_in=reward_obj)
 
 @router.post("/")
 def create_order(
