@@ -14,6 +14,7 @@ class MasterStatus(Enum):
 # Shared properties
 class MasterBase(BaseModel):
     phone: Optional[str] = None
+    email:Optional[str] = None
     name: Optional[str] = None
     avatar: Optional[str] = None
 

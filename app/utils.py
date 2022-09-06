@@ -134,10 +134,49 @@ def send_verify_code(phone: str, verify_code: str):
         req.from_json_string(json.dumps(params))
 
         resp = client.SendSms(req)
+
         return resp.to_json_string()
 
     except TencentCloudSDKException as err:
         print(err)
+def send_verify_email(email:str,verify_code:str):
+    import json
+    from tencentcloud.common import credential
+    from tencentcloud.common.profile.client_profile import ClientProfile
+    from tencentcloud.common.profile.http_profile import HttpProfile
+    from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
+    from tencentcloud.ses.v20201002 import ses_client, models
+    try:
+        # 实例化一个认证对象，入参需要传入腾讯云账户secretId，secretKey,此处还需注意密钥对的保密
+        # 密钥可前往https://console.cloud.tencent.com/cam/capi网站进行获取
+        cred = credential.Credential(settings.SMS_SECRET_ID, settings.SMS_SECRET_KEY)
+        client = ses_client.SesClient(cred, "ap-hongkong")
+
+        # 实例化一个请求对象,每个接口都会对应一个request对象
+        req = models.SendEmailRequest()
+        print(settings.SES_FROM_ADDR)
+        print(settings.SES_TEMPLATE_ID)
+        templateData = json.dumps({"yzm":verify_code})
+        params ={
+            "FromEmailAddress": settings.SES_FROM_ADDR,
+            "Destination": [email],
+            "Subject":"haha",
+            "Template": {
+                "TemplateID": settings.SES_TEMPLATE_ID,
+                "TemplateData": templateData
+            },
+        }
+        req.from_json_string(json.dumps(params))
+        print(req)
+
+        # 返回的resp是一个SendEmailResponse的实例，与请求对象对应
+        resp = client.SendEmail(req)
+        # 输出json格式的字符串回包
+        return resp.to_json_string()
+    except TencentCloudSDKException as err:
+        print('123456789009876543')
+        print(err)
+
 
 
 def random_password_number(length: int):

@@ -17,7 +17,7 @@ description = '''
 parser = argparse.ArgumentParser(description=description,
                                  formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('shengxiao', action="store", help=u'生肖')
-parser.add_argument('--version', action='version',
+parser.add_argument('--versions', action='versions',
                     version='%(prog)s 0.1 Rongzhong xu 2019 03 06 钉钉或微信pythontesting')
 options = parser.parse_args()
 

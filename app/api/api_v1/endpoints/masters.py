@@ -137,6 +137,7 @@ def create_master_open(
         *,
         db: Session = Depends(deps.get_db),
         phone: str = Body(...),
+        email:str = Body(...),
         verify_code: str = Body(...),
         name: str = Body(None),
         avatar: str = Body(None),

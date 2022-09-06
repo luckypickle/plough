@@ -30,6 +30,10 @@ class AppSettings(BaseAppSettings):
     SMS_APP_ID = ''
     SMS_SIGNATURE = ''
 
+    SES_FROM_ADDR=''
+    SES_TEMPLATE_ID=0
+
+
     EMAILS_ENABLED = True
     EMAILS_FROM_NAME = ''
     EMAILS_FROM_EMAIL = ''
@@ -44,6 +48,7 @@ class AppSettings(BaseAppSettings):
     EMAIL_RESET_TOKEN_EXPIRE_HOURS = 3600
 
     mpcode_request_interval = 60
+    emailcode_request_interval = 300
     debug: bool = False
     docs_url: str = "/docs"
     openapi_prefix: str = ""
@@ -79,7 +84,7 @@ class AppSettings(BaseAppSettings):
             "openapi_url": self.openapi_url,
             "redoc_url": self.redoc_url,
             "title": self.title,
-            "version": self.version,
+            "versions": self.version,
         }
 
     def configure_logging(self) -> None:

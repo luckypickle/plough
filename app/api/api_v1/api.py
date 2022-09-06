@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from app.api.api_v1.endpoints import (
     orders, login, users, 
     masters, utils, pay,
-    product, comments
+    product, comments, invite, reward, withdraw
 )
 
 api_router = APIRouter()
@@ -15,3 +15,6 @@ api_router.include_router(utils.router, prefix="/utils", tags=["utils"])
 api_router.include_router(orders.router, prefix="/orders", tags=["orders"])
 api_router.include_router(product.router, prefix="/product", tags=["product"])
 api_router.include_router(comments.router, prefix="/comments", tags=["comments"])
+api_router.include_router(invite.router, prefix="/invite", tags=["invite"])
+api_router.include_router(reward.router, prefix="/reward", tags=["reward"])
+api_router.include_router(withdraw.router, prefix="/withdraw", tags=["withdraw"])

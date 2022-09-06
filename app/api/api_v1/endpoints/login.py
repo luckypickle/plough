@@ -42,7 +42,8 @@ def login_access_token(
             verified = True
         master = crud.master.login(
             db=db, 
-            phone=form_data.username, 
+            phone=form_data.username,
+            email=form_data.username,
             password=form_data.password,
             verified=verified
         )
@@ -160,6 +161,41 @@ def request_mpcode(
         )
         crud.mpcode.create(db, obj_in=mpcodeCreate)
         ret = send_verify_code(phone, code)
+        return {"msg": f"code generated successfully: {ret}"}
+    else:
+        return {"msg": f"please request after {retry_delta} seconds"}
+@router.post("/request-emailcode/", response_model=Any)
+def request_emailcode(
+    email: str = Body(...),
+    db: Session = Depends(deps.get_db),
+    settings: AppSettings = Depends(get_app_settings),
+) -> Any:
+    """
+    Request email code
+    """
+    now = int(time.time())
+    valid_request_time = now - settings.mpcode_request_interval
+    mpcodes = crud.mpcode.get_unused_code(db, phone=email)
+    need_generate = True
+    retry_delta = 0
+    for m in mpcodes:
+        if m.request_time < valid_request_time:
+            m.status = 2
+            db.add(m)
+            db.commit()
+        else:
+            if retry_delta < m.request_time - valid_request_time:
+                retry_delta = m.request_time - valid_request_time
+            need_generate = False
+    if need_generate:
+        code = utils.random_password_number(6)
+        mpcodeCreate = schemas.MPCodeCreate(
+            phone=email, code=code,
+            request_time=now, expire_time=now + settings.mpcode_request_interval,
+            status=0
+        )
+        crud.mpcode.create(db, obj_in=mpcodeCreate)
+        ret = utils.send_verify_email(email=email,verify_code=code)
         return {"msg": f"code generated successfully: {ret}"}
     else:
         return {"msg": f"please request after {retry_delta} seconds"}

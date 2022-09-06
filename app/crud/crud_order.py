@@ -1,5 +1,5 @@
 import time
-from typing import List
+from typing import List,Optional
 from random import sample
 from string import ascii_letters, digits
 
@@ -111,5 +111,6 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
         )
 
-
+    def get_first_order(self,db:Session, *,owner_id:int)->Optional[Order]:
+        return db.query(Order).order_by(Order.create_time.asc()).filter(Order.owner_id == owner_id).first()
 order = CRUDOrder(Order)

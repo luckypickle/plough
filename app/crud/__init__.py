@@ -6,6 +6,9 @@ from .crud_product import product
 from .crud_comment import comment
 from .crud_version import version
 from .crud_history import history
+from .crud_invite import invite
+from .crud_reward import reward
+from .crud_withdraw import withdraw
 
 # For a new basic set of CRUD operations you could just do
 
