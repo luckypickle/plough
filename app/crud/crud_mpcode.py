@@ -27,7 +27,7 @@ class CRUDMPCode(CRUDBase[MPCode, MPCodeCreate, MPCodeUpdate]):
         now = int(time.time())
         valid_codes = db.query(MPCode).filter(MPCode.phone == phone, MPCode.status == 0).all()
         for c in valid_codes:
-            if c.expire_time >= now:
+            if c.expire_time >= now and c.veirfy_code == verify_code:
                 c.status = 1
                 db.add(c)
                 db.commit()
