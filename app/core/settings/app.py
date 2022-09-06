@@ -47,6 +47,7 @@ class AppSettings(BaseAppSettings):
     EMAIL_RESET_TOKEN_EXPIRE_HOURS = 3600
 
     mpcode_request_interval = 60
+    emailcode_request_interval = 600
     debug: bool = False
     docs_url: str = "/docs"
     openapi_prefix: str = ""
