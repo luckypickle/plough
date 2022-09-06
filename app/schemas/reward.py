@@ -1,7 +1,7 @@
-from typing import Optional
+from typing import Optional,List
 
 from pydantic import BaseModel
-
+import datetime
 
 # Shared properties
 class RewardBase(BaseModel):
@@ -22,7 +22,16 @@ class RewardInDBBase(RewardBase):
     class Config:
         orm_mode = True
 
-
+class RewardDetail(RewardBase):
+    invited_user:Optional[str] = None
+    prev_invited_user: Optional[str] = None
+    order_amount:Optional[int] = None
+    reward_amount:Optional[int] = None
+    order_time: Optional[datetime.datetime] = None
+    prev_prev_level:Optional[int] = None
+class RewardDetailInfos(RewardBase):
+    total: int = 0
+    reward_details: List[RewardDetail]
 # Additional properties to return via API
 class Reward(RewardInDBBase):
     pass

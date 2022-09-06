@@ -36,3 +36,25 @@ def withdraw_money(
     )
     crud.withdraw.create(db,obj_in=withdraw_obj)
     return ""
+
+@router.post("/withdraw_money",response_model=Any)
+def withdraw_money(
+    *,
+    amount:str,
+    real_name:str,
+    card_num:str,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user)
+)->Any:
+    """
+    Withdraw money
+    """
+    withdraw_obj = schemas.WithdrawCreate(
+        user_id=current_user.id,
+        pay_name=real_name,
+        pay_card_num=card_num,
+        pay_amount=amount,
+        status=0
+    )
+    crud.withdraw.create(db,obj_in=withdraw_obj)
+    return ""

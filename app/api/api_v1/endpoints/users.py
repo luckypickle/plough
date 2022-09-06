@@ -13,7 +13,7 @@ from app.core.settings.app import AppSettings
 from app.utils import send_new_account_email
 from app.bazi import BaZi
 from app.bazi.bazi import  convert_lunar_to_solar
-
+import uuid
 router = APIRouter()
 
 
@@ -104,12 +104,20 @@ def create_user_open(
         phone: str = Body(...),
         password: str = Body(...),
         user_name: str = Body(None),
-        email: EmailStr = Body(None),
+        email: str = Body(None),
+        invite_code:str=None,
         settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
     """
     Create new user without the need to be logged in.
     """
+    if invite_code is not None:
+        prev_user = crud.invite.get_invite_user(db, invite_code=invite_code)
+        if prev_user is None:
+            raise HTTPException(
+                status_code=403,
+                detail="Invalid invite_code",
+            )
     if not settings.USERS_OPEN_REGISTRATION:
         raise HTTPException(
             status_code=403,
@@ -127,6 +135,20 @@ def create_user_open(
         user_name=user_name,
         phone=phone)
     user = crud.user.create(db, obj_in=user_in)
+
+    def generate_invite_code():
+        return str(uuid.uuid4())[:8]
+    if invite_code is not None:
+        invite_code_user = generate_invite_code()
+        invite_obj = schemas.InviteCreate(
+            user_id=user.id,
+            phone=user.phone,
+            invite_code=invite_code_user,
+            register_time=user.create_time,
+            prev_invite=prev_user.user_id,
+            prev_prev_invite=prev_user.prev_user_id
+        )
+        crud.invite.create(db, obj_in=invite_obj)
     return user
 
 

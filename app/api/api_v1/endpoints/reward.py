@@ -17,9 +17,9 @@ router = APIRouter()
 
 
 @router.get("/rewards_info",response_model=Any)
-def invite_reward_list(
+def reward_list(
     *,
-    user_name:str,
+    user_id:str,
     skip: int = 0,
     limit: int = 20,
     db: Session = Depends(deps.get_db),
@@ -28,4 +28,34 @@ def invite_reward_list(
     """
     Get invited user reward info
     """
-    return ""
+    ret = schemas.RewardDetailInfos(total=0, reward_details=[])
+    total,rewards = crud.reward.get_reward_list(db,user_id=user_id,skip=skip,limit=limit)
+    if total == 0:
+        return ret
+    ret.total = total
+    for reward_obj in rewards:
+        if reward_obj.prev_user_id == user_id:
+            invited_user = crud.user.get(db,id=reward_obj.user_id)
+            if invited_user is None:
+                continue
+            ret.reward_details.append(schemas.RewardDetail(
+                invited_user=invited_user.phone,
+                order_amount=reward_obj.amount,
+                reward_amount=reward_obj.prev_amount,
+                order_time=reward_obj.order_time,
+                prev_prev_level=0
+            ))
+        elif reward_obj.prev_prev_user_id == user_id:
+            invited_user = crud.user.get(db, id=reward_obj.user_id)
+            prev_invited_user =crud.user.get(db, id=reward_obj.prev_user_id)
+            if invited_user is None or prev_invited_user is None:
+                continue
+            ret.reward_details.append(schemas.RewardDetail(
+                invited_user=invited_user.phone,
+                prev_invited_user = prev_invited_user.phone,
+                order_amount=reward_obj.amount,
+                reward_amount=reward_obj.prev_prev_amount,
+                order_time=reward_obj.order_time,
+                prev_prev_level=1
+            ))
+    return ret
