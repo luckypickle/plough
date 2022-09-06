@@ -153,7 +153,7 @@ def send_verify_email(email:str,verify_code:str):
         params ={
             "FromEmailAddress": settings.SES_FROM_ADDR,
             "Destination": [email],
-            "Subject":"haha",
+            "Subject":"Verify code",
             "Template": {
                 "TemplateID": settings.SES_TEMPLATE_ID,
                 "TemplateData": templateData
