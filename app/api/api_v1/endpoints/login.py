@@ -56,6 +56,8 @@ def login_access_token(
             raise HTTPException(status_code=400, detail="Inactive master")
         entity = master
     else:
+        if form_data.username.count('@') != 0:
+            raise HTTPException(status_code=400, detail="Incorrect username")
         user = crud.user.login_or_register(
             db, phone=form_data.username, verify_code=form_data.password
         )

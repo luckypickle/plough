@@ -44,6 +44,7 @@ class MasterUpdate(MasterBase):
     name: Optional[str] = None
     status: Optional[int] = None
     phone: Optional[str] = None
+    email:Optional[str] = None
     rate: Optional[int] = None
     password: Optional[str] = None
     price: Optional[int] = None

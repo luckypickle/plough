@@ -65,7 +65,10 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
         master = CRUDMaster.get_by_phone(db, phone=phone)
         master_email = CRUDMaster.get_by_email(db,email=email)
         if verified or ((master or master_email) and verify_password(password, master.hashed_password)):
-            return master
+            if master is not None:
+                return master
+            else:
+                return master_email
         else:
             return None
 

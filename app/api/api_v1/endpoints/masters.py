@@ -152,12 +152,18 @@ def create_master_open(
             detail="Open master registration is forbidden on this server",
         )
     master = crud.master.get_by_phone(db, phone=phone)
+    master_email = crud.master.get_by_email(db,email=email)
     if master:
         raise HTTPException(
             status_code=400,
             detail="The master with this phone already exists in the system",
         )
-    if not crud.mpcode.verify_mpcode(db=db, phone=phone, verify_code=verify_code):
+    if master_email:
+        raise HTTPException(
+            status_code=400,
+            detail="The master with this email already exists in the system",
+        )
+    if not crud.mpcode.verify_mpcode(db=db, phone=phone, verify_code=verify_code) and not crud.mpcode.verify_mpcode(db=db, phone=email, verify_code=verify_code):
         raise HTTPException(
             status_code=400,
             detail="Invalid verify code",
@@ -166,7 +172,8 @@ def create_master_open(
         verify_code=verify_code,
         name=name,
         avatar=avatar,
-        phone=phone)
+        phone=phone,
+        email=email)
     master = crud.master.register(db, obj_in=data_in)
     return master
 
