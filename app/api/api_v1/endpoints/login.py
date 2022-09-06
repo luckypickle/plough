@@ -176,7 +176,7 @@ def request_emailcode(
     Request email code
     """
     now = int(time.time())
-    valid_request_time = now - settings.mpcode_request_interval
+    valid_request_time = now - settings.emailcode_request_interval
     mpcodes = crud.mpcode.get_unused_code(db, phone=email)
     need_generate = True
     retry_delta = 0
@@ -193,7 +193,7 @@ def request_emailcode(
         code = utils.random_password_number(6)
         mpcodeCreate = schemas.MPCodeCreate(
             phone=email, code=code,
-            request_time=now, expire_time=now + settings.mpcode_request_interval,
+            request_time=now, expire_time=now + settings.emailcode_request_interval,
             status=0
         )
         crud.mpcode.create(db, obj_in=mpcodeCreate)
