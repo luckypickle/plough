@@ -30,6 +30,9 @@ class AppSettings(BaseAppSettings):
     SMS_APP_ID = ''
     SMS_SIGNATURE = ''
 
+    SES_FROM_ADDR=''
+    SES_TEMPLATE_ID=0
+
     EMAILS_ENABLED = True
     EMAILS_FROM_NAME = ''
     EMAILS_FROM_EMAIL = ''
