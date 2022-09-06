@@ -49,10 +49,11 @@ class CRUDInvite(CRUDBase[Invite, InviteCreate, InviteUpdate]):
             query.order_by(Invite.register_time.desc()).offset(skip).limit(limit).all()
         )
     def get_prev_count(self,db: Session, *,
-            user_id: int)->int:
-        pass
-    def get_prev_prev_count(selfdb: Session, *,
-            user_id: int)->int:
-        pass
+            user_id: int,status:int=2)->int:
+        return db.query(Invite).filter((Invite.prev_invite == user_id)and(Invite.order_status == status)).count()
+
+    def get_prev_prev_count(self,db: Session, *,
+            user_id: int,status:int=2)->int:
+        return db.query(Invite).filter((Invite.prev_prev_invite == user_id)and(Invite.order_status == status)).count()
 invite = CRUDInvite(Invite)
 
