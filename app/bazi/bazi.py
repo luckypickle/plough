@@ -46,7 +46,7 @@ class BaZi():
         if day.hasJieQi():
             jd = day.getJieQiJD()
             jieqi_t = sxtwl.JD2DD(jd)
-            if jieqi_t.h > int(self.hour) or (jieqi_t.h==self.hour and jieqi_t.s>= self.minute):
+            if jieqi_t.h > int(self.hour) or (jieqi_t.h==self.hour and jieqi_t.m>= self.minute):
                 tmp_day = day.before(1)
                 yGZ = tmp_day.getYearGZ()
                 mGZ = tmp_day.getMonthGZ()
