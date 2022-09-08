@@ -116,6 +116,12 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
 
     def get_first_order(self,db:Session, *,owner_id:int)->Optional[Order]:
         return db.query(Order).order_by(Order.create_time.asc()).filter(Order.owner_id == owner_id).first()
+
+    def get_all_order_by_bill_state(self, db: Session, bill_state: int):
+        return db.query(Order).filter(Order.bill_state==bill_state).all()
+
+
+
     def get_favorite_open_orders(
             self, db: Session, *,
             user_id:int,
