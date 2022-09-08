@@ -11,7 +11,7 @@ Zhis = collections.namedtuple("Zhis", "year month day time")
 
 
 class BaZi():
-    def __init__(self, year: int, month: int, day: int, hour: int, sex: int,lunar:int=0,run:int=0):
+    def __init__(self, year: int, month: int, day: int, hour: int, sex: int,lunar:int=0,run:int=0,minute:int=0):
         self.year = int(year)
         self.month = int(month)
         self.day = int(day)
@@ -19,6 +19,7 @@ class BaZi():
         self.sex = int(sex)
         self.lunar = int(lunar)
         self.run = run==1
+        self.minute = int(minute)
 
     def get_detail(self):
         detail = {}

@@ -215,3 +215,15 @@ def update_master(
         )
     master = crud.master.update(db, db_obj=master, obj_in=obj_in)
     return master
+
+
+@router.get("/bills",response_model=schemas.BillQuery)
+def get_bills( *,
+        db: Session = Depends(deps.get_db),
+        bill_date: str,
+        current_user: models.User = Depends(deps.get_current_active_superuser),) ->Any:
+    '''
+    get all master bill by bill date.(superuser only)
+    '''
+    #todo 生成bill
+

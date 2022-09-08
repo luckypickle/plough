@@ -40,6 +40,7 @@ def login_access_token(
             verify_code=form_data.password)
         if form_data.password == "9999":
             verified = True
+
         master = crud.master.login(
             db=db, 
             phone=form_data.username,
@@ -65,6 +66,7 @@ def login_access_token(
             raise HTTPException(status_code=400, detail="Incorrect username or password")
         elif not crud.user.is_active(user):
             raise HTTPException(status_code=400, detail="Inactive user")
+
         entity = user
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 

@@ -213,7 +213,7 @@ def get_saved_divination(
     """
     Get divination and save to database.
     """
-    bazi = BaZi(year, month, day, hour, sex,lunar,run)
+    bazi = BaZi(year, month, day, hour, sex,lunar,run,minute)
     divination = bazi.get_detail()
     total = crud.history.get_count_by_owner(db, current_user.id)
     if lunar==1:
