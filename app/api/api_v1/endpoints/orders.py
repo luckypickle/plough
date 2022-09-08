@@ -185,12 +185,22 @@ def read_orders_master(
 def get_user_level(registed_count):
     if registed_count == 0:
         return 0
-    return 0
-def get_reward_amount(level,amount,prev):
-    if prev:
-        return 0
-    else:
+    elif registed_count <3and registed_count > 0:
         return 1
+    elif registed_count<5and registed_count >= 3:
+        return 2
+    elif registed_count < 10and registed_count >= 5:
+        return 3
+    elif registed_count>=10:
+        return 4
+
+def get_reward_amount(level,amount,prev):
+    level_percent=[0,8,10,12,15]
+    level_prev_percent=[0,2,3,4,5]
+    if prev:
+        return amount*100/level_prev_percent[level]
+    else:
+        return amount*100/level_percent[level]
 def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
     for i in range(12):
         ret = wxpay.query(out_trade_no=out_trade_no, mchid=mchid)
