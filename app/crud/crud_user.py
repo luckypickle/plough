@@ -54,6 +54,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             MPCode.phone == phone,
             MPCode.expire_time >= now,
             MPCode.status == 0).first()
+
         if mpcode and mpcode.code == verify_code:
             valid_mpcode = True
         if phone == "11012345678" and verify_code == "778899":

@@ -11,5 +11,6 @@ from .history import History, HistoryCreate, HistoryUpdate
 from .invite import Invite, InviteCreate, InviteUpdate, InviteForInfo, InvitedDetailUsers,InvitedUserDetail
 from .reward import Reward, RewardCreate, RewardUpdate, RewardDetail,RewardDetailInfos
 from .withdraw import Withdraw, WithdrawCreate, WithdrawUpdate
+from .bill import BillQuery
 
 from .favorite import FavoriteCreate,Favorite,FavoriteUpdate

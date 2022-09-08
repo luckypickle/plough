@@ -31,3 +31,4 @@ class Order(Base):
     status = Column(Integer, comment="订单状态：0 - 未确认, 1 - 已支付, 3 - 作废, 4 - 退款")
     is_open = Column(Integer,default=0,comment="是否公开案例： 0 - 未公开，1 - 已公开")
     comment_rate = Column(Integer,default=0, comment="订单评价")
+    bill_state = Column(Integer,default=0,comment="结算状态")
