@@ -11,7 +11,7 @@ Zhis = collections.namedtuple("Zhis", "year month day time")
 
 
 class BaZi():
-    def __init__(self, year: int, month: int, day: int, hour: int, sex: int,lunar:int=0,run:int=0):
+    def __init__(self, year: int, month: int, day: int, hour: int, sex: int,lunar:int=0,run:int=0,minute:int=0):
         self.year = int(year)
         self.month = int(month)
         self.day = int(day)
@@ -19,6 +19,7 @@ class BaZi():
         self.sex = int(sex)
         self.lunar = int(lunar)
         self.run = run==1
+        self.minute= minute
 
     def get_detail(self):
         detail = {}
@@ -42,6 +43,13 @@ class BaZi():
         mGZ = day.getMonthGZ()
         dGZ = day.getDayGZ()
         hGZ = day.getHourGZ(self.hour)
+        if day.hasJieQi():
+            jd = day.getJieQiJD()
+            jieqi_t = sxtwl.JD2DD(jd)
+            if jieqi_t.h > int(self.hour) or (jieqi_t.h==self.hour and jieqi_t.s>= self.minute):
+                tmp_day = day.before(1)
+                yGZ = tmp_day.getYearGZ()
+                mGZ = tmp_day.getMonthGZ()
         gans = Gans(
             year=datas.Gan[yGZ.tg], month=datas.Gan[mGZ.tg],
             day=datas.Gan[dGZ.tg], time=datas.Gan[hGZ.tg])
