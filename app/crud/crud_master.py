@@ -64,7 +64,7 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
     def login(db: Session, *, phone: str, password: str,email:str, verified: bool) -> Optional[Master]:
         master = CRUDMaster.get_by_phone(db, phone=phone)
         master_email = CRUDMaster.get_by_email(db,email=email)
-        if verified or ((master or master_email) and verify_password(password, master.hashed_password)):
+        if verified or(master and verify_password(password, master.hashed_password)) or (master_email and verify_password(password, master_email.hashed_password)):
             if master is not None:
                 return master
             else:
@@ -76,7 +76,7 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
     def register(db: Session, *, obj_in: MasterRegister) -> Optional[Master]:
         master = CRUDMaster.get_by_phone(db=db, phone=obj_in.phone)
         master_email = CRUDMaster.get_by_email(db, email=obj_in.email)
-        if (master is None and master_email is None) or master.status == MasterStatus.refused.value:
+        if ((master is None or master.status == MasterStatus.refused.value) and (master_email is None or master_email.status == MasterStatus.refused.value)):
             db_obj = Master()
             db_obj.hashed_password = get_password_hash("12345678")
             db_obj.name = obj_in.name

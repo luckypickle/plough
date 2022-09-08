@@ -53,6 +53,7 @@ def get_invite_info(
         prev_phone = ""
         if prev_user is not None:
             prev_phone = prev_user.phone
+        total_amount = crud.reward.get_first_total_reward(db,user_id=current_user.id)+ crud.reward.get_second_total_reward(db,user_id=current_user.id)
         ret_obj = schemas.InviteForInfo(
             user_id= invite_info.user_id,
             phone= invite_info.phone,
@@ -61,8 +62,8 @@ def get_invite_info(
             invited_count=0,
             invited_place_order_count=0,
             prev_user_phone=prev_phone,
-            total_amount=invite_info.invite_first_total_reward + invite_info.invite_second_total_reward,
-            uncollect_amount=invite_info.invite_first_total_reward + invite_info.invite_second_total_reward-invite_info.payed_reward
+            total_amount=total_amount,
+            uncollect_amount=total_amount-crud.withdraw.get_withdraw_amount(db,user_id=current_user.id)
         )
     return ret_obj
 
@@ -174,15 +175,11 @@ def invite_users(
         return ret
     ret.total = invited_count
     for invited_user_obj in invited_users:
-        if invited_user_obj.first_order_time is None:
-            status = 2
-        else:
-            status = 1
         ret.invited_users.append(schemas.InvitedUserDetail(
             user_id=invited_user_obj.user_id,
             phone=invited_user_obj.phone,
             register_time=invited_user_obj.register_time,
             first_order_time=invited_user_obj.first_order_time,
-            status=status
+            status=invited_user_obj.order_status
         ))
     return ret
