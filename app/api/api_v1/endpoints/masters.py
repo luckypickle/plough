@@ -217,6 +217,12 @@ def update_master(
     return master
 
 
+def generate_bill(db,):
+    all_unhandle_bill = crud.order.get_all_order_by_bill_state(db,0)
+    for one_data in all_unhandle_bill:
+        bill_date = one_data.pay_time.strftime("%Y-%m")
+
+
 @router.get("/bills",response_model=schemas.BillQuery)
 def get_bills( *,
         db: Session = Depends(deps.get_db),
@@ -226,4 +232,6 @@ def get_bills( *,
     get all master bill by bill date.(superuser only)
     '''
     #todo 生成bill
+
+
 
