@@ -50,6 +50,13 @@ class BaZi():
                 tmp_day = day.before(1)
                 yGZ = tmp_day.getYearGZ()
                 mGZ = tmp_day.getMonthGZ()
+            if jieqi_t.h==23 and int(self.hour)>=23 and jieqi_t.m< self.minute:
+                tmp_day = day.after(1)
+                dGZ = tmp_day.getDayGZ()
+        else:
+            if int(self.hour)>=23:
+                tmp_day = day.after(1)
+                dGZ = tmp_day.getDayGZ()
         gans = Gans(
             year=datas.Gan[yGZ.tg], month=datas.Gan[mGZ.tg],
             day=datas.Gan[dGZ.tg], time=datas.Gan[hGZ.tg])
