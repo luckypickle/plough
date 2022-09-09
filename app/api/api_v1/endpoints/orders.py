@@ -17,6 +17,7 @@ from app import crud, models, schemas
 from app.api import deps
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
+from app.api import util
 
 router = APIRouter()
 
@@ -235,6 +236,8 @@ def read_orders_master(
         ))
     return ret_obj
 
+
+
 @router.post('/orderFavorite')
 def set_order_favorite( db: Session = Depends(deps.get_db),
         order_id:int=0,
@@ -242,13 +245,22 @@ def set_order_favorite( db: Session = Depends(deps.get_db),
     order = crud.order.get(db,order_id)
     if order is not None:
         if order.is_open==1:
+            fav  = crud.favority.get_by_user_id_order_id()
+            if fav is not None:
+                return util.make_return(-1, "already favorite")
             crud.favority.create_user_favorite(db,schemas.FavoriteCreate(
                 user_id=current_user.id,
                 order_id=order_id,
                 status=0
             ))
 
-    return "success"
+            return util.make_return(0,"success")
+        else:
+            return util.make_return(-1, "not open")
+    else:
+        return util.make_return(-1, "order id error")
+
+
 
 @router.delete('/orderFavorite')
 def delete_order_favorite( db: Session = Depends(deps.get_db),

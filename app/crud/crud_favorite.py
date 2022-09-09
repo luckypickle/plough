@@ -28,6 +28,10 @@ class CRUDFavorite(CRUDBase[Favorite, FavoriteCreate, FavoriteUpdate]):
         self.create(db, obj_in=favorite)
 
     @staticmethod
+    def get_by_user_id_order_id(db:Session,user_id:int,order_id:int):
+        return db.query(Favorite).filter(Favorite.user_id==user_id).filter(Favorite.order_id==order_id).first()
+
+    @staticmethod
     def delete_favorite(db: Session,favorite_id:int,user_id:int) ->bool:
         obj = db.query(Favorite).get(favorite_id)
         if obj.user_id == user_id:
