@@ -245,7 +245,7 @@ def set_order_favorite( db: Session = Depends(deps.get_db),
     order = crud.order.get(db,order_id)
     if order is not None:
         if order.is_open==1:
-            fav  = crud.favority.get_by_user_id_order_id()
+            fav  = crud.favority.get_by_user_id_order_id(db,current_user.id,order_id)
             if fav is not None:
                 return util.make_return(-1, "already favorite")
             crud.favority.create_user_favorite(db,schemas.FavoriteCreate(
