@@ -223,6 +223,7 @@ def get_history(
     rets = []
     for h in history:
         rets.append(schemas.History(
+            id=h.id,
             name=h.name,
             birthday=h.birthday,
             sex=h.sex,
@@ -231,6 +232,18 @@ def get_history(
             create_time=h.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         ))
     return rets
+
+@router.delete('/history')
+def delete_history( history_id:int ,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user)):
+
+    res = crud.history.delete_history(db=db,history_id=history_id,owner_id=current_user.id)
+    if res:
+        return "success"
+    else:
+        return "failed"
+
 
 
 @router.get("/{user_id}", response_model=schemas.User)

@@ -5,3 +5,4 @@ from .product import Product
 from .comment import Comment
 from .version import Version
 from .history import History
+from .favorite import Favorite

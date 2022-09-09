@@ -75,10 +75,17 @@ class Order(OrderInDBBase):
     product: Optional[str] = None
     comment_rate: Optional[int] = None
 
+class FavOrder(Order):
+    favorite_id:Optional[int]=None
 
 class OrderQuery(BaseModel):
     total: int = 0
     orders: List[Order]
+
+class FavOrderQuery(BaseModel):
+    total: int = 0
+    orders: List[FavOrder]
+
 
 class MasterOrderQuery(OrderQuery):
     total_reward: float = 0.0

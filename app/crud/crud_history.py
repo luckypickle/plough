@@ -33,5 +33,15 @@ class CRUDHistory(CRUDBase[History, HistoryCreate, HistoryUpdate]):
                 db.query(History).filter(History.id == first_history.id).delete()
         self.create(db, obj_in=history)
 
+    @staticmethod
+    def delete_history(db: Session,history_id:int,owner_id:int) ->bool:
+        obj = db.query(History).get(history_id)
+        if obj.owner_id == owner_id:
+            db.delete(obj)
+            db.commit()
+            return True
+        #super(CRUDHistory,self).remove(db,history_id)
+        return False
+
 
 history = CRUDHistory(History)

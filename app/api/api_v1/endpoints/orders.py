@@ -129,6 +129,59 @@ def read_orders(
     return ret_obj
 
 
+@router.get('/openOrders/favorite', response_model=schemas.FavOrderQuery)
+def read_orders_by_favorite(
+        db: Session = Depends(deps.get_db),
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_user),
+) -> Any:
+    """
+    Retrieve open orders [all user].
+    """
+
+    total, orders = crud.order.get_favorite_open_orders(db,user_id=current_user.id,skip=skip, limit=limit)
+    print(orders)
+    # FIXME, not check count
+    ret_obj = schemas.FavOrderQuery(total=0, orders=[])
+    ret_obj.total = total
+    products = crud.product.get_multi(db=db)
+    for o in orders:
+        print(o[0])
+        for p in products:
+            if p.id == o[0].product_id:
+                product = p.name
+
+        create_time = o[0].create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        pay_time = o[0].pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        ret_obj.orders.append(schemas.FavOrder(
+            id=o[0].id,
+            product_id=o[0].product_id,
+            product=product,
+            order_number=o[0].order_number,
+            name=o[0].name,
+            sex=o[0].sex,
+            birthday=o[0].birthday,
+            location=o[0].location,
+            amount=o[0].amount,
+            shareRate=o[0].shareRate,
+            owner_id=o[0].owner_id,
+            master_id=o[0].master_id,
+            divination=o[0].divination,
+            reason=o[0].reason,
+            create_time=create_time,
+            pay_time=pay_time,
+            arrange_status=o[0].arrange_status,
+            status=o[0].status,
+            master=o[2],
+            master_avatar=o[3],
+            owner=o[4],
+            is_open=o[0].is_open,
+            comment_rate=o[0].comment_rate,
+            favorite_id=o[1]
+        ))
+    return ret_obj
+
 
 @router.get("/master", response_model=schemas.MasterOrderQuery)
 def read_orders_master(
@@ -182,6 +235,28 @@ def read_orders_master(
         ))
     return ret_obj
 
+@router.post('/orderFavorite')
+def set_order_favorite( db: Session = Depends(deps.get_db),
+        order_id:int=0,
+        current_user: models.User = Depends(deps.get_current_user),):
+    order = crud.order.get(db,order_id)
+    if order is not None:
+        if order.is_open==1:
+            crud.favority.create_user_favorite(db,schemas.FavoriteCreate(
+                user_id=current_user.id,
+                order_id=order_id,
+                status=0
+            ))
+
+    return "success"
+
+@router.delete('/orderFavorite')
+def delete_order_favorite( db: Session = Depends(deps.get_db),
+        favorite_id:int=0,
+        current_user: models.User = Depends(deps.get_current_user),):
+    res = crud.favority.delete_favorite(db,favorite_id,current_user.id)
+
+    return "success"
 
 def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
     for i in range(12):

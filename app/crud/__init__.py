@@ -6,6 +6,7 @@ from .crud_product import product
 from .crud_comment import comment
 from .crud_version import version
 from .crud_history import history
+from .crud_favorite import favority
 
 # For a new basic set of CRUD operations you could just do
 

@@ -10,6 +10,9 @@ from sqlalchemy import func
 from app.crud.base import CRUDBase
 from app.models.order import Order
 from app.schemas.order import OrderCreate, OrderUpdate, OrderUpdateDivination, OrderStatus
+from app.models.favorite import Favorite
+from app.models.master import Master
+from app.models.user import User
 
 
 class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
@@ -111,5 +114,24 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
         )
 
+    def get_favorite_open_orders(
+            self, db: Session, *,
+            user_id:int,
+            skip: int = 0, limit: int = 100
+    ) -> (int, List[Order]):
+        subquery = db.query(Favorite.id.label('fav_id'),Favorite.order_id.label('fav_order_id')).filter(Favorite.user_id==user_id).subquery()
+        #query = db.query(Order.id,Order.is_open,Order.owner_id,Order.master_id,Order.status,Order.master,Order.owner,Order.create_time,Order.product_id,Order.name
+        #                 ,Order.comment_rate,Order.arrange_status,Order.amount,Order.shareRate,Order.pay_time,Order.reason,Order.channel,Order.birthday,Order.divination,Order.location,Order.order_number,Order.pay_type,Order.sex,subquery.c.fav_id)
+        query = db.query(Order,subquery.c.fav_id,Master.name,Master.avatar,User.user_name).join(Master,Master.id==Order.master_id).join(User,User.id==Order.owner_id)
+
+        conditions = []
+        conditions.append(Order.is_open == 1)
+        conditions.append(Order.id == subquery.c.fav_order_id)
+        query = query.filter(*conditions)
+
+        return (
+            query.count(),
+            query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
+        )
 
 order = CRUDOrder(Order)
