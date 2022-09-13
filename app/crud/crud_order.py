@@ -118,7 +118,10 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         return db.query(Order).order_by(Order.create_time.asc()).filter(Order.owner_id == owner_id).first()
 
     def get_all_order_by_bill_state(self, db: Session, bill_state: int):
-        return db.query(Order).filter(Order.bill_state==bill_state).all()
+        sql = db.query(Order).filter(Order.bill_state==bill_state).filter(Order.status==1).filter(Order.arrange_status==3)
+        if bill_state ==0:
+            sql.filter(Order.bill_state==None)
+        return sql.all()
 
 
 

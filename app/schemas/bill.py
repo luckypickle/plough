@@ -5,11 +5,11 @@ from pydantic import BaseModel, EmailStr
 
 # Shared properties
 class BillBase(BaseModel):
-    id: Optional[int] = None
-    master_id: Optional[int] = None
-    value: Optional[str] = None
+    id: Optional[int] = 0
+    master_id: Optional[int] = 0
+    value: Optional[int] = None
     bill_date: Optional[str] = None
-    status: Optional[int] = None
+    status: Optional[int] = 0
 
 
 
@@ -27,6 +27,8 @@ class BillList(BaseModel):
 
 
 # Properties to receive via API on update
-class BillUpdate(BillBase):
-    pass
+class BillUpdate(BaseModel):
+    id: Optional[int] = 0
+    status: Optional[int] = 0
+
 

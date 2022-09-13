@@ -183,3 +183,5 @@ def random_password_number_upper_letters(length: int):
 
 def random_password_number_letters(length: int):
     return ''.join(sample(Numbers + Alphabets + Alphabets.upper(), length))
+
+
