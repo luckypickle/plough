@@ -134,6 +134,7 @@ def send_verify_code(phone: str, verify_code: str):
         req.from_json_string(json.dumps(params))
 
         resp = client.SendSms(req)
+
         return resp.to_json_string()
 
     except TencentCloudSDKException as err:

@@ -33,6 +33,7 @@ class AppSettings(BaseAppSettings):
     SES_FROM_ADDR=''
     SES_TEMPLATE_ID=0
 
+
     EMAILS_ENABLED = True
     EMAILS_FROM_NAME = ''
     EMAILS_FROM_EMAIL = ''
