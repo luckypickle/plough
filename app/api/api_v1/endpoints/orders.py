@@ -20,7 +20,8 @@ from app.core.settings.app import AppSettings
 from app.api import util
 
 router = APIRouter()
-
+def isTestPay():
+    return True
 
 @router.get("/", response_model=schemas.OrderQuery)
 def read_orders(
@@ -237,6 +238,7 @@ def read_orders_master(
     return ret_obj
 
 def get_user_level(registed_count):
+    print('registed count is ',registed_count)
     if registed_count == 0:
         return 0
     elif registed_count <3and registed_count > 0:
@@ -297,15 +299,12 @@ def get_reward_amount(level,amount,prev):
     level_percent=[0,8,10,12,15]
     level_prev_percent=[0,2,3,4,5]
     if prev:
-        return amount*100/level_prev_percent[level]
+        return amount*level_prev_percent[level]/100
     else:
-        return amount*100/level_percent[level]
+        return amount*level_percent[level]/100
 def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
     for i in range(12):
-        ret = wxpay.query(out_trade_no=out_trade_no, mchid=mchid)
-        ret_json = json.loads(ret[1])
-        print(ret_json["trade_state"])
-        if ret_json["trade_state"] != "NOTPAY":
+        if isTestPay():
             order = crud.order.get(db=db, id=order_id)
             if order:
                 order.status = 1
@@ -314,41 +313,59 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                 db.commit()
                 db.refresh(order)
             break
+        else:
+            ret = wxpay.query(out_trade_no=out_trade_no, mchid=mchid)
+            ret_json = json.loads(ret[1])
+            print(ret_json["trade_state"])
+            if ret_json["trade_state"] != "NOTPAY":
+                order = crud.order.get(db=db, id=order_id)
+                if order:
+                    order.status = 1
+                    order.pay_time = datetime.datetime.now(),
+                    db.add(order),
+                    db.commit()
+                    db.refresh(order)
+                break
         time.sleep(5)
     order = crud.order.get(db=db, id=order_id)
-
     if order is not None:
         if order.status == 1:
             invite_obj = crud.invite.get_invite_info(db,user_id=order.owner_id)
+            if invite_obj is None:
+                return
             if invite_obj.order_status == 1:
                 invite_obj.order_status = 2
                 invite_obj.first_order_time = order.pay_time
                 db.add(invite_obj),
                 db.commit()
                 db.refresh(invite_obj)
-                prev_amount = 0
-                prev_prev_amount = 0
-                prev_invite_obj = crud.invite.get_invite_info(db,user_id=invite_obj.prev_user_id)
-                if prev_invite_obj is not None:
-                    prev_invite_obj.current_level = get_user_level(crud.invite.get_prev_count(db,user_id=invite_obj.prev_user_id))
-                    db.add(prev_invite_obj),
-                    db.commit()
-                    db.refresh(prev_invite_obj)
-                    prev_amount = get_reward_amount(prev_invite_obj.current_level,order.amount,False)
-                    prev_prev_invite_obj = crud.invite.get_invite_info(db,user_id=invite_obj.prev_prev_user_id)
-                    if prev_prev_invite_obj is not None:
-                        prev_prev_amount = get_reward_amount(prev_invite_obj.current_level, order.amount, True)
-                reward_obj = models.Reward(
-                    order_id=order.id,
-                    user_id = order.owner_id,
-                    order_amount=order.amount,
-                    prev_user_id=invite_obj.prev_user_id,
-                    prev_prev_user_id=invite_obj.prev_prev_user_id,
-                    prev_amount = prev_amount,
-                    prev_prev_amount = prev_prev_amount,
-                    order_time = order.pay_time
-                )
-                crud.reward.create(db,obj_in=reward_obj)
+            prev_amount = 0
+            prev_prev_amount = 0
+            prev_invite_obj = crud.invite.get_invite_info(db,user_id=invite_obj.prev_invite)
+            if prev_invite_obj is not None:
+                prev_invite_obj.current_level = get_user_level(crud.invite.get_prev_count(db,user_id=invite_obj.prev_invite))
+                db.add(prev_invite_obj),
+                db.commit()
+                db.refresh(prev_invite_obj)
+                if prev_invite_obj.current_level is None:
+                    prev_obj_level = 0
+                else:
+                    prev_obj_level = prev_invite_obj.current_level
+                prev_amount = get_reward_amount(prev_obj_level,order.amount,False)
+                prev_prev_invite_obj = crud.invite.get_invite_info(db,user_id=invite_obj.prev_prev_invite)
+                if prev_prev_invite_obj is not None:
+                    prev_prev_amount = get_reward_amount(prev_obj_level, order.amount, True)
+            reward_obj = models.Reward(
+                order_id=order.id,
+                user_id = order.owner_id,
+                order_amount=order.amount,
+                prev_user_id=invite_obj.prev_invite,
+                prev_prev_user_id=invite_obj.prev_prev_invite,
+                prev_amount = prev_amount,
+                prev_prev_amount = prev_prev_amount,
+                order_time = order.pay_time
+            )
+            crud.reward.create(db,obj_in=reward_obj)
 
 @router.post("/")
 def create_order(
@@ -385,13 +402,18 @@ def create_order(
         logger=None,
         partner_mode=settings.PARTNER_MODE,
         proxy=None)
-    code, message = wxpay.pay(
-        description=product.name,
-        out_trade_no=order.order_number,
-        amount={'total': order.amount}
-    )
+    if isTestPay():
+        code=200
+        message=json.dumps({'prepay_id':'123456665878'})
+    else:
+        code, message = wxpay.pay(
+            description=product.name,
+            out_trade_no=order.order_number,
+            amount={'total': order.amount}
+        )
     result = json.loads(message)
     if code in range(200, 300):
+
         prepay_id = result.get('prepay_id')
         timearray = time.strptime(order_in.create_time, "%Y-%m-%d %H:%M:%S")
         timestamp = int(time.mktime(timearray))
