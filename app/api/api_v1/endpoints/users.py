@@ -14,6 +14,7 @@ from app.utils import send_new_account_email
 from app.bazi import BaZi
 from app.bazi.bazi import  convert_lunar_to_solar
 import uuid
+import time
 router = APIRouter()
 
 
@@ -96,7 +97,8 @@ def read_user_me(
     """
     return current_user
 
-
+def generate_invite_code():
+    return str(uuid.uuid4())[:8]
 @router.post("/open", response_model=schemas.User)
 def create_user_open(
         *,
@@ -105,13 +107,14 @@ def create_user_open(
         password: str = Body(...),
         user_name: str = Body(None),
         email: str = Body(None),
-        invite_code:str=None,
+        invite_code:str=Body(None),
         settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
     """
     Create new user without the need to be logged in.
     """
-    if invite_code is not None:
+    prev_user = None
+    if invite_code is not None and invite_code != "":
         prev_user = crud.invite.get_invite_user(db, invite_code=invite_code)
         if prev_user is None:
             raise HTTPException(
@@ -123,22 +126,27 @@ def create_user_open(
             status_code=403,
             detail="Open user registration is forbidden on this server",
         )
-    user = crud.user.get_by_name(db, name=user_name)
-    if user:
+    valid_mpcod,user = crud.user.register(db,phone=phone,email=email,user_name=user_name,verify_code=password)
+    if not valid_mpcod:
+        raise HTTPException(
+            status_code=400,
+            detail="mpcode error",
+        )
+    #user = crud.user.get_by_name(db, name=user_name)
+    if user is None:
         raise HTTPException(
             status_code=400,
             detail="The user with this username already exists in the system",
         )
+    '''
     user_in = schemas.UserCreate(
         password=password,
         email=email,
         user_name=user_name,
         phone=phone)
     user = crud.user.create(db, obj_in=user_in)
-
-    def generate_invite_code():
-        return str(uuid.uuid4())[:8]
-    if invite_code is not None:
+'''
+    if prev_user is not None:
         invite_code_user = generate_invite_code()
         invite_obj = schemas.InviteCreate(
             user_id=user.id,
@@ -146,7 +154,16 @@ def create_user_open(
             invite_code=invite_code_user,
             register_time=user.create_time,
             prev_invite=prev_user.user_id,
-            prev_prev_invite=prev_user.prev_user_id
+            prev_prev_invite=prev_user.prev_invite
+        )
+        crud.invite.create(db, obj_in=invite_obj)
+    else:
+        invite_code_user = generate_invite_code()
+        invite_obj = schemas.InviteCreate(
+            user_id=user.id,
+            phone=user.phone,
+            invite_code=invite_code_user,
+            register_time=user.create_time
         )
         crud.invite.create(db, obj_in=invite_obj)
     return user
