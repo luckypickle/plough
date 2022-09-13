@@ -75,7 +75,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
         if mpcode and mpcode.code == verify_code:
             valid_mpcode = True
-        if phone == "11012345678" and verify_code == "778899":
+        if phone == "11012345678" and verify_code=="778899":
             valid_mpcode = True
         if not user and valid_mpcode:
             return self.create(db, obj_in=UserCreate(phone=phone))

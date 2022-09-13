@@ -236,6 +236,17 @@ def read_orders_master(
         ))
     return ret_obj
 
+def get_user_level(registed_count):
+    if registed_count == 0:
+        return 0
+    elif registed_count <3and registed_count > 0:
+        return 1
+    elif registed_count<5and registed_count >= 3:
+        return 2
+    elif registed_count < 10and registed_count >= 5:
+        return 3
+    elif registed_count>=10:
+        return 4
 
 
 @router.post('/orderFavorite')
