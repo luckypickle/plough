@@ -5,18 +5,16 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
-
+import app.utils
 from app import crud, models, schemas
 from app.api import deps
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 from app.utils import send_new_account_email
 from app.bazi import BaZi
-import uuid
 router = APIRouter()
 
-def generate_invite_code():
-    return str(uuid.uuid4())[:8]
+
 @router.post("/invite_info", response_model=schemas.InviteForInfo)
 def get_invite_info(
     *,
@@ -29,7 +27,7 @@ def get_invite_info(
     invite_info = crud.invite.get_invite_info(db, user_id=current_user.id)
 
     if invite_info is None:
-        invite_code = generate_invite_code()
+        invite_code = utils.generate_invite_code()
         invite_obj = schemas.InviteCreate(
             user_id=current_user.id,
             phone=current_user.phone,
