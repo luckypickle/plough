@@ -13,7 +13,7 @@ from app.db.base_class import Base
 from app.models.user import User
 from app.models.mpcode import MPCode
 from app.models.order import Order
-from app.schemas.user import UserCreate, UserUpdate, UserSummary
+from app.schemas.user import UserCreate, UserUpdate, UserSummary, UserCreateWithInfo
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
@@ -45,7 +45,25 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     @staticmethod
     def get_by_phone(db: Session, *, phone: str) -> Optional[User]:
         return db.query(User).filter(User.phone == phone).first()
+    def register(self ,db: Session, *, phone: str, email:str,user_name:str,verify_code: str) -> (bool,Optional[User]):
+        user = CRUDUser.get_by_phone(db, phone=phone)
+        valid_mpcode = False
+        now = int(time.time())
+        mpcode = db.query(MPCode).filter(
+            MPCode.phone == phone,
+            MPCode.expire_time >= now,
+            MPCode.status == 0).first()
 
+        if mpcode and mpcode.code == verify_code:
+            valid_mpcode = True
+        if user is None and valid_mpcode:
+            user_in = UserCreateWithInfo(
+                email=email,
+                user_name=user_name,
+                phone=phone)
+            return valid_mpcode, self.create_with_email(db,obj_in=user_in)
+        else:
+            return valid_mpcode, None
     def login_or_register(self, db: Session, *, phone: str, verify_code: str) -> Optional[User]:
         user = CRUDUser.get_by_phone(db, phone=phone)
         valid_mpcode = False
@@ -94,6 +112,20 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db.refresh(db_obj)
         return db_obj
 
+    @staticmethod
+    def create_with_email(db: Session, *, obj_in: UserCreateWithInfo) -> User:
+        rand_password = utils.random_password_number_lower_letters(8)
+        db_obj = User()
+        db_obj.hashed_password = get_password_hash(rand_password)
+        db_obj.user_name = str(uuid.uuid4())
+        db_obj.is_superuser = False
+        db_obj.phone = obj_in.phone
+        db_obj.user_name = obj_in.user_name
+        db_obj.email = obj_in.email
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
     def update(
         self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]
     ) -> Base:
