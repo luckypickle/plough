@@ -120,8 +120,13 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
     def get_all_order_by_bill_state(self, db: Session, bill_state: int):
         return db.query(Order).filter(Order.bill_state==bill_state).all()
 
-
-
+    def get_order_count(self,db:Session,user_id:int):
+        return db.query(Order).filter((Order.owner_id == user_id)).count()
+    def get_order_amount(self,db:Session,user_id:int):
+        total = db.query(func.sum(Order.amount)).filter(Order.owner_id == user_id).scalar()
+        if total is None:
+            total = 0
+        return total
     def get_favorite_open_orders(
             self, db: Session, *,
             user_id:int,
