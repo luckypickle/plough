@@ -12,9 +12,6 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     pass
 
-class UserCreateWithInfo(UserBase):
-    email:Optional[str]=None
-    user_name: Optional[str] = None
 # Properties to show in Admin page
 class UserSummary(UserBase):
     id: Optional[int] = None

@@ -105,8 +105,6 @@ def create_user_open(
         db: Session = Depends(deps.get_db),
         phone: str = Body(...),
         password: str = Body(...),
-        user_name: str = Body(None),
-        email: str = Body(None),
         invite_code:str=Body(None),
         settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
@@ -126,7 +124,7 @@ def create_user_open(
             status_code=403,
             detail="Open user registration is forbidden on this server",
         )
-    valid_mpcod,user = crud.user.register(db,phone=phone,email=email,user_name=user_name,verify_code=password)
+    valid_mpcod,user = crud.user.register(db,phone=phone,verify_code=password)
     if not valid_mpcod:
         raise HTTPException(
             status_code=400,
