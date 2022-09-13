@@ -13,8 +13,8 @@ from app.core.settings.app import AppSettings
 from app.utils import send_new_account_email
 from app.bazi import BaZi
 from app.bazi.bazi import  convert_lunar_to_solar
-import uuid
 import time
+import app.utils
 router = APIRouter()
 
 
@@ -97,16 +97,13 @@ def read_user_me(
     """
     return current_user
 
-def generate_invite_code():
-    return str(uuid.uuid4())[:8]
+
 @router.post("/open", response_model=schemas.User)
 def create_user_open(
         *,
         db: Session = Depends(deps.get_db),
         phone: str = Body(...),
         password: str = Body(...),
-        user_name: str = Body(None),
-        email: str = Body(None),
         invite_code:str=Body(None),
         settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
@@ -126,7 +123,7 @@ def create_user_open(
             status_code=403,
             detail="Open user registration is forbidden on this server",
         )
-    valid_mpcod,user = crud.user.register(db,phone=phone,email=email,user_name=user_name,verify_code=password)
+    valid_mpcod,user = crud.user.register(db,phone=phone,verify_code=password)
     if not valid_mpcod:
         raise HTTPException(
             status_code=400,
@@ -147,7 +144,7 @@ def create_user_open(
     user = crud.user.create(db, obj_in=user_in)
 '''
     if prev_user is not None:
-        invite_code_user = generate_invite_code()
+        invite_code_user = utils.generate_invite_code()
         invite_obj = schemas.InviteCreate(
             user_id=user.id,
             phone=user.phone,
@@ -158,7 +155,7 @@ def create_user_open(
         )
         crud.invite.create(db, obj_in=invite_obj)
     else:
-        invite_code_user = generate_invite_code()
+        invite_code_user = utils.generate_invite_code()
         invite_obj = schemas.InviteCreate(
             user_id=user.id,
             phone=user.phone,

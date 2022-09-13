@@ -42,6 +42,18 @@ class InvitedUserDetail(InviteBase):
 class InvitedDetailUsers:
     total: int = 0
     invited_users: List[InvitedUserDetail]
+class InviteOrder(BaseModel):
+    phone:Optional[str]=None
+    prev_phone:Optional[str]=None
+    prev_prev_phone:Optional[str]=None
+    order_count:Optional[int]=0
+    order_amount:Optional[int]=0
+    register_time:Optional[datetime.datetime]=None
+
+class InviteOrderInfo(BaseModel):
+    total:int=0
+    invite_orders:List[InviteOrder]
+
 class Invite(InviteInDBBase):
     pass
 

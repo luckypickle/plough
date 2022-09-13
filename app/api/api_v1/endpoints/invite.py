@@ -1,22 +1,20 @@
-from typing import Any, List
+from typing import Any, List,Optional
 import json
 import pytz
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
-
+import app.utils
 from app import crud, models, schemas
 from app.api import deps
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 from app.utils import send_new_account_email
 from app.bazi import BaZi
-import uuid
 router = APIRouter()
 
-def generate_invite_code():
-    return str(uuid.uuid4())[:8]
+
 @router.post("/invite_info", response_model=schemas.InviteForInfo)
 def get_invite_info(
     *,
@@ -29,7 +27,7 @@ def get_invite_info(
     invite_info = crud.invite.get_invite_info(db, user_id=current_user.id)
 
     if invite_info is None:
-        invite_code = generate_invite_code()
+        invite_code = utils.generate_invite_code()
         invite_obj = schemas.InviteCreate(
             user_id=current_user.id,
             phone=current_user.phone,
@@ -181,5 +179,76 @@ def invite_users(
             register_time=invited_user_obj.register_time,
             first_order_time=invited_user_obj.first_order_time,
             status=invited_user_obj.order_status
+        ))
+    return ret
+@router.get("/invite_order_infos",response_model=Any)
+def invite_order_info(
+    *,
+    phone:str = None,
+    prev_phone:str=None,
+    prev_prev_phone:str=None,
+    skip: int = 0,
+    limit: int = 20,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_superuser)
+)->Any:
+    """
+    Get invited users order info
+    """
+    user_id = None
+    prev_user_id=None
+    prev_prev_user_id=None
+
+    if phone is not None:
+        user_obj = crud.user.get_by_phone(db,phone=phone)
+        if user_obj is None:
+            raise HTTPException(
+                status_code=400,
+                detail="User`s phone doesnt exist",
+            )
+        user_id = user_obj.id
+    if prev_phone is not None:
+        prev_user_obj = crud.user.get_by_phone(db, phone=prev_phone)
+        if prev_user_obj is None:
+            raise HTTPException(
+                status_code=400,
+                detail="User`s prev phone doesnt exist",
+            )
+        prev_user_id= prev_user_obj.id
+    if prev_prev_phone is not None:
+        prev_prev_user_obj = crud.user.get_by_phone(db, phone=prev_phone)
+        if prev_prev_user_obj is None:
+            raise HTTPException(
+                status_code=400,
+                detail="User`s prev phone doesnt exist",
+            )
+        prev_prev_user_id=prev_prev_user_obj.id
+    ret = schemas.InviteOrderInfo(total=0, invite_orders=[])
+    invited_count, invited_users = crud.invite.get_invited_users_with_condition(db, user_id=user_id,
+                                                                                prev_user_id=prev_user_id,
+                                                                                prev_prev_user_id=prev_prev_user_id,
+                                                                                skip=skip,
+                                                                                limit=limit)
+    if invited_count == 0:
+        return ret
+    ret.total = invited_count
+    for invited_user_obj in invited_users:
+        prev_phone = None
+        prev_prev_phone = None
+        if invited_user_obj.prev_invite is not None:
+            prev_user = crud.user.get(db,id=invited_user_obj.prev_invite)
+            if prev_user is not None:
+                prev_phone= prev_user.phone
+        if invited_user_obj.prev_invite is not None:
+            prev_prev_user = crud.user.get(db,id=invited_user_obj.prev_prev_invite)
+            if prev_prev_user is not None:
+                prev_prev_phone= prev_prev_user.phone
+        ret.invite_orders.append(schemas.InviteOrder(
+            phone=invited_user_obj.phone,
+            register_time=invited_user_obj.register_time,
+            prev_phone=prev_phone,
+            prev_prev_phone=prev_prev_phone,
+            order_count=crud.order.get_order_count(db,user_id=invited_user_obj.user_id),
+            order_amount=crud.order.get_order_amount(db,user_id=invited_user_obj.user_id)
         ))
     return ret

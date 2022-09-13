@@ -34,7 +34,24 @@ class CRUDInvite(CRUDBase[Invite, InviteCreate, InviteUpdate]):
             invite_code:str
     )->(Optional[Invite]):
         return db.query(Invite).filter(Invite.invite_code == invite_code).first()
-
+    def get_invited_users_with_condition(self,db: Session, *,
+            user_id:int,
+            prev_user_id:int,
+            prev_prev_user_id:int,
+            skip: int = 0, limit: int = 100):
+        query = db.query(self.model)
+        conditions = []
+        if user_id is not None:
+            conditions.append(Invite.user_id == user_id)
+        if prev_user_id is not None:
+            conditions.append(Invite.prev_invite == prev_user_id)
+        if prev_prev_user_id is not None:
+            conditions.append(Invite.prev_prev_invite == prev_prev_user_id)
+        query = query.filter(*conditions)
+        return (
+            query.count(),
+            query.order_by(Invite.register_time.desc()).offset(skip).limit(limit).all()
+        )
     def get_invited_users(
             self, db: Session, *,
             user_id:int,

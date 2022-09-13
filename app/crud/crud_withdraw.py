@@ -15,6 +15,9 @@ class CRUDWithdraw(CRUDBase[Withdraw, WithdrawCreate, WithdrawUpdate]):
     def get_by_id(self, db: Session, *, id: int) -> Optional[Withdraw]:
         return db.query(Withdraw).filter(Withdraw.id == id).first()
     def get_withdraw_amount(self,db:Session,*,user_id :int):
-        return db.query(func.sum(Withdraw.pay_amount)).filter(Withdraw.user_id == user_id).scalar()
+        total = db.query(func.sum(Withdraw.pay_amount)).filter(Withdraw.user_id == user_id).scalar()
+        if total is None:
+            total = 0
+        return total
 
 withdraw = CRUDWithdraw(Withdraw)

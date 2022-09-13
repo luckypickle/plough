@@ -30,9 +30,17 @@ class CRUDReward(CRUDBase[Reward, RewardCreate, RewardUpdate]):
         )
     def get_first_total_reward(self, db: Session, *,
             user_id:int)->int:
-        return db.query(func.sum(Reward.prev_amount)).filter(Reward.prev_user_id == user_id).scalar()
+        total =db.query(func.sum(Reward.prev_amount)).filter(Reward.prev_user_id == user_id).scalar()
+        if total is None:
+            total =0
+        print('first total is ',total)
+        return total
     def get_second_total_reward(self, db: Session, *,
             user_id:int)->int:
-        return db.query(func.sum(Reward.prev_prev_amount)).filter(Reward.prev_prev_user_id == user_id).scalar()
+        total = db.query(func.sum(Reward.prev_prev_amount)).filter(Reward.prev_prev_user_id == user_id).scalar()
+        if total is None:
+            total =0
+        print('Second total is ', total)
+        return total
 
 reward = CRUDReward(Reward)

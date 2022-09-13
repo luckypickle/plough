@@ -62,6 +62,16 @@ def login_access_token(
         user = crud.user.login_or_register(
             db, phone=form_data.username, verify_code=form_data.password
         )
+        invite_info = crud.invite.get_invite_info(db, user_id=user.id)
+        if invite_info is None:
+            invite_code = utils.generate_invite_code()
+            invite_obj = schemas.InviteCreate(
+                user_id=user.id,
+                phone=user.phone,
+                invite_code=invite_code,
+                register_time=user.create_time
+            )
+            crud.invite.create(db, obj_in=invite_obj)
         if not user:
             raise HTTPException(status_code=400, detail="Incorrect username or password")
         elif not crud.user.is_active(user):
