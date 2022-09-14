@@ -9,8 +9,8 @@ from .comment import Comment, CommentCreate, CommentUpdate,CommentQuery,CommentL
 from .version import Version, VersionCreate, VersionUpdate
 from .history import History, HistoryCreate, HistoryUpdate
 from .invite import Invite, InviteCreate, InviteUpdate, InviteForInfo, InvitedDetailUsers,InvitedUserDetail,InviteOrder,InviteOrderInfo
-from .reward import Reward, RewardCreate, RewardUpdate, RewardDetail,RewardDetailInfos
-from .withdraw import Withdraw, WithdrawCreate, WithdrawUpdate
+from .reward import Reward, RewardCreate, RewardUpdate, RewardDetail,RewardDetailInfos,RewardInfo,RewardInfos
+from .withdraw import Withdraw, WithdrawCreate, WithdrawUpdate,WithdrawInfo,WithdrawItems
 from .bill import BillQuery,BillCreate,BillList,BillUpdate
 
 from .favorite import FavoriteCreate,Favorite,FavoriteUpdate

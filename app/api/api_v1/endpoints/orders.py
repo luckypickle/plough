@@ -355,17 +355,17 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                 prev_prev_invite_obj = crud.invite.get_invite_info(db,user_id=invite_obj.prev_prev_invite)
                 if prev_prev_invite_obj is not None:
                     prev_prev_amount = get_reward_amount(prev_obj_level, order.amount, True)
-            reward_obj = models.Reward(
-                order_id=order.id,
-                user_id = order.owner_id,
-                order_amount=order.amount,
-                prev_user_id=invite_obj.prev_invite,
-                prev_prev_user_id=invite_obj.prev_prev_invite,
-                prev_amount = prev_amount,
-                prev_prev_amount = prev_prev_amount,
-                order_time = order.pay_time
-            )
-            crud.reward.create(db,obj_in=reward_obj)
+                reward_obj = models.Reward(
+                    order_id=order.id,
+                    user_id = order.owner_id,
+                    order_amount=order.amount,
+                    prev_user_id=invite_obj.prev_invite,
+                    prev_prev_user_id=invite_obj.prev_prev_invite,
+                    prev_amount = prev_amount,
+                    prev_prev_amount = prev_prev_amount,
+                    order_time = order.pay_time
+                )
+                crud.reward.create(db,obj_in=reward_obj)
 
 @router.post("/")
 def create_order(

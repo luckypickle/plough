@@ -21,7 +21,20 @@ class RewardInDBBase(RewardBase):
 
     class Config:
         orm_mode = True
-
+class RewardInfo(RewardBase):
+    user_phone:Optional[str] = None
+    register_time:Optional[datetime.datetime] = None
+    son_phone:Optional[str] = None
+    grand_son_phone:Optional[str] = None
+    son_order_amount:Optional[int] = 0
+    grand_son_order_amount:Optional[int] = 0
+    son_reward_amount:Optional[int] = 0
+    grand_son_reward_amount:Optional[int]=0
+    order_time:Optional[datetime.datetime] = None
+    order_level:Optional[int] = 0
+class RewardInfos(RewardBase):
+    total:int=0
+    item:List[RewardInfo]
 class RewardDetail(RewardBase):
     invited_user:Optional[str] = None
     prev_invited_user: Optional[str] = None

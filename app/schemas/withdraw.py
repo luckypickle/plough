@@ -1,30 +1,39 @@
-from typing import Optional
+from typing import Optional,List
 
 from pydantic import BaseModel
 
 
 # Shared properties
 class WithdrawBase(BaseModel):
-    user_id: Optional[int] = None
+    pass
+
 
 # Properties to receive via API on creation
 class WithdrawCreate(WithdrawBase):
     pay_name:Optional[str]= None
     pay_card_num:Optional[str]= None
     pay_amount : Optional[int] = None
-    status:Optional[int]=0
+    pay_status:Optional[int]=0
+    user_id: Optional[int] = None
 
 
 # Properties to receive via API on update
 class WithdrawUpdate(WithdrawBase):
-    pass
+    pay_status: Optional[int] = 0
 
 class WithdrawInDBBase(WithdrawBase):
     id: Optional[int] = None
 
     class Config:
         orm_mode = True
-
+class WithdrawInfo(WithdrawCreate):
+    phone:Optional[str]=None
+    register_time:Optional[str]=None
+    id:Optional[int]=None
+    order_time:Optional[str]=None
+class WithdrawItems(BaseModel):
+    total:Optional[int] = 0
+    items:List[WithdrawInfo]
 
 # Additional properties to return via API
 class Withdraw(WithdrawInDBBase):

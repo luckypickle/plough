@@ -39,7 +39,7 @@ class InviteForInfo(InviteBase):
 # Additional properties to return via API
 class InvitedUserDetail(InviteBase):
     status: Optional[int] = 1
-class InvitedDetailUsers:
+class InvitedDetailUsers(BaseModel):
     total: int = 0
     invited_users: List[InvitedUserDetail]
 class InviteOrder(BaseModel):
