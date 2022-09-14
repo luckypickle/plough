@@ -132,7 +132,7 @@ def bind_invite_code(
     prev_inviter = crud.invite.get_invite_user(db, invite_code=inviter.invite_code)
     prev_prev_user_id = None
     if prev_inviter is not None:
-        prev_prev_user_id=prev_inviter.user_id
+        prev_prev_user_id=prev_inviter.prev_invite
         if user_invite_obj.invite_code == prev_inviter.invite_code or prev_inviter.prev_invite == user_invite_obj.id:
             raise HTTPException(
                 status_code=400,
