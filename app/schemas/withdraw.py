@@ -1,7 +1,7 @@
 from typing import Optional,List
 
 from pydantic import BaseModel
-
+import datetime
 
 # Shared properties
 class WithdrawBase(BaseModel):
@@ -15,6 +15,8 @@ class WithdrawCreate(WithdrawBase):
     pay_amount : Optional[int] = None
     pay_status:Optional[int]=0
     user_id: Optional[int] = None
+    phone:Optional[str] = None
+    create_user_time:Optional[datetime.datetime] = None
 
 
 # Properties to receive via API on update

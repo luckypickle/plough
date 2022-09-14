@@ -32,7 +32,9 @@ def withdraw_money(
         pay_name=real_name,
         pay_card_num=card_num,
         pay_amount=amount,
-        pay_status=0
+        pay_status=0,
+        phone=current_user.phone,
+        create_user_time=current_user.create_time
     )
     crud.withdraw.create(db,obj_in=withdraw_obj)
     return ""
