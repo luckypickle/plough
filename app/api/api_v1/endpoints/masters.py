@@ -123,7 +123,7 @@ def update_master_me(
 
 
 
-@router.get("/bills",response_model=Any)
+@router.get("/bills",response_model=schemas.BillList)
 def get_bills(
         bill_date: str,
         db: Session = Depends(deps.get_db),
