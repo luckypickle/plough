@@ -5,8 +5,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
-import app.utils
-from app import crud, models, schemas
+from app import crud, models, schemas, utils
 from app.api import deps
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
@@ -133,8 +132,8 @@ def bind_invite_code(
     prev_inviter = crud.invite.get_invite_user(db, invite_code=inviter.invite_code)
     prev_prev_user_id = None
     if prev_inviter is not None:
-        prev_prev_user_id=prev_inviter.user_id
-        if user_invite_obj.invite_code == prev_inviter.invite_code or prev_inviter.prev_user_id == user_invite_obj.id:
+        prev_prev_user_id=prev_inviter.prev_invite
+        if user_invite_obj.invite_code == prev_inviter.invite_code or prev_inviter.prev_invite == user_invite_obj.id:
             raise HTTPException(
                 status_code=400,
                 detail="Invite cant be a circle",
@@ -199,7 +198,7 @@ def invite_order_info(
     prev_user_id=None
     prev_prev_user_id=None
 
-    if phone is not None:
+    if phone is not None and phone != "":
         user_obj = crud.user.get_by_phone(db,phone=phone)
         if user_obj is None:
             raise HTTPException(
@@ -207,7 +206,7 @@ def invite_order_info(
                 detail="User`s phone doesnt exist",
             )
         user_id = user_obj.id
-    if prev_phone is not None:
+    if prev_phone is not None and prev_phone != "":
         prev_user_obj = crud.user.get_by_phone(db, phone=prev_phone)
         if prev_user_obj is None:
             raise HTTPException(
@@ -215,7 +214,7 @@ def invite_order_info(
                 detail="User`s prev phone doesnt exist",
             )
         prev_user_id= prev_user_obj.id
-    if prev_prev_phone is not None:
+    if prev_prev_phone is not None and prev_prev_phone != "":
         prev_prev_user_obj = crud.user.get_by_phone(db, phone=prev_phone)
         if prev_prev_user_obj is None:
             raise HTTPException(
