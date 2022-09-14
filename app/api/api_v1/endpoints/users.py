@@ -6,15 +6,15 @@ from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
 
-from app import crud, models, schemas
+from app import crud, models, schemas, utils
 from app.api import deps
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
-from app.utils import send_new_account_email
+
 from app.bazi import BaZi
 from app.bazi.bazi import  convert_lunar_to_solar
 import time
-import app.utils
+
 router = APIRouter()
 
 
