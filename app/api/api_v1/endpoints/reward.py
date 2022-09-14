@@ -195,17 +195,49 @@ def total_info(
                 user_obj = crud.user.get(db, id=reward_obj.user_id)
                 prev_obj = crud.user.get(db, id=reward_obj.prev_user_id)
                 prev_prev_obj = crud.user.get(db, id=reward_obj.prev_prev_user_id)
-                if prev_prev_obj is not None:
+                if grand_son_user_id is not None:
                     ret.item.append(schemas.RewardInfo(
                         user_phone=prev_prev_obj.phone,
                         register_time=prev_prev_obj.create_time,
-                        son_phone=user_obj.phone,
-                        son_order_amout=reward_obj.order_amount,
-                        order_time=reward_obj.order_time,
-                        son_reward_amount=reward_obj.prev_amount,
                         grand_son_phone=user_obj.phone,
                         grand_son_order_amount=reward_obj.order_amount,
                         grand_son_reward_amount=reward_obj.prev_prev_amount,
+                        order_time=reward_obj.order_time,
                         order_level=2
                     ))
+                else:
+                    if son_user_id is not None:
+                        ret.item.append(schemas.RewardInfo(
+                            user_phone=prev_obj.phone,
+                            register_time=prev_obj.create_time,
+                            son_phone=user_obj.phone,
+                            son_order_amout=reward_obj.order_amount,
+                            order_time=reward_obj.order_time,
+                            son_reward_amount=reward_obj.prev_amount,
+                            order_level=1
+                        ))
+                    else:
+                        if prev_prev_obj is not None:
+                            ret.item.append(schemas.RewardInfo(
+                                user_phone=prev_prev_obj.phone,
+                                register_time=prev_prev_obj.create_time,
+                                son_phone=user_obj.phone,
+                                son_order_amout=reward_obj.order_amount,
+                                order_time=reward_obj.order_time,
+                                son_reward_amount=reward_obj.prev_amount,
+                                grand_son_phone=user_obj.phone,
+                                grand_son_order_amount=reward_obj.order_amount,
+                                grand_son_reward_amount=reward_obj.prev_prev_amount,
+                                order_level=2
+                            ))
+                        else:
+                            ret.item.append(schemas.RewardInfo(
+                                user_phone=prev_obj.phone,
+                                register_time=prev_obj.create_time,
+                                son_phone=user_obj.phone,
+                                son_order_amout=reward_obj.order_amount,
+                                order_time=reward_obj.order_time,
+                                son_reward_amount=reward_obj.prev_amount,
+                                order_level=1
+                            ))
     return ret
