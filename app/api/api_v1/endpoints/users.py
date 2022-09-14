@@ -29,9 +29,30 @@ def read_users(
     Retrieve users.
     """
     total, users = crud.user.get_user_summary(db, skip=skip, limit=limit)
+
+    invite_users = []
+    for user in users:
+        invite_obj = crud.invite.get_invite_info(db,user_id=user.id)
+        level = 0
+        if invite_obj is not None:
+            level = invite_obj.current_level
+        invite_users.append(schemas.InviteSummary(
+            id=user.id,
+            create_time=user.create_time,
+            order_count=user.order_count,
+            order_amount=user.order_amount,
+            phone=user.phone,
+            level=level,
+            first_order_count=crud.invite.get_prev_count(db,user_id=user.id,status=1)+crud.invite.get_prev_count(db,user_id=user.id,status=2),
+            first_order_amount=crud.reward.get_total_reward_amount(db,user_id=user.id,prev_prev_option=False),
+            second_order_count=crud.invite.get_prev_prev_count(db,user_id=user.id,status=1)+crud.invite.get_prev_prev_count(db,user_id=user.id,status=2),
+            second_order_amount=crud.reward.get_total_reward_amount(db,user_id=user.id,prev_prev_option=True),
+            total_reward_amount=crud.reward.get_first_total_reward(db,user_id=user.id)+ crud.reward.get_second_total_reward(db,user_id=user.id),
+            withdraw_reward_amount=crud.withdraw.get_withdraw_amount(db,user_id=user.id)
+        ))
     return {
         "total": total,
-        "users": users
+        "users": invite_users
     }
 
 

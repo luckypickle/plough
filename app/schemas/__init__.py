@@ -8,7 +8,7 @@ from .product import Product, ProductCreate, ProductUpdate, ProductForOrder
 from .comment import Comment, CommentCreate, CommentUpdate,CommentQuery,CommentListQuery,CommentFullData
 from .version import Version, VersionCreate, VersionUpdate
 from .history import History, HistoryCreate, HistoryUpdate
-from .invite import Invite, InviteCreate, InviteUpdate, InviteForInfo, InvitedDetailUsers,InvitedUserDetail,InviteOrder,InviteOrderInfo
+from .invite import Invite, InviteCreate, InviteUpdate, InviteForInfo, InvitedDetailUsers,InvitedUserDetail,InviteOrder,InviteOrderInfo,InviteSummary
 from .reward import Reward, RewardCreate, RewardUpdate, RewardDetail,RewardDetailInfos,RewardInfo,RewardInfos
 from .withdraw import Withdraw, WithdrawCreate, WithdrawUpdate,WithdrawInfo,WithdrawItems
 from .bill import BillQuery,BillCreate,BillList,BillUpdate

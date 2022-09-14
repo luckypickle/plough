@@ -39,6 +39,7 @@ class CRUDReward(CRUDBase[Reward, RewardCreate, RewardUpdate]):
     ) -> (int, List[Reward]):
         query = db.query(self.model)
         conditions = []
+        is_or=0
         if user_id is not None:
             if level == 1:
                 conditions.append(Reward.prev_user_id == user_id)
@@ -60,8 +61,11 @@ class CRUDReward(CRUDBase[Reward, RewardCreate, RewardUpdate]):
                     if son_user_id is not None:
                         conditions.append((Reward.prev_user_id == user_id and Reward.user_id == son_user_id)
                                           or(Reward.prev_prev_user_id == user_id and Reward.prev_user_id == son_user_id))
+                        is_or = 2
                     else:
-                         conditions.append(Reward.prev_user_id == user_id or Reward.prev_prev_user_id == user_id)
+                        conditions.append(Reward.prev_user_id == user_id)
+                        conditions.append(Reward.prev_prev_user_id == user_id)
+                        is_or=1
         else:
             if level == 1:
                 if son_user_id is not None:
@@ -79,12 +83,32 @@ class CRUDReward(CRUDBase[Reward, RewardCreate, RewardUpdate]):
                         conditions.append(Reward.prev_user_id == son_user_id)
                 else:
                     if son_user_id is not None:
-                        conditions.append(Reward.user_id == son_user_id or Reward.prev_user_id == son_user_id)
-        query = query.filter(*conditions)
+                        conditions.append(Reward.user_id == son_user_id)
+                        conditions.append(Reward.prev_user_id == son_user_id)
+                        is_or = 1
+        if is_or == 1:
+            query = query.filter(or_(*conditions))
+        elif is_or==2:
+            query = query.filter((Reward.prev_user_id == user_id and Reward.user_id == son_user_id)
+                                          or(Reward.prev_prev_user_id == user_id and Reward.prev_user_id == son_user_id))
+        else:
+            query = query.filter(*conditions)
         return (
             query.count(),
             query.order_by(Reward.order_time.desc()).offset(skip).limit(limit).all()
         )
+    def get_total_reward_amount(self,db: Session, *,
+            user_id:int,prev_prev_option:bool=False):
+        if prev_prev_option:
+            total = db.query(func.sum(Reward.order_amount)).filter(Reward.prev_prev_user_id == user_id).scalar()
+            if total is None:
+                total = 0
+            return total
+        else:
+            total = db.query(func.sum(Reward.order_amount)).filter(Reward.prev_user_id == user_id).scalar()
+            if total is None:
+                total = 0
+            return total
     def get_first_total_reward(self, db: Session, *,
             user_id:int)->int:
         total =db.query(func.sum(Reward.prev_amount)).filter(Reward.prev_user_id == user_id).scalar()

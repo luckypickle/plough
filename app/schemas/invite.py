@@ -38,9 +38,12 @@ class InviteForInfo(InviteBase):
     uncollect_amount: Optional[int] = None
 # Additional properties to return via API
 class InvitedUserDetail(InviteBase):
+
     status: Optional[int] = 1
 class InvitedDetailUsers(BaseModel):
     total: int = 0
+    invited_count: int = 0
+    invited_order_count: int = 0
     invited_users: List[InvitedUserDetail]
 class InviteOrder(BaseModel):
     phone:Optional[str]=None
@@ -53,6 +56,19 @@ class InviteOrder(BaseModel):
 class InviteOrderInfo(BaseModel):
     total:int=0
     invite_orders:List[InviteOrder]
+class InviteSummary(BaseModel):
+    id: Optional[int] = None
+    create_time: Optional[str] = None
+    order_count: Optional[int] = None
+    order_amount: Optional[int] = None
+    phone:Optional[str]=None
+    level:Optional[str]=0
+    first_order_count:Optional[int]=0
+    first_order_amount:Optional[int]=0
+    second_order_count:Optional[int]=0
+    second_order_amount:Optional[int]=0
+    total_reward_amount:Optional[int]=0
+    withdraw_reward_amount:Optional[int]=0
 
 class Invite(InviteInDBBase):
     pass

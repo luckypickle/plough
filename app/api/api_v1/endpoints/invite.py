@@ -166,19 +166,23 @@ def invite_users(
             status_code=400,
             detail="User`s phone doesnt exist",
         )
-    ret = schemas.InvitedDetailUsers(total=0, invited_users=[])
+    ret = schemas.InvitedDetailUsers(total=0,invited_count=0,invited_order_count=0, invited_users=[])
     invited_count, invited_users = crud.invite.get_invited_users(db, user_id=user_obj.id, skip=skip, limit=limit)
     if invited_count == 0:
         return ret
     ret.total = invited_count
+
     for invited_user_obj in invited_users:
         ret.invited_users.append(schemas.InvitedUserDetail(
             user_id=invited_user_obj.user_id,
             phone=invited_user_obj.phone,
             register_time=invited_user_obj.register_time,
             first_order_time=invited_user_obj.first_order_time,
-            status=invited_user_obj.order_status
+            status=invited_user_obj.order_status,
+
         ))
+    ret.invited_count = crud.invite.get_prev_count(db, user_id=user_obj.id, status=1)
+    ret.invited_order_count = crud.invite.get_prev_count(db, user_id=user_obj.id, status=2)
     return ret
 @router.get("/invite_order_infos",response_model=Any)
 def invite_order_info(
