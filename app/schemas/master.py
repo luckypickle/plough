@@ -70,11 +70,17 @@ class MasterInDBBase(MasterBase):
 class Master(MasterInDBBase):
     pass
 
+class MasterRate(MasterInDBBase):
+    avg_rate:Optional[str]=None
+
 
 class MasterQuery(BaseModel):
     total: int
     masters: List[Master]
 
+class MasterRateQuery(BaseModel):
+    total: int
+    masters: List[MasterRate]
 
 # Additional properties stored in DB
 class MasterInDB(MasterInDBBase):

@@ -6,10 +6,11 @@ from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
 
 from app import crud, models, schemas
-from app.api import deps
+from app.api import deps,util
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 from app.bazi import BaZi
+
 
 router = APIRouter()
 
@@ -54,6 +55,41 @@ def read_masters(
         total=total,
         masters=masters
     )
+    return ret_obj
+
+
+@router.get("/listWithRate", response_model=schemas.MasterRateQuery)
+def read_masters(
+        db: Session = Depends(deps.get_db),
+        status: int = -1,
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    """
+    Retrieve masters. (superuser only)
+    """
+    util.load_master_rate(db)
+    total, masters = crud.master.get_multi_with_conditions(db=db, status=status, skip=skip, limit=limit)
+    ret_obj = schemas.MasterRateQuery(
+        total=total,
+        masters=[]
+    )
+    for one_data in masters:
+        ret_obj.masters.append(schemas.MasterRate(
+        id=one_data.id,
+        name=one_data.name,
+        rate=one_data.rate,
+            avatar=one_data.avatar,
+        order_number=one_data.order_number,
+        order_amount=one_data.order_amount,
+        status=one_data.status,
+        phone=one_data.phone,
+        email=one_data.email,
+        price=one_data.price,
+        desc=one_data.desc,
+        avg_rate=util.cache_master_rate[str(one_data.id)],
+        ))
     return ret_obj
 
 

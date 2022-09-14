@@ -28,6 +28,14 @@ class OrderCreate(OrderBase):
     shareRate: Optional[int]
     create_time: Optional[str]
     pay_type: Optional[str] = "wx"
+    pic1: Optional[str]=None
+    pic2: Optional[str]=None
+    pic3: Optional[str]=None
+
+class OrderPic(BaseModel):
+    pic1: Optional[str] = None
+    pic2: Optional[str] = None
+    pic3: Optional[str] = None
 
 
 # Properties to receive on item update

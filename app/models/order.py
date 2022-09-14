@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, func
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, func,Text
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -26,8 +26,12 @@ class Order(Base):
     divination = Column(String)
     reason = Column(String)
     create_time = Column(DateTime, server_default=func.now(), index=True, comment="创建时间")
-    pay_time = Column(DateTime, server_default=func.now(), index=True, comment="支付时间")
+    pay_time = Column(DateTime, server_default=None, index=True, comment="支付时间")
     arrange_status = Column(Integer, comment="排盘状态：0 - 未排盘, 1 - 待审核, 2 - 拒绝, 3 - 完成")
     status = Column(Integer, comment="订单状态：0 - 未确认, 1 - 已支付, 3 - 作废, 4 - 退款")
     is_open = Column(Integer,default=0,comment="是否公开案例： 0 - 未公开，1 - 已公开")
     comment_rate = Column(Integer,default=0, comment="订单评价")
+    bill_state = Column(Integer,default=0,comment="结算状态")
+    pic1 = Column(Text,default=None,comment="Pic1")
+    pic2 = Column(Text,default=None,comment="Pic2")
+    pic3 = Column(Text,default=None,comment="Pic3")

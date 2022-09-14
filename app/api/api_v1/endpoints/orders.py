@@ -261,6 +261,21 @@ def set_order_favorite( db: Session = Depends(deps.get_db),
         return util.make_return(-1, "order id error")
 
 
+@router.get('/orderPic',response_model=schemas.OrderPic)
+def get_order_pic(db: Session = Depends(deps.get_db),
+                  order_id:int=0,
+                current_user: models.User = Depends(deps.get_current_user),):
+    res = crud.order.get(db, order_id)
+    if crud.user.is_active(current_user):
+        if res.owner_id==current_user.id:
+            return schemas.OrderPic(pic1=res.pic1,pic2=res.pic2,pic3=res.pic3)
+
+    if crud.master.is_active(current_user):
+        if res.master_id ==current_user.id:
+            return schemas.OrderPic(pic1=res.pic1, pic2=res.pic2, pic3=res.pic3)
+    return schemas.OrderPic()
+
+
 
 @router.delete('/orderFavorite')
 def delete_order_favorite( db: Session = Depends(deps.get_db),

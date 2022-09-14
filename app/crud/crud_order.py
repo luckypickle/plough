@@ -5,7 +5,7 @@ from string import ascii_letters, digits
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, desc,case
 
 from app.crud.base import CRUDBase
 from app.models.order import Order
@@ -72,10 +72,10 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         if status >= 0:
             conditions.append(Order.status == status)
         query = query.filter(*conditions)
-
         return (
             query.count(),
-            query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
+            query.order_by(case(whens=[(Order.arrange_status==1,0)] ,else_=1),Order.id.desc()).offset(skip).limit(limit).all()
+
         )
 
     def get_multi_and_sum_with_condition(
@@ -113,6 +113,14 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             query.count(),
             query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
         )
+
+    def get_all_rate_orders(self,db:Session,rate:int):
+        if rate ==-1:
+            sql =db.query(Order).filter(Order.comment_rate>=0)
+        else:
+            sql =db.query(Order).filter(Order.comment_rate==rate)
+
+        return sql.all()
 
     def get_favorite_open_orders(
             self, db: Session, *,
