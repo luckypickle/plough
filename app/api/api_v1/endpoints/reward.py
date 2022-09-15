@@ -42,7 +42,7 @@ def reward_list(
                 invited_user=invited_user.phone,
                 order_amount=reward_obj.order_amount,
                 reward_amount=reward_obj.prev_amount,
-                order_time=reward_obj.order_time,
+                order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                 prev_prev_level=0
             ))
         elif reward_obj.prev_prev_user_id == user_id:
@@ -55,7 +55,7 @@ def reward_list(
                 prev_invited_user = prev_invited_user.phone,
                 order_amount=reward_obj.order_amount,
                 reward_amount=reward_obj.prev_prev_amount,
-                order_time=reward_obj.order_time,
+                order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                 prev_prev_level=1
             ))
     return ret
@@ -123,10 +123,10 @@ def total_info(
                 prev_obj = crud.user.get(db,id=reward_obj.prev_user_id)
                 ret.item.append(schemas.RewardInfo(
                     user_phone=prev_obj.phone,
-                    register_time=prev_obj.create_time,
+                    register_time=prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                     son_phone=user_obj.phone,
                     son_order_amout=reward_obj.order_amount,
-                    order_time=reward_obj.order_time,
+                    order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                     son_reward_amount=reward_obj.prev_amount,
                     order_level=1
                 ))
@@ -135,11 +135,11 @@ def total_info(
                 prev_prev_obj = crud.user.get(db, id=reward_obj.prev_prev_user_id)
                 ret.item.append(schemas.RewardInfo(
                     user_phone=prev_prev_obj.phone,
-                    register_time=prev_prev_obj.create_time,
+                    register_time=prev_prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                     grand_son_phone=user_obj.phone,
                     grand_son_order_amount=reward_obj.order_amount,
                     grand_son_reward_amount=reward_obj.prev_prev_amount,
-                    order_time=reward_obj.order_time,
+                    order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                     order_level=2
                 ))
             else:
@@ -149,21 +149,21 @@ def total_info(
                 if prev_obj.id == user_id:
                     ret.item.append(schemas.RewardInfo(
                         user_phone=prev_obj.phone,
-                        register_time=prev_obj.create_time,
+                        register_time=prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                         son_phone=user_obj.phone,
                         son_order_amout=reward_obj.order_amount,
-                        order_time=reward_obj.order_time,
+                        order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                         son_reward_amount=reward_obj.prev_amount,
                         order_level=1
                     ))
                 else:
                     ret.item.append(schemas.RewardInfo(
                         user_phone=prev_prev_obj.phone,
-                        register_time=prev_prev_obj.create_time,
+                        register_time=prev_prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                         grand_son_phone=user_obj.phone,
                         grand_son_order_amount=reward_obj.order_amount,
                         grand_son_reward_amount=reward_obj.prev_prev_amount,
-                        order_time=reward_obj.order_time,
+                        order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                         order_level=2
                     ))
         else:
@@ -172,10 +172,10 @@ def total_info(
                 prev_obj = crud.user.get(db, id=reward_obj.prev_user_id)
                 ret.item.append(schemas.RewardInfo(
                     user_phone=prev_obj.phone,
-                    register_time=prev_obj.create_time,
+                    register_time=prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                     son_phone=user_obj.phone,
                     son_order_amout=reward_obj.order_amount,
-                    order_time=reward_obj.order_time,
+                    order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                     son_reward_amount=reward_obj.prev_amount,
                     order_level=1
                 ))
@@ -184,11 +184,11 @@ def total_info(
                 prev_prev_obj = crud.user.get(db, id=reward_obj.prev_prev_user_id)
                 ret.item.append(schemas.RewardInfo(
                     user_phone=prev_prev_obj.phone,
-                    register_time=prev_prev_obj.create_time,
+                    register_time=prev_prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                     grand_son_phone=user_obj.phone,
                     grand_son_order_amount=reward_obj.order_amount,
                     grand_son_reward_amount=reward_obj.prev_prev_amount,
-                    order_time=reward_obj.order_time,
+                    order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                     order_level=2
                 ))
             else:
@@ -198,21 +198,21 @@ def total_info(
                 if grand_son_user_id is not None:
                     ret.item.append(schemas.RewardInfo(
                         user_phone=prev_prev_obj.phone,
-                        register_time=prev_prev_obj.create_time,
+                        register_time=prev_prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                         grand_son_phone=user_obj.phone,
                         grand_son_order_amount=reward_obj.order_amount,
                         grand_son_reward_amount=reward_obj.prev_prev_amount,
-                        order_time=reward_obj.order_time,
+                        order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                         order_level=2
                     ))
                 else:
                     if son_user_id is not None:
                         ret.item.append(schemas.RewardInfo(
                             user_phone=prev_obj.phone,
-                            register_time=prev_obj.create_time,
+                            register_time=prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                             son_phone=user_obj.phone,
                             son_order_amout=reward_obj.order_amount,
-                            order_time=reward_obj.order_time,
+                            order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                             son_reward_amount=reward_obj.prev_amount,
                             order_level=1
                         ))
@@ -220,10 +220,10 @@ def total_info(
                         if prev_prev_obj is not None:
                             ret.item.append(schemas.RewardInfo(
                                 user_phone=prev_prev_obj.phone,
-                                register_time=prev_prev_obj.create_time,
+                                register_time=prev_prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                                 son_phone=user_obj.phone,
                                 son_order_amout=reward_obj.order_amount,
-                                order_time=reward_obj.order_time,
+                                order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                                 son_reward_amount=reward_obj.prev_amount,
                                 grand_son_phone=user_obj.phone,
                                 grand_son_order_amount=reward_obj.order_amount,
@@ -233,10 +233,10 @@ def total_info(
                         else:
                             ret.item.append(schemas.RewardInfo(
                                 user_phone=prev_obj.phone,
-                                register_time=prev_obj.create_time,
+                                register_time=prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                                 son_phone=user_obj.phone,
                                 son_order_amout=reward_obj.order_amount,
-                                order_time=reward_obj.order_time,
+                                order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                                 son_reward_amount=reward_obj.prev_amount,
                                 order_level=1
                             ))
