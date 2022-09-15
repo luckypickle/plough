@@ -76,7 +76,7 @@ def withdraw_info(
             pay_name=withdraw_obj.pay_name,
             pay_card_num=withdraw_obj.pay_card_num,
             pay_amount=withdraw_obj.pay_amount,
-            status=withdraw_obj.pay_status,
+            pay_status=withdraw_obj.pay_status,
             register_time=withdraw_obj.create_user_time.strftime("%Y-%m-%d %H:%M:%S"),
             id=withdraw_obj.id,
             order_time=withdraw_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
