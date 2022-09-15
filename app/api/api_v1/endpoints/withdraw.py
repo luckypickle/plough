@@ -27,6 +27,11 @@ def withdraw_money(
     """
     Withdraw money
     """
+    left_amount = crud.reward.get_first_total_reward(db, user_id=current_user.id) \
+    + crud.reward.get_second_total_reward(db,user_id=current_user.id)\
+    - crud.withdraw.get_withdraw_amount(db, user_id=current_user.id)
+    if amount > left_amount:
+        raise HTTPException(status_code=400, detail="Dont have enough money")
     withdraw_obj = schemas.WithdrawCreate(
         user_id=current_user.id,
         pay_name=real_name,
