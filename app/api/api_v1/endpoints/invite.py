@@ -173,11 +173,14 @@ def invite_users(
     ret.total = invited_count
 
     for invited_user_obj in invited_users:
+        order_time = None
+        if invited_user_obj.first_order_time is not None:
+            order_time = invited_user_obj.first_order_time.strftime("%Y-%m-%d %H:%M:%S")
         ret.invited_users.append(schemas.InvitedUserDetail(
             user_id=invited_user_obj.user_id,
             phone=invited_user_obj.phone,
             register_time=invited_user_obj.register_time.strftime("%Y-%m-%d %H:%M:%S"),
-            first_order_time=invited_user_obj.first_order_time.strftime("%Y-%m-%d %H:%M:%S"),
+            first_order_time=order_time,
             status=invited_user_obj.order_status,
 
         ))
