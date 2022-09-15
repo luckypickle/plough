@@ -78,7 +78,7 @@ def total_info(
     user_id = None
     son_user_id = None
     grand_son_user_id = None
-    if level == 1 and (grand_son_phone !="" or (grand_son_phone is not None)):
+    if level == 1 and (grand_son_phone != "" and grand_son_phone is not None):
         raise HTTPException(
             status_code=400,
             detail="Search condition error",
