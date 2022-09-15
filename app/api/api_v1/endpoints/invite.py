@@ -12,6 +12,7 @@ from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 from app.utils import send_new_account_email
 from app.bazi import BaZi
+import time
 router = APIRouter()
 
 tz = pytz.timezone('Asia/Shanghai')
@@ -117,7 +118,12 @@ def bind_invite_code(
             status_code=400,
             detail="Should get invite info first",
         )
-
+    register_time = int(time.mktime(current_user.create_time.timetuple()))
+    if time.time() > register_time+24*3600:
+        raise HTTPException(
+            status_code=400,
+            detail="Out of bind time",
+        )
     if user_invite_obj.invite_code == invite_code:
         raise HTTPException(
             status_code=400,
