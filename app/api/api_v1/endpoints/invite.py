@@ -176,15 +176,16 @@ def invite_users(
         order_time = None
         if invited_user_obj.first_order_time is not None:
             order_time = invited_user_obj.first_order_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")
+        register_time = invited_user_obj.register_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")
         ret.invited_users.append(schemas.InvitedUserDetail(
             user_id=invited_user_obj.user_id,
             phone=invited_user_obj.phone,
-            register_time=invited_user_obj.register_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S"),
+            register_time=register_time,
             first_order_time=order_time,
             status=invited_user_obj.order_status,
 
         ))
-    ret.invited_count = crud.invite.get_prev_count(db, user_id=user_obj.id, status=1)
+    ret.invited_count = crud.invite.get_prev_count(db, user_id=user_obj.id, status=1)+crud.invite.get_prev_count(db, user_id=user_obj.id, status=2)
     ret.invited_order_count = crud.invite.get_prev_count(db, user_id=user_obj.id, status=2)
     return ret
 @router.get("/invite_order_infos",response_model=Any)
