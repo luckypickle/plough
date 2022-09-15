@@ -6,13 +6,14 @@ from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
 
-from app import crud, models, schemas
+from app import crud, models, schemas, utils
 from app.api import deps
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
-from app.utils import send_new_account_email
+
 from app.bazi import BaZi
 from app.bazi.bazi import  convert_lunar_to_solar
+import time
 
 router = APIRouter()
 
@@ -28,9 +29,30 @@ def read_users(
     Retrieve users.
     """
     total, users = crud.user.get_user_summary(db, skip=skip, limit=limit)
+
+    invite_users = []
+    for user in users:
+        invite_obj = crud.invite.get_invite_info(db,user_id=user.id)
+        level = 0
+        if invite_obj is not None:
+            level = invite_obj.current_level
+        invite_users.append(schemas.InviteSummary(
+            id=user.id,
+            create_time=user.create_time,
+            order_count=user.order_count,
+            order_amount=user.order_amount,
+            phone=user.phone,
+            level=level,
+            first_order_count=crud.invite.get_prev_count(db,user_id=user.id,status=1)+crud.invite.get_prev_count(db,user_id=user.id,status=2),
+            first_order_amount=crud.reward.get_total_reward_amount(db,user_id=user.id,prev_prev_option=False),
+            second_order_count=crud.invite.get_prev_prev_count(db,user_id=user.id,status=1)+crud.invite.get_prev_prev_count(db,user_id=user.id,status=2),
+            second_order_amount=crud.reward.get_total_reward_amount(db,user_id=user.id,prev_prev_option=True),
+            total_reward_amount=crud.reward.get_first_total_reward(db,user_id=user.id)+ crud.reward.get_second_total_reward(db,user_id=user.id),
+            withdraw_reward_amount=crud.withdraw.get_withdraw_amount(db,user_id=user.id)
+        ))
     return {
         "total": total,
-        "users": users
+        "users": invite_users
     }
 
 
@@ -103,30 +125,65 @@ def create_user_open(
         db: Session = Depends(deps.get_db),
         phone: str = Body(...),
         password: str = Body(...),
-        user_name: str = Body(None),
-        email: EmailStr = Body(None),
+        invite_code:str=Body(None),
         settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
     """
     Create new user without the need to be logged in.
     """
+    prev_user = None
+    if invite_code is not None and invite_code != "":
+        prev_user = crud.invite.get_invite_user(db, invite_code=invite_code)
+        if prev_user is None:
+            raise HTTPException(
+                status_code=403,
+                detail="Invalid invite_code",
+            )
     if not settings.USERS_OPEN_REGISTRATION:
         raise HTTPException(
             status_code=403,
             detail="Open user registration is forbidden on this server",
         )
-    user = crud.user.get_by_name(db, name=user_name)
-    if user:
+    valid_mpcod,user = crud.user.register(db,phone=phone,verify_code=password)
+    if not valid_mpcod:
+        raise HTTPException(
+            status_code=400,
+            detail="mpcode error",
+        )
+    #user = crud.user.get_by_name(db, name=user_name)
+    if user is None:
         raise HTTPException(
             status_code=400,
             detail="The user with this username already exists in the system",
         )
+    '''
     user_in = schemas.UserCreate(
         password=password,
         email=email,
         user_name=user_name,
         phone=phone)
     user = crud.user.create(db, obj_in=user_in)
+'''
+    if prev_user is not None:
+        invite_code_user = utils.generate_invite_code()
+        invite_obj = schemas.InviteCreate(
+            user_id=user.id,
+            phone=user.phone,
+            invite_code=invite_code_user,
+            register_time=user.create_time,
+            prev_invite=prev_user.user_id,
+            prev_prev_invite=prev_user.prev_invite
+        )
+        crud.invite.create(db, obj_in=invite_obj)
+    else:
+        invite_code_user = utils.generate_invite_code()
+        invite_obj = schemas.InviteCreate(
+            user_id=user.id,
+            phone=user.phone,
+            invite_code=invite_code_user,
+            register_time=user.create_time
+        )
+        crud.invite.create(db, obj_in=invite_obj)
     return user
 
 

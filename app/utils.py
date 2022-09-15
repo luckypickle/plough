@@ -10,7 +10,7 @@ from jose import jwt
 
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
-
+import uuid
 settings: AppSettings = get_app_settings()
 
 Numbers = "1234567890"
@@ -134,6 +134,7 @@ def send_verify_code(phone: str, verify_code: str):
         req.from_json_string(json.dumps(params))
 
         resp = client.SendSms(req)
+
         return resp.to_json_string()
 
     except TencentCloudSDKException as err:
@@ -166,7 +167,8 @@ def send_verify_email(email:str,verify_code:str):
     except TencentCloudSDKException as err:
         print(err)
 
-
+def generate_invite_code():
+    return str(uuid.uuid4())[:8]
 
 def random_password_number(length: int):
     return ''.join(sample(Numbers, length))
@@ -182,3 +184,5 @@ def random_password_number_upper_letters(length: int):
 
 def random_password_number_letters(length: int):
     return ''.join(sample(Numbers + Alphabets + Alphabets.upper(), length))
+
+

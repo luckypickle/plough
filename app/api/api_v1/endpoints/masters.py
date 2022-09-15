@@ -10,6 +10,7 @@ from app.api import deps,util
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 from app.bazi import BaZi
+from app.api.util import make_return
 
 
 router = APIRouter()
@@ -157,6 +158,88 @@ def update_master_me(
     return master
 
 
+
+@router.get("/bills",response_model=schemas.BillList)
+def get_bills(
+        bill_date: str,
+        db: Session = Depends(deps.get_db),
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_active_superuser),) ->Any:
+    '''
+    get all master bill by bill date.(superuser only)
+    '''
+
+    generate_bill(db)
+    total,res = crud.bill.get_all_by_date(db,date=bill_date,skip=skip,limit=limit)
+    ret_data =schemas.BillList(total=total,bills=[])
+    for one_data in res:
+        ret_data.bills.append(schemas.BillQuery(
+            id=one_data.id,
+            master_id=one_data.master_id,
+            master_name = one_data.master.name,
+            value = one_data.value,
+            bill_date = one_data.bill_date,
+            status =one_data.status,
+        ))
+
+    return ret_data
+
+@router.put("/bill")
+def update_bill(
+        *,
+        db: Session = Depends(deps.get_db),
+        id: int,
+        bill_in: schemas.BillUpdate,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    """
+    Update an bill (superuser).
+    """
+    bill = crud.bill.get(db=db, id=id)
+    if not bill:
+        raise HTTPException(status_code=404, detail="Order not found")
+    # if not crud.user.is_superuser(current_user) and (order.owner_id != current_user.id):
+    #     raise HTTPException(status_code=400, detail="Not enough permissions")
+    order = crud.bill.update(db=db, db_obj=bill, obj_in=bill_in)
+    return  make_return(1,"success")
+
+
+
+
+
+
+def generate_bill(db :Session):
+    all_unhandle_bill = crud.order.get_all_order_by_bill_state(db,0)
+    cache_change = {}
+    print(all_unhandle_bill)
+    for one_data in all_unhandle_bill:
+        bill_date = one_data.pay_time.strftime("%Y-%m")
+        master_id = one_data.master_id
+        if master_id in cache_change:
+            if bill_date in cache_change[str(master_id)]:
+                cache_change[str(master_id)][bill_date] += one_data.amount * one_data.shareRate
+            else:
+                cache_change[str(master_id)][bill_date] =  one_data.amount * one_data.shareRate
+        else:
+            cache_change[str(master_id)] = {bill_date: one_data.amount * one_data.shareRate}
+        crud.order.update(db,db_obj=one_data,obj_in=schemas.OrderUpdate(bill_state=1,product_id=one_data.product_id))
+
+    for master_id,data in cache_change.items():
+        for bill_date,value in data.items():
+            billObj = crud.bill.get_by_bill_date_master_id(db,master_id,bill_date)
+            if billObj is None:
+                billObj = schemas.BillCreate(master_id=master_id,value=value,bill_date=bill_date,status=0)
+            else:
+                if billObj.status ==0:
+                    billObj.value = billObj.value+value
+            crud.bill.update_or_create(db,billObj)
+    return
+
+
+
+
+
 @router.get("/me", response_model=schemas.Master)
 def read_master_me(
         db: Session = Depends(deps.get_db),
@@ -251,3 +334,6 @@ def update_master(
         )
     master = crud.master.update(db, db_obj=master, obj_in=obj_in)
     return master
+
+
+
