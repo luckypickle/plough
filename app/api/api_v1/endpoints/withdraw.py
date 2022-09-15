@@ -82,8 +82,8 @@ def withdraw_info(
             order_time=withdraw_obj.create_time,
         ))
     return ret
-@router.get("/change_state",response_model=Any)
-def withdraw_info(
+@router.post("/change_state",response_model=Any)
+def change_withdraw_state(
     *,
     withdraw_id:int,
     state:int = 1,
