@@ -1,3 +1,4 @@
+import datetime
 from typing import Any, List,Optional
 import json
 import pytz
@@ -24,7 +25,6 @@ def get_invite_info(
     Get invite info
     """
     invite_info = crud.invite.get_invite_info(db, user_id=current_user.id)
-
     if invite_info is None:
         invite_code = utils.generate_invite_code()
         invite_obj = schemas.InviteCreate(
@@ -33,7 +33,7 @@ def get_invite_info(
             invite_code=invite_code,
             register_time=current_user.create_time.astimezone(tz)
         )
-        crud.invite.create(db, obj_in=invite_obj)
+        #crud.invite.create(db, obj_in=invite_obj)
         ret_obj = schemas.InviteForInfo(
             user_id=current_user.id,
             phone=current_user.phone,
@@ -43,7 +43,8 @@ def get_invite_info(
             invited_place_order_count=0,
             prev_user_phone="",
             total_amount=0,
-            uncollect_amount=0
+            uncollect_amount=0,
+            register_time=current_user.create_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")
         )
     else:
         prev_user = crud.user.get(db, id=invite_info.prev_invite)
@@ -176,7 +177,7 @@ def invite_users(
         order_time = None
         if invited_user_obj.first_order_time is not None:
             order_time = invited_user_obj.first_order_time.strftime("%Y-%m-%d %H:%M:%S")
-        register_time = invited_user_obj.register_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")
+        register_time = (invited_user_obj.register_time+datetime.timedelta(hours=8)).astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")
         ret.invited_users.append(schemas.InvitedUserDetail(
             user_id=invited_user_obj.user_id,
             phone=invited_user_obj.phone,
