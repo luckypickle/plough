@@ -13,7 +13,7 @@ from app.utils import send_new_account_email
 from app.bazi import BaZi
 router = APIRouter()
 
-
+tz = pytz.timezone('Asia/Shanghai')
 @router.post("/invite_info", response_model=schemas.InviteForInfo)
 def get_invite_info(
     *,
@@ -175,11 +175,12 @@ def invite_users(
     for invited_user_obj in invited_users:
         order_time = None
         if invited_user_obj.first_order_time is not None:
-            order_time = invited_user_obj.first_order_time.strftime("%Y-%m-%d %H:%M:%S")
+
+            order_time = invited_user_obj.first_order_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")
         ret.invited_users.append(schemas.InvitedUserDetail(
             user_id=invited_user_obj.user_id,
             phone=invited_user_obj.phone,
-            register_time=invited_user_obj.register_time.strftime("%Y-%m-%d %H:%M:%S"),
+            register_time=invited_user_obj.register_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S"),
             first_order_time=order_time,
             status=invited_user_obj.order_status,
 
@@ -251,7 +252,7 @@ def invite_order_info(
                 prev_prev_phone= prev_prev_user.phone
         ret.invite_orders.append(schemas.InviteOrder(
             phone=invited_user_obj.phone,
-            register_time=invited_user_obj.register_time.strftime("%Y-%m-%d %H:%M:%S"),
+            register_time=invited_user_obj.register_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S"),
             prev_phone=prev_phone,
             prev_prev_phone=prev_prev_phone,
             order_count=crud.order.get_order_count(db,user_id=invited_user_obj.user_id),
