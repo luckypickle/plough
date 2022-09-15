@@ -30,9 +30,9 @@ class WithdrawInDBBase(WithdrawBase):
         orm_mode = True
 class WithdrawInfo(WithdrawCreate):
     phone:Optional[str]=None
-    register_time:Optional[str]=None
+    register_time:Optional[datetime.datetime]=None
     id:Optional[int]=None
-    order_time:Optional[str]=None
+    order_time:Optional[datetime.datetime]=None
 class WithdrawItems(BaseModel):
     total:Optional[int] = 0
     items:List[WithdrawInfo]
