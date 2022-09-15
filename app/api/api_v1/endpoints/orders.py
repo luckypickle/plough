@@ -343,7 +343,7 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                 break
         time.sleep(5)
     order = crud.order.get(db=db, id=order_id)
-    if order is not None:
+    if order is not None and order.status == 1:
         if order.status == 1:
             invite_obj = crud.invite.get_invite_info(db,user_id=order.owner_id)
             if invite_obj is None:
