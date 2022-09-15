@@ -176,6 +176,8 @@ def invite_users(
         order_time = None
         if invited_user_obj.first_order_time is not None:
             order_time = invited_user_obj.first_order_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")
+        print(invited_user_obj.register_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S"))
+        print(invited_user_obj.register_time.strftime("%Y-%m-%d %H:%M:%S"))
         register_time = invited_user_obj.register_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")
         ret.invited_users.append(schemas.InvitedUserDetail(
             user_id=invited_user_obj.user_id,
