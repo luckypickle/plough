@@ -10,7 +10,7 @@ cache_master_rate_time=0
 cache_master_rate_refresh_interval=7200
 def load_master_rate(db:Session):
     global cache_master_rate_time, cache_master_rate
-    if int(time.time())-cache_master_rate<cache_master_rate_refresh_interval:
+    if int(time.time())-cache_master_rate_time<cache_master_rate_refresh_interval:
         return
     rates = {}
     counts ={}
@@ -31,4 +31,9 @@ def load_master_rate(db:Session):
     cache_master_rate_time = int(time.time())
 
 
+def get_avg_rate(master_id):
+    if str(master_id) not in cache_master_rate:
+        return 0
+    else:
+        return cache_master_rate[str(master_id)]
 

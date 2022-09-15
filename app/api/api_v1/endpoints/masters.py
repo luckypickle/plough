@@ -83,7 +83,7 @@ def read_masters(
                 id=one_data.id,
                 price=one_data.price,
                 avatar=one_data.avatar,
-                avg_rate = util.cache_master_rate[str(one_data.id)],
+                avg_rate = util.get_avg_rate(one_data.id),
             )
         )
     return ret_obj
