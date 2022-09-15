@@ -137,7 +137,7 @@ def create_user_open(
         if prev_user is None:
             raise HTTPException(
                 status_code=403,
-                detail="Invalid invite_code",
+                detail="邀请码错误",
             )
     if not settings.USERS_OPEN_REGISTRATION:
         raise HTTPException(
@@ -148,13 +148,13 @@ def create_user_open(
     if not valid_mpcod:
         raise HTTPException(
             status_code=400,
-            detail="mpcode error",
+            detail="验证码错误",
         )
     #user = crud.user.get_by_name(db, name=user_name)
     if user is None:
         raise HTTPException(
             status_code=400,
-            detail="The user with this username already exists in the system",
+            detail="您已完成注册，请打开五行演义APP进行排盘批盘吧！",
         )
     '''
     user_in = schemas.UserCreate(
