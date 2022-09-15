@@ -34,7 +34,7 @@ def get_invite_info(
             invite_code=invite_code,
             register_time=current_user.create_time.astimezone(tz)
         )
-        #crud.invite.create(db, obj_in=invite_obj)
+        crud.invite.create(db, obj_in=invite_obj)
         ret_obj = schemas.InviteForInfo(
             user_id=current_user.id,
             phone=current_user.phone,
