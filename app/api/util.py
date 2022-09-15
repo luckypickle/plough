@@ -17,6 +17,10 @@ def load_master_rate(db:Session):
 
     res = crud.order.get_all_rate_orders(db,-1)
     for one_data in res:
+        if one_data.comment_rate is None:
+            continue
+        if int(one_data.comment_rate)<1:
+            continue
         rate = int(one_data.comment_rate)
         master_id = one_data.master_id
         if str(master_id) in rates:
