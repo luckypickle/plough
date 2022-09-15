@@ -76,20 +76,15 @@ def read_masters(
         masters=[]
     )
     for one_data in masters:
-        ret_obj.masters.append(schemas.MasterRate(
-        id=one_data.id,
-        name=one_data.name,
-        rate=one_data.rate,
-            avatar=one_data.avatar,
-        order_number=one_data.order_number,
-        order_amount=one_data.order_amount,
-        status=one_data.status,
-        phone=one_data.phone,
-        email=one_data.email,
-        price=one_data.price,
-        desc=one_data.desc,
-        avg_rate=util.cache_master_rate[str(one_data.id)],
-        ))
+        ret_obj.masters.append(schemas.MasterForOrderRate(
+                name=one_data.name,
+                desc=one_data.desc,
+                id=one_data.id,
+                price=one_data.price,
+                avatar=one_data.avatar,
+                avg_rate = util.cache_master_rate[str(one_data.id)],
+            )
+        )
     return ret_obj
 
 

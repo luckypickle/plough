@@ -31,6 +31,14 @@ class MasterForOrder(BaseModel):
     price: Optional[int] = None
     avatar: Optional[str] = None
 
+class MasterForOrderRate(BaseModel):
+    name: Optional[str] = None
+    desc: Optional[str] = None
+    id: Optional[int] = None
+    price: Optional[int] = None
+    avatar: Optional[str] = None
+    avg_rate: Optional[str] = None
+
 
 class MasterRegister(MasterBase):
     verify_code: Optional[str] = None
@@ -80,7 +88,7 @@ class MasterQuery(BaseModel):
 
 class MasterRateQuery(BaseModel):
     total: int
-    masters: List[MasterRate]
+    masters: List[MasterForOrderRate]
 
 # Additional properties stored in DB
 class MasterInDB(MasterInDBBase):
