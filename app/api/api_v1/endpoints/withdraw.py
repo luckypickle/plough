@@ -1,3 +1,4 @@
+import datetime
 from typing import Any, List
 import json
 import pytz
@@ -18,7 +19,7 @@ router = APIRouter()
 @router.post("/withdraw_money",response_model=Any)
 def withdraw_money(
     *,
-    amount:str,
+    amount:int,
     real_name:str,
     card_num:str,
     db: Session = Depends(deps.get_db),
@@ -32,6 +33,11 @@ def withdraw_money(
     - crud.withdraw.get_withdraw_amount(db, user_id=current_user.id)
     if amount > left_amount:
         raise HTTPException(status_code=400, detail="Dont have enough money")
+    last_withdraw_obj = crud.withdraw.get_last_order(db,user_id=current_user.id)
+    if last_withdraw_obj is not None:
+        current_time=datetime.datetime.now()
+        if last_withdraw_obj.create_time.year == current_time.year and last_withdraw_obj.create_time.month == current_time.month:
+            raise HTTPException(status_code=400, detail="Only withdraw once money")
     withdraw_obj = schemas.WithdrawCreate(
         user_id=current_user.id,
         pay_name=real_name,

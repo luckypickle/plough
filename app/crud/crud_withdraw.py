@@ -20,6 +20,8 @@ class CRUDWithdraw(CRUDBase[Withdraw, WithdrawCreate, WithdrawUpdate]):
         if total is None:
             total = 0
         return total
+    def get_last_order(self,db:Session,*,user_id:int)-> Optional[Withdraw]:
+        return db.query(Withdraw).order_by(Withdraw.create_time.desc()).filter(Withdraw.user_id == user_id).first()
     def get_withdraw_items(self,db:Session,*,user_id:int,state:int,start_time:int,end_time:int,skip: int = 0, limit: int = 100):
         query = db.query(self.model)
         conditions = []
