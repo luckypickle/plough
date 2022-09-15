@@ -164,13 +164,14 @@ def create_user_open(
         phone=phone)
     user = crud.user.create(db, obj_in=user_in)
 '''
+    tz = pytz.timezone('Asia/Shanghai')
     if prev_user is not None:
         invite_code_user = utils.generate_invite_code()
         invite_obj = schemas.InviteCreate(
             user_id=user.id,
             phone=user.phone,
             invite_code=invite_code_user,
-            register_time=user.create_time,
+            register_time=user.create_time.astimezone(tz),
             prev_invite=prev_user.user_id,
             prev_prev_invite=prev_user.prev_invite
         )
@@ -181,7 +182,7 @@ def create_user_open(
             user_id=user.id,
             phone=user.phone,
             invite_code=invite_code_user,
-            register_time=user.create_time
+            register_time=user.create_time.astimezone(tz)
         )
         crud.invite.create(db, obj_in=invite_obj)
     return user

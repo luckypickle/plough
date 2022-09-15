@@ -19,7 +19,7 @@ from app.utils import (
     verify_password_reset_token,
     send_verify_code,
 )
-
+import pytz
 router = APIRouter()
 
 
@@ -67,13 +67,14 @@ def login_access_token(
         elif not crud.user.is_active(user):
             raise HTTPException(status_code=400, detail="Inactive user")
         invite_info = crud.invite.get_invite_info(db, user_id=user.id)
+        tz = pytz.timezone('Asia/Shanghai')
         if invite_info is None:
             invite_code = utils.generate_invite_code()
             invite_obj = schemas.InviteCreate(
                 user_id=user.id,
                 phone=user.phone,
                 invite_code=invite_code,
-                register_time=user.create_time
+                register_time=user.create_time.astimezone(tz)
             )
             crud.invite.create(db, obj_in=invite_obj)
         entity = user
