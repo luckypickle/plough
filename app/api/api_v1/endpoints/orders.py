@@ -369,7 +369,11 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                 prev_amount = get_reward_amount(prev_obj_level,order.amount,False)
                 prev_prev_invite_obj = crud.invite.get_invite_info(db,user_id=invite_obj.prev_prev_invite)
                 if prev_prev_invite_obj is not None:
-                    prev_prev_amount = get_reward_amount(prev_obj_level, order.amount, True)
+                    if prev_prev_invite_obj.current_level is None:
+                        prev_prev_obj_level = 0
+                    else:
+                        prev_prev_obj_level = prev_prev_invite_obj.current_level
+                    prev_prev_amount = get_reward_amount(prev_prev_obj_level, order.amount, True)
                 reward_obj = models.Reward(
                     order_id=order.id,
                     user_id = order.owner_id,
