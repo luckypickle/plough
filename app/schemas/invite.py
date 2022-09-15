@@ -62,7 +62,7 @@ class InviteSummary(BaseModel):
     order_count: Optional[int] = None
     order_amount: Optional[int] = None
     phone:Optional[str]=None
-    level:Optional[str]=0
+    level:Optional[int]=0
     first_order_count:Optional[int]=0
     first_order_amount:Optional[int]=0
     second_order_count:Optional[int]=0
