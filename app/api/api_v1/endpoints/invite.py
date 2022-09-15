@@ -57,7 +57,7 @@ def get_invite_info(
             phone= invite_info.phone,
             invite_code=invite_info.invite_code,
             level=invite_info.current_level,
-            invited_count=crud.invite.get_prev_count(db,user_id=invite_info.user_id,status=1),
+            invited_count=crud.invite.get_prev_count(db, user_id=invite_info.user_id, status=1)+crud.invite.get_prev_count(db, user_id=invite_info.user_id, status=2),
             invited_place_order_count=crud.invite.get_prev_count(db,user_id=invite_info.user_id,status=2),
             prev_user_phone=prev_phone,
             total_amount=total_amount,
