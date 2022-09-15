@@ -62,6 +62,10 @@ def login_access_token(
         user = crud.user.login_or_register(
             db, phone=form_data.username, verify_code=form_data.password
         )
+        if not user:
+            raise HTTPException(status_code=400, detail="Incorrect username or password")
+        elif not crud.user.is_active(user):
+            raise HTTPException(status_code=400, detail="Inactive user")
         invite_info = crud.invite.get_invite_info(db, user_id=user.id)
         if invite_info is None:
             invite_code = utils.generate_invite_code()
@@ -72,11 +76,6 @@ def login_access_token(
                 register_time=user.create_time
             )
             crud.invite.create(db, obj_in=invite_obj)
-        if not user:
-            raise HTTPException(status_code=400, detail="Incorrect username or password")
-        elif not crud.user.is_active(user):
-            raise HTTPException(status_code=400, detail="Inactive user")
-
         entity = user
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
