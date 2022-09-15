@@ -45,7 +45,23 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     @staticmethod
     def get_by_phone(db: Session, *, phone: str) -> Optional[User]:
         return db.query(User).filter(User.phone == phone).first()
+    def register(self ,db: Session, *, phone: str,verify_code: str) -> (bool,Optional[User]):
+        user = CRUDUser.get_by_phone(db, phone=phone)
+        valid_mpcode = False
+        now = int(time.time())
+        mpcode = db.query(MPCode).filter(
+            MPCode.phone == phone,
+            MPCode.expire_time >= now,
+            MPCode.status == 0).first()
 
+        if mpcode and mpcode.code == verify_code:
+            valid_mpcode = True
+        if user is None and valid_mpcode:
+            user_in = UserCreate(
+                phone=phone)
+            return valid_mpcode, self.create(db,obj_in=user_in)
+        else:
+            return valid_mpcode, None
     def login_or_register(self, db: Session, *, phone: str, verify_code: str) -> Optional[User]:
         user = CRUDUser.get_by_phone(db, phone=phone)
         valid_mpcode = False
@@ -54,9 +70,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             MPCode.phone == phone,
             MPCode.expire_time >= now,
             MPCode.status == 0).first()
+
         if mpcode and mpcode.code == verify_code:
             valid_mpcode = True
-        if phone == "11012345678" and verify_code == "778899":
+        if phone == "11012345678" and verify_code=="778899":
             valid_mpcode = True
         if not user and valid_mpcode:
             return self.create(db, obj_in=UserCreate(phone=phone))

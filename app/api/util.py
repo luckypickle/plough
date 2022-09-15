@@ -30,3 +30,5 @@ def load_master_rate(db:Session):
         cache_master_rate[k] = "%.1f"%(float(v)/counts[k])
     cache_master_rate_time = int(time.time())
 
+
+

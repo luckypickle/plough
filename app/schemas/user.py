@@ -12,7 +12,6 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     pass
 
-
 # Properties to show in Admin page
 class UserSummary(UserBase):
     id: Optional[int] = None

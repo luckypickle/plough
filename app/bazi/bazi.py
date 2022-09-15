@@ -19,7 +19,7 @@ class BaZi():
         self.sex = int(sex)
         self.lunar = int(lunar)
         self.run = run==1
-        self.minute= minute
+        self.minute = int(minute)
 
     def get_detail(self):
         detail = {}
