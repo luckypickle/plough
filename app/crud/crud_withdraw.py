@@ -13,7 +13,7 @@ import datetime
 
 class CRUDWithdraw(CRUDBase[Withdraw, WithdrawCreate, WithdrawUpdate]):
     @staticmethod
-    def get_by_id(self, db: Session, *, id: int) -> Optional[Withdraw]:
+    def get_by_id( db: Session, *, id: int) -> Optional[Withdraw]:
         return db.query(Withdraw).filter(Withdraw.id == id).first()
     def get_withdraw_amount(self,db:Session,*,user_id :int):
         total = db.query(func.sum(Withdraw.pay_amount)).filter(Withdraw.user_id == user_id).scalar()
