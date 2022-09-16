@@ -21,6 +21,8 @@ router = APIRouter()
 @router.get("/list")
 def read_users(
         db: Session = Depends(deps.get_db),
+        user_phone: str = None,
+        level :int = 5,
         skip: int = 0,
         limit: int = 100,
         current_user: models.User = Depends(deps.get_current_active_superuser),
@@ -28,14 +30,17 @@ def read_users(
     """
     Retrieve users.
     """
-    total, users = crud.user.get_user_summary(db, skip=skip, limit=limit)
+    user_id = None
+    user_obj = crud.user.get_by_phone(db,phone=user_phone)
+    if user_obj is not None:
+        user_id = user_obj.id
+    total, users = crud.user.get_user_summary(db, user_id=user_id,level=level,skip=skip, limit=limit)
 
     invite_users = []
     for user in users:
-        invite_obj = crud.invite.get_invite_info(db,user_id=user.id)
         level = 0
-        if invite_obj is not None:
-            level = invite_obj.current_level
+        if user.level is not None:
+            level = user.level
         invite_users.append(schemas.InviteSummary(
             id=user.id,
             create_time=user.create_time,

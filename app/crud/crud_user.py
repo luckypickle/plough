@@ -13,6 +13,7 @@ from app.db.base_class import Base
 from app.models.user import User
 from app.models.mpcode import MPCode
 from app.models.order import Order
+from app.models.invite import Invite
 from app.schemas.user import UserCreate, UserUpdate, UserSummary
 
 
@@ -23,12 +24,19 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     @staticmethod
     def get_user_summary(
-            db: Session, *, skip: int = 0, limit: int = 100
+            db: Session, *,user_id:int,level:int,skip: int = 0, limit: int = 100
     ) -> (int, List[UserSummary]):
-        query = db.query(func.count(Order.id), func.sum(Order.amount), User.phone, User.create_time, User.id) \
+        condition = []
+        if level != 5:
+            condition.append(Invite.current_level == level)
+        if user_id is not None:
+            condition.append(User.id == user_id)
+        query = db.query(func.count(Order.id), func.sum(Order.amount), User.phone, User.create_time, User.id,Invite.current_level) \
             .join(Order, Order.owner_id == User.id, isouter=True) \
+            .join(Invite,Invite.user_id==User.id, isouter=True)\
             .filter(User.is_superuser == False) \
-            .group_by(User.phone, User.create_time, User.id)
+            .filter(*condition)\
+            .group_by(User.phone, User.create_time, User.id,Invite.current_level)
         ret_obj = []
         total = query.count()
         users = query.offset(skip).limit(limit).all()
@@ -36,6 +44,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             ret_obj.append(UserSummary(
                 id=i.id,
                 phone=i.phone,
+                level=i.current_level,
                 create_time=str(i.create_time.strftime("%Y-%m-%d %H:%M:%S")),
                 order_count=i[0],
                 order_amount=i[1] if i[1] else 0
