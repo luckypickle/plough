@@ -86,6 +86,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             valid_mpcode = True
         if not user and valid_mpcode:
             return self.create(db, obj_in=UserCreate(phone=phone))
+        elif user is None:
+            return None
         elif valid_mpcode or verify_password(verify_code, user.hashed_password):
             return user
         else:
