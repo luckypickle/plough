@@ -26,8 +26,7 @@ class RewardInfo(RewardBase):
     register_time:Optional[datetime.datetime] = None
     son_phone:Optional[str] = None
     grand_son_phone:Optional[str] = None
-    son_order_amount:Optional[int] = 0
-    grand_son_order_amount:Optional[int] = 0
+    order_amount:Optional[int] = 0
     son_reward_amount:Optional[int] = 0
     grand_son_reward_amount:Optional[int]=0
     order_time:Optional[datetime.datetime] = None
