@@ -140,7 +140,8 @@ def bind_invite_code(
     prev_prev_user_id = None
     if prev_inviter is not None:
         prev_prev_user_id=prev_inviter.prev_invite
-        if user_invite_obj.invite_code == prev_inviter.invite_code or prev_inviter.prev_invite == user_invite_obj.user_id:
+        if user_invite_obj.invite_code == prev_inviter.invite_code or prev_inviter.prev_invite == user_invite_obj.user_id\
+                or prev_inviter.prev_prev_invite == user_invite_obj.user_id:
             raise HTTPException(
                 status_code=400,
                 detail="Invite cant be a circle",
