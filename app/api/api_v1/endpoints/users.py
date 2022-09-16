@@ -38,7 +38,7 @@ def read_users(
             level = invite_obj.current_level
         invite_users.append(schemas.InviteSummary(
             id=user.id,
-            create_time=user.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+            create_time=user.create_time,
             order_count=user.order_count,
             order_amount=user.order_amount,
             phone=user.phone,

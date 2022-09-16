@@ -36,7 +36,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             ret_obj.append(UserSummary(
                 id=i.id,
                 phone=i.phone,
-                create_time=str(i.create_time),
+                create_time=str(i.create_time.strftime("%Y-%m-%d %H:%M:%S")),
                 order_count=i[0],
                 order_amount=i[1] if i[1] else 0
             ))
