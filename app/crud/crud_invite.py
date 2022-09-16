@@ -47,6 +47,7 @@ class CRUDInvite(CRUDBase[Invite, InviteCreate, InviteUpdate]):
             conditions.append(Invite.prev_invite == prev_user_id)
         if prev_prev_user_id is not None:
             conditions.append(Invite.prev_prev_invite == prev_prev_user_id)
+        conditions.append(Invite.prev_invite != 0)
         query = query.filter(*conditions)
         return (
             query.count(),
