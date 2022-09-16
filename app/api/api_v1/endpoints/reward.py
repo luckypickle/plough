@@ -125,7 +125,7 @@ def total_info(
                     user_phone=prev_obj.phone,
                     register_time=prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                     son_phone=user_obj.phone,
-                    son_order_amout=reward_obj.order_amount,
+                    son_order_amount=reward_obj.order_amount,
                     order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                     son_reward_amount=reward_obj.prev_amount,
                     order_level=1
@@ -151,7 +151,7 @@ def total_info(
                         user_phone=prev_obj.phone,
                         register_time=prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                         son_phone=user_obj.phone,
-                        son_order_amout=reward_obj.order_amount,
+                        son_order_amount=reward_obj.order_amount,
                         order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                         son_reward_amount=reward_obj.prev_amount,
                         order_level=1
@@ -174,7 +174,7 @@ def total_info(
                     user_phone=prev_obj.phone,
                     register_time=prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                     son_phone=user_obj.phone,
-                    son_order_amout=reward_obj.order_amount,
+                    son_order_amount=reward_obj.order_amount,
                     order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                     son_reward_amount=reward_obj.prev_amount,
                     order_level=1
@@ -211,7 +211,7 @@ def total_info(
                             user_phone=prev_obj.phone,
                             register_time=prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                             son_phone=user_obj.phone,
-                            son_order_amout=reward_obj.order_amount,
+                            son_order_amount=reward_obj.order_amount,
                             order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                             son_reward_amount=reward_obj.prev_amount,
                             order_level=1
@@ -222,7 +222,7 @@ def total_info(
                                 user_phone=prev_prev_obj.phone,
                                 register_time=prev_prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                                 son_phone=prev_obj.phone,
-                                son_order_amout=reward_obj.order_amount,
+                                son_order_amount=reward_obj.order_amount,
                                 order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                                 son_reward_amount=reward_obj.prev_amount,
                                 grand_son_phone=user_obj.phone,
@@ -235,7 +235,7 @@ def total_info(
                                 user_phone=prev_obj.phone,
                                 register_time=prev_obj.create_time.strftime("%Y-%m-%d %H:%M:%S"),
                                 son_phone=user_obj.phone,
-                                son_order_amout=reward_obj.order_amount,
+                                son_order_amount=reward_obj.order_amount,
                                 order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
                                 son_reward_amount=reward_obj.prev_amount,
                                 order_level=1
