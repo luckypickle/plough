@@ -11,7 +11,6 @@ class Order(Base):
     id = Column(Integer, primary_key=True, index=True)
     order_number = Column(String, unique=True, index=True)
     product_id = Column(Integer, ForeignKey("product.id"))
-    #product = relationship("Product", back_populates="orders", foreign_keys=[product_id])
     name = Column(String, index=True)
     sex = Column(Integer, index=True)
     birthday = Column(String)

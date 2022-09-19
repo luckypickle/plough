@@ -13,6 +13,8 @@ from app.schemas.order import OrderCreate, OrderUpdate, OrderUpdateDivination, O
 from app.models.favorite import Favorite
 from app.models.master import Master
 from app.models.user import User
+from app.models.product import Product
+
 
 
 class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
@@ -81,11 +83,11 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         if order_number != "":
             conditions.append(Order.order_number == order_number)
         if name != "":
-            conditions.append(Order.owner.name == name)
+            conditions.append(Order.name == name)
         if master_name != "":
-            conditions.append(Order.master.name == master_name)
-        # if product_name != "":
-        #     conditions.append(Order.product.name == product_name)
+            conditions.append(Master.name == master_name)
+        if product_name != "":
+            conditions.append(Product.name == product_name)
         if arrange_status >=0:
             conditions.append(Order.arrange_status == arrange_status)
         if order_min_amount !=0 :
