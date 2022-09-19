@@ -83,14 +83,15 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         if name != "":
             conditions.append(Order.owner.name == name)
         if master_name != "":
-            conditions.append(Order.master.name == name)
-        # order_number: str = "",
-        # name: str = "",
-        # master_name: str = "",
-        # product_name: str = "",
-        # arrange_status: int = -1,
-        # order_min_amount: int = 0,
-        # order_max_amount: int = 999999999,
+            conditions.append(Order.master.name == master_name)
+        if product_name != "":
+            conditions.append(Order.product.name == product_name)
+        if arrange_status >=0:
+            conditions.append(Order.arrange_status == arrange_status)
+        if order_min_amount !=0 :
+            conditions.append(Order.amount>=order_min_amount)
+        if order_max_amount != 999999999:
+            conditions.append(Order.amount<=order_max_amount)
 
         query = query.filter(*conditions)
         return (

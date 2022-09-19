@@ -42,7 +42,13 @@ def read_orders(
     Retrieve orders (User & SuperUser).
     """
     if crud.user.is_superuser(current_user):
-        total, orders = crud.order.get_multi_with_condition(db, role=0, role_id=current_user.id, status=status,
+        total, orders = crud.order.get_multi_with_condition(db, order_number=order_number,
+            name=name,
+            master_name=master_name,
+            product_name=product_name,
+            arrange_status=arrange_status,
+            order_min_amount=order_min_amount,
+            order_max_amount=order_max_amount, role=0, role_id=current_user.id, status=status,
                                                             skip=skip, limit=limit)
     else:
         total, orders = crud.order.get_multi_with_condition(db, role=1, role_id=current_user.id, status=status,
