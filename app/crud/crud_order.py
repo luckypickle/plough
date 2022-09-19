@@ -84,8 +84,8 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             conditions.append(Order.owner.name == name)
         if master_name != "":
             conditions.append(Order.master.name == master_name)
-        if product_name != "":
-            conditions.append(Order.product.name == product_name)
+        # if product_name != "":
+        #     conditions.append(Order.product.name == product_name)
         if arrange_status >=0:
             conditions.append(Order.arrange_status == arrange_status)
         if order_min_amount !=0 :
