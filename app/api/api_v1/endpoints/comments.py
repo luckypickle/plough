@@ -85,6 +85,8 @@ def read_comment_by_master(
 
 @router.get("/list",response_model=schemas.CommentListQuery)
 def get_list(
+        phone:str="",
+        master_name:str = "",
         startTime:int =0,
         endTime:int=999999999,
         skip: int = 0,
@@ -96,7 +98,7 @@ def get_list(
     super user get all comments
     '''
 
-    total,comments = crud.comment.get_all_merge_order(db,  skip=skip, limit=limit)
+    total,comments = crud.comment.get_all_merge_order(db, phone_or_email=phone,master_name=master_name,start_time=startTime,end_time=endTime, skip=skip, limit=limit)
     ret = schemas.CommentListQuery(total=0,comments=[])
     for one_comm in comments:
         # print(one_comm.create_time)

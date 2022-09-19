@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func,or_
 
 from app.crud.base import CRUDBase
 from app.crud.crud_master import CRUDMaster
@@ -12,6 +12,7 @@ from app.models.order import Order
 from app.models.user import User
 from app.models.master import Master
 from app.models.product import Product
+from datetime import datetime
 
 
 class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
@@ -40,7 +41,7 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
         return db.query(Comment).filter(Comment.status == 0).order_by(Comment.id.asc()).offset(skip).limit(limit).all()
 
     @staticmethod
-    def get_all_merge_order(db: Session, skip: int = 0, limit: int = 100) -> (int, Optional[Comment]):
+    def get_all_merge_order(db: Session,phone_or_email:str="",master_name:str="",start_time:int=0,end_time:int=999999999, skip: int = 0, limit: int = 100) -> (int, Optional[Comment]):
         sql = db.query(Comment.id, Comment.order_id, Comment.status, Comment.master_id, Comment.rate, Comment.content,
                        Comment.user_id,
                        Comment.create_time, User.phone, Master.name.label('master_name'),
@@ -48,6 +49,14 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
             filter(Order.product_id == Product.id).filter(Order.owner_id == User.id).filter(
             Order.master_id == Master.id). \
             filter(Comment.status == 0)
+        if start_time != 0 :
+            sql = sql.filter(Comment.create_time >= datetime.fromtimestamp(start_time))
+        if end_time != 999999999:
+            sql = sql.filter(Comment.create_time <= datetime.fromtimestamp(end_time))
+        if phone_or_email !="":
+            sql =sql.filter(or_(User.phone==phone_or_email,User.email==phone_or_email))
+        if master_name != "":
+            sql = sql.filter(Master.name==master_name)
 
         return (sql.count(), sql.order_by(Comment.id.asc()).offset(skip).limit(limit).all())
 
