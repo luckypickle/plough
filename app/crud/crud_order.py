@@ -138,6 +138,13 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         if total is None:
             total = 0
         return total
+
+    def get_order_reward_by_master(self,db:Session,master_id:int):
+        total = db.query(func.sum(Order.amount*Order.shareRate/100)).filter(Order.master_id==master_id,Order.status==1).scalar()
+        if total is None:
+            return 0
+        return total
+
     def get_favorite_open_orders(
             self, db: Session, *,
             user_id:int,

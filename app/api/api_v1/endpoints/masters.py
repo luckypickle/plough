@@ -26,7 +26,7 @@ def read_masters(
     """
     Retrieve master list for placing order.
     """
-    masters = crud.master.get_multi(db, skip=skip, limit=limit)
+    masters = crud.master.get_multi_by_sort(db, skip=skip, limit=limit)
     ret_obj = []
     for m in masters:
         if m.status == 1:
@@ -57,6 +57,47 @@ def read_masters(
         masters=masters
     )
     return ret_obj
+@router.get("/listWithReward", response_model=schemas.MasterRewardQuery)
+def read_masters(
+        db: Session = Depends(deps.get_db),
+        status: int = -1,
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    """
+    Retrieve masters. (superuser only)
+    """
+    total, masters = crud.master.get_multi_with_conditions(db=db, status=status, skip=skip, limit=limit)
+    ret_obj = schemas.MasterRewardQuery(
+        total=total,
+        masters=[]
+    )
+    for one_data in masters:
+        sum = crud.order.get_order_reward_by_master(db,one_data.id)
+        ret_obj.masters.append(
+            schemas.MasterReward(
+                id=one_data.id,
+        name= one_data.name,
+        rate= one_data.rate,
+        order_number=one_data.order_number,
+        order_amount= one_data.order_amount,
+        price= one_data.price,
+        create_time= str(one_data.create_time),
+        desc= one_data.desc,
+        status= one_data.status,
+        phone=one_data.phone,
+        email= one_data.email,
+
+        avatar= one_data.avatar,
+        sort_weight=one_data.sort_weight,
+                total_reward=sum,
+            )
+        )
+
+    return ret_obj
+
+
 
 
 @router.get("/listWithRate", response_model=schemas.MasterRateQuery)
@@ -199,6 +240,15 @@ def update_bill(
     order = crud.bill.update(db=db, db_obj=bill, obj_in=bill_in)
     return  make_return(1,"success")
 
+@router.put('/productPrice')
+def set_product_price(db: Session = Depends(deps.get_db),
+                      *,
+        obj_in: schemas.MasterProdcutCreate,
+        current_user: models.User = Depends(deps.get_current_active_superuser),):
+
+    bill = crud.masterProduct.create_price(db,obj_in)
+
+    return make_return(1,"success")
 
 
 

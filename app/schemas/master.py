@@ -17,6 +17,7 @@ class MasterBase(BaseModel):
     email:Optional[str] = None
     name: Optional[str] = None
     avatar: Optional[str] = None
+    sort_weight: Optional[int]= None
 
 
 # Properties to receive via API on creation
@@ -77,6 +78,10 @@ class MasterInDBBase(MasterBase):
 # Additional properties to return via API
 class Master(MasterInDBBase):
     pass
+class MasterReward(MasterInDBBase):
+    total_reward: Optional[int]=None
+
+
 
 class MasterRate(MasterInDBBase):
     avg_rate:Optional[str]=None
@@ -85,6 +90,10 @@ class MasterRate(MasterInDBBase):
 class MasterQuery(BaseModel):
     total: int
     masters: List[Master]
+
+class MasterRewardQuery(BaseModel):
+    total: int
+    masters: List[MasterReward]
 
 class MasterRateQuery(BaseModel):
     total: int

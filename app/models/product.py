@@ -10,3 +10,4 @@ class Product(Base):
     name = Column(String, index=True, nullable=False)
     desc = Column(String)
     status = Column(Integer, nullable=False)
+    sort_weight = Column(Integer,default=1,comment="排序权限")

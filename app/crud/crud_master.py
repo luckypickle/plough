@@ -28,7 +28,6 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
     def get_by_email(db: Session, *, email: str) -> Optional[Master]:
         return db.query(Master).filter(Master.email == email).first()
 
-
     @staticmethod
     def get_multi_with_conditions(db: Session, *, status: int, skip: int = 0, limit: int = 100) -> (int, Optional[
         Master]):

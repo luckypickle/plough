@@ -8,12 +8,19 @@ class ProductBase(BaseModel):
     name: Optional[str] = None
     desc: Optional[str] = None
     status: Optional[int] = None
+    sort_weight: Optional[int] = None
 
 
 class ProductForOrder(BaseModel):
     name: Optional[str] = None
     id: Optional[int] = None
     desc: Optional[str] = None
+
+class ProductForOrderPrice(BaseModel):
+    name: Optional[str] = None
+    id: Optional[int] = None
+    desc: Optional[str] = None
+    price: Optional[int] = None
 
 
 # Properties to receive via API on creation

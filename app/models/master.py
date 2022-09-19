@@ -18,3 +18,5 @@ class Master(Base):
     status = Column(Integer, index=True, comment="状态: 0 - 未激活, 1 - 激活, 2 - 失效, 3 - 待激活")
     orders = relationship("Order", back_populates="master")
     order_amount = Column(Integer, default=0, comment="订单金额")
+    sort_weight = Column(Integer,default=1,comment="排序权重")
+
