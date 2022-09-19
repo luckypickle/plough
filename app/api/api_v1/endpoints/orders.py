@@ -21,7 +21,7 @@ from app.api import util
 
 router = APIRouter()
 def isTestPay():
-    return True
+    return False
 
 @router.get("/", response_model=schemas.OrderQuery)
 def read_orders(

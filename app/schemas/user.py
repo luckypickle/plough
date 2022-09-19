@@ -18,6 +18,7 @@ class UserSummary(UserBase):
     create_time: Optional[str] = None
     order_count: Optional[int] = None
     order_amount: Optional[int] = None
+    level:Optional[int] = None
 
 
 # Properties to receive via API on update
