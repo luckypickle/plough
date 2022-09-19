@@ -19,7 +19,7 @@ class CRUDMasterProduct(CRUDBase[MasterProduct, MasterProdcutCreate, MasterProdc
             self.create(db, obj_in=masterProduct)
         else:
             upobj = MasterProdcutUpdate(price = masterProduct.price)
-            self.update(db,res,upobj)
+            self.update(db,db_obj=res,obj_in=upobj)
         return True
 
     @staticmethod
