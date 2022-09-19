@@ -45,6 +45,7 @@ class OrderUpdate(OrderCreate):
     status: Optional[int]
     is_open: Optional[int]
     bill_state: Optional[int]
+    divination: Optional[str] = None
 
 
 class OrderUpdateDivination(OrderBase):
