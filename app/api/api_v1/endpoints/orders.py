@@ -26,6 +26,11 @@ def isTestPay():
 @router.get("/", response_model=schemas.OrderQuery)
 def read_orders(
         db: Session = Depends(deps.get_db),
+        order_number: str = "",
+        name: str = "",
+        master_name:str = "",
+        product_name:str = "",
+
         status: int = -1,
         skip: int = 0,
         limit: int = 100,
@@ -74,7 +79,9 @@ def read_orders(
             master_avatar=o.master.avatar,
             owner=o.owner.user_name,
             is_open=o.is_open,
-            comment_rate=o.comment_rate
+            comment_rate=o.comment_rate,
+            owner_email= o.owner.email,
+            owner_phone= o.owner.phone,
         ))
     return ret_obj
 

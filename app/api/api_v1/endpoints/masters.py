@@ -43,6 +43,7 @@ def read_masters(
 @router.get("/list", response_model=schemas.MasterQuery)
 def read_masters(
         db: Session = Depends(deps.get_db),
+        name: str = "",
         status: int = -1,
         skip: int = 0,
         limit: int = 100,
@@ -51,7 +52,8 @@ def read_masters(
     """
     Retrieve masters. (superuser only)
     """
-    total, masters = crud.master.get_multi_with_conditions(db=db, status=status, skip=skip, limit=limit)
+
+    total, masters = crud.master.get_multi_with_conditions(db=db,name=name, status=status, skip=skip, limit=limit)
     ret_obj = schemas.MasterQuery(
         total=total,
         masters=masters

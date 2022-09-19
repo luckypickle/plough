@@ -71,6 +71,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             conditions.append(Order.master_id == role_id)
         if status >= 0:
             conditions.append(Order.status == status)
+
         query = query.filter(*conditions)
         return (
             query.count(),

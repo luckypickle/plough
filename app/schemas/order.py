@@ -84,6 +84,8 @@ class Order(OrderInDBBase):
     owner: Optional[str] = None
     product: Optional[str] = None
     comment_rate: Optional[int] = None
+    owner_phone: Optional[str] = None
+    owner_email: Optional[str] = None
 
 class FavOrder(Order):
     favorite_id:Optional[int]=None
