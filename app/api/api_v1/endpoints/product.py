@@ -51,7 +51,7 @@ def read_product(
     products = crud.product.get_multi_by_sort(db, skip=skip, limit=limit)
     prices = crud.masterProduct.get_master_product_price(db,master_id)
     master = crud.master.get(db,master_id)
-    if not current_user.is_superuser():
+    if not crud.user.is_superuser(current_user):
         if master is None or master.status!=1:
             raise HTTPException(status_code=400, detail="The master id not in this system.",)
     ret_obj = []
