@@ -14,7 +14,7 @@ class CRUDMasterProduct(CRUDBase[MasterProduct, MasterProdcutCreate, MasterProdc
 
 
     def create_price(self, db: Session, masterProduct: MasterProdcutCreate) -> Any:
-        res = db.query(MasterProduct).filter(MasterProduct.master_id == MasterProduct.master_id, MasterProduct.product_id == masterProduct.product_id).first()
+        res = db.query(MasterProduct).filter(MasterProduct.master_id == masterProduct.master_id, MasterProduct.product_id == masterProduct.product_id).first()
         if res is None:
             self.create(db, obj_in=masterProduct)
         else:

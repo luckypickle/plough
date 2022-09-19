@@ -30,7 +30,7 @@ def read_orders(
         name: str = "",
         master_name:str = "",
         product_name:str = "",
-
+        arrange_status:int = -1,
         status: int = -1,
         skip: int = 0,
         limit: int = 100,
