@@ -38,7 +38,7 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
             query.filter(Master.name==name)
         return (
             query.count(),
-            query.offset(skip).limit(limit).all()
+            query.order_by(Master.sort_weight.desc()).offset(skip).limit(limit).all()
         )
 
 

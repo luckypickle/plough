@@ -31,6 +31,8 @@ def read_orders(
         master_name:str = "",
         product_name:str = "",
         arrange_status:int = -1,
+        order_min_amount:int = 0,
+        order_max_amount:int = 999999999,
         status: int = -1,
         skip: int = 0,
         limit: int = 100,

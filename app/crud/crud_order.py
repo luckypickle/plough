@@ -59,6 +59,13 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
     def get_multi_with_condition(
             self, db: Session, *,
             role_id: int,
+            order_number: str = "",
+            name: str = "",
+            master_name: str = "",
+            product_name: str = "",
+            arrange_status: int = -1,
+            order_min_amount: int = 0,
+            order_max_amount: int = 999999999,
             role: int = 0,
             status: int = -1,
             skip: int = 0, limit: int = 100
@@ -71,6 +78,19 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             conditions.append(Order.master_id == role_id)
         if status >= 0:
             conditions.append(Order.status == status)
+        if order_number != "":
+            conditions.append(Order.order_number == order_number)
+        if name != "":
+            conditions.append(Order.owner.name == name)
+        if master_name != "":
+            conditions.append(Order.master.name == name)
+        # order_number: str = "",
+        # name: str = "",
+        # master_name: str = "",
+        # product_name: str = "",
+        # arrange_status: int = -1,
+        # order_min_amount: int = 0,
+        # order_max_amount: int = 999999999,
 
         query = query.filter(*conditions)
         return (
