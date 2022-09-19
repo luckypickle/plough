@@ -31,7 +31,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             condition.append(Invite.current_level == level)
         if user_id is not None:
             condition.append(User.id == user_id)
-        query = db.query(func.count(Order.id), func.sum(Order.amount), User.phone, User.create_time, User.id,Invite.current_level) \
+        query = db.query( User.phone, User.create_time, User.id,Invite.current_level) \
             .join(Order, Order.owner_id == User.id, isouter=True) \
             .join(Invite,Invite.user_id==User.id, isouter=True)\
             .filter(User.is_superuser == False) \
@@ -41,13 +41,15 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         total = query.count()
         users = query.offset(skip).limit(limit).all()
         for i in users:
+            order_count = db.query(func.count(Order.id)).filter(Order.owner_id == i.id,Order.status==1).first()
+            order_amount = db.query(func.sum(Order.amount)).filter(Order.owner_id == i.id, Order.status == 1).first()
             ret_obj.append(UserSummary(
                 id=i.id,
                 phone=i.phone,
                 level=i.current_level,
                 create_time=str(i.create_time.strftime("%Y-%m-%d %H:%M:%S")),
-                order_count=i[0],
-                order_amount=i[1] if i[1] else 0
+                order_count=order_count[0],
+                order_amount=order_amount[0] if order_amount[0] else 0
             ))
         return (total, ret_obj)
 
