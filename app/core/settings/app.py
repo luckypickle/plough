@@ -47,6 +47,12 @@ class AppSettings(BaseAppSettings):
     SERVER_HOST = ''
     EMAIL_RESET_TOKEN_EXPIRE_HOURS = 3600
 
+    COS_SECRET_ID=""
+    COS_SECRET_KEY=""
+    COS_BUCKET_NAME =""
+    COS_REGION = ""
+    COS_REQUEST_URL=""
+
     mpcode_request_interval = 60
     emailcode_request_interval = 600
     debug: bool = False

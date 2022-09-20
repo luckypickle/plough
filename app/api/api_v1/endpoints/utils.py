@@ -1,6 +1,6 @@
 from typing import Any, List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,File
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
 from app import models, schemas, crud
@@ -10,6 +10,9 @@ from app.utils import send_test_email
 from app.bazi.citys import cal_zone
 from app.bazi.bazi import getYearJieQi,get_birthday_by_bazi
 from app.api.util import make_return
+import hashlib
+import os
+from app.cos_utils import upload_file_to_cos,get_read_url
 router = APIRouter()
 
 
@@ -133,3 +136,27 @@ def update_version(
         )
     version_new = crud.version.update(db, db_obj=version, obj_in=obj_in)
     return version_new
+
+
+@router.post("/uploadFile",response_model=Any)
+async def uploadfile(file_type:str,file: bytes = File(),
+                     db: Session = Depends(deps.get_db),
+current_user: models.User = Depends(deps.get_current_user),
+    ):
+    file_name = hashlib.md5(file).hexdigest()
+
+    res  = crud.upload_history.get_by_file_name(db,file_name)
+    if res is not None:
+        #if os.path.exists("./uploadfile/"+file_name):
+        return make_return(1, res.url)
+        #文件已存在从数据库中查找
+
+    else:
+        with open("./uploadfile/"+file_name+"."+file_type,"wb") as fx:
+            fx.write(file)
+    res = upload_file_to_cos(file_name+"."+file_type)
+    if res:
+        #存入数据库
+        url = get_read_url(file_name+"."+file_type)
+        crud.upload_history.create_upload(db,schemas.UploadHistoryCreate(file_name=file_name,url=url,status=1))
+        return make_return(1,url)

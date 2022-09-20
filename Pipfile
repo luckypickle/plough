@@ -64,6 +64,9 @@ websockets = "==10.3"
 wechatpayv3 = "==1.2.30"
 zipp = "==3.8.1"
 pytz = "==2022.2.1"
+cos-python-sdk-v5 = "==1.9.20"
+crcmod= "==1.7"
+dicttoxml= "==1.7.4"
 
 [dev-packages]
 

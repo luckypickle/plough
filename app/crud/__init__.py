@@ -12,6 +12,7 @@ from .crud_reward import reward
 from .crud_withdraw import withdraw
 from .crud_bill import bill
 from .crud_master_product import masterProduct
+from .crud_upload_history import upload_history
 
 # For a new basic set of CRUD operations you could just do
 
