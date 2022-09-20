@@ -64,7 +64,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             order_number: str = "",
             name: str = "",
             master_name: str = "",
-            prodcut_id: int = -1,
+            product_id: int = -1,
             arrange_status: int = -1,
             order_min_amount: int = 0,
             order_max_amount: int = 999999999,
@@ -87,8 +87,8 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         if master_name != "":
             query = query.join(Master,Master.id == Order.master_id)
             conditions.append(Master.name == master_name)
-        if prodcut_id != -1:
-            conditions.append(Order.product_id == prodcut_id)
+        if product_id != -1:
+            conditions.append(Order.product_id == product_id)
         if arrange_status >=0:
             conditions.append(Order.arrange_status == arrange_status)
         if order_min_amount !=0 :
