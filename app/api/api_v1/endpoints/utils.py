@@ -148,15 +148,17 @@ current_user: models.User = Depends(deps.get_current_user),
     res  = crud.upload_history.get_by_file_name(db,file_name)
     if res is not None:
         #if os.path.exists("./uploadfile/"+file_name):
-        return make_return(1, res.url)
+        return make_return(200, res.url)
         #文件已存在从数据库中查找
 
     else:
         with open("./uploadfile/"+file_name+"."+file_type,"wb") as fx:
             fx.write(file)
-    res = upload_file_to_cos(file_name+"."+file_type)
-    if res:
-        #存入数据库
-        url = get_read_url(file_name+"."+file_type)
-        crud.upload_history.create_upload(db,schemas.UploadHistoryCreate(file_name=file_name,url=url,status=1))
-        return make_return(200,url)
+        res = upload_file_to_cos(file_name+"."+file_type)
+        if res:
+            #存入数据库
+            url = get_read_url(file_name+"."+file_type)
+            crud.upload_history.create_upload(db,schemas.UploadHistoryCreate(file_name=file_name,url=url,status=1))
+            return make_return(200,url)
+        else:
+            return make_return(400,"upload file to cos failed,please contact admin!")
