@@ -31,11 +31,13 @@ class OrderCreate(OrderBase):
     pic1: Optional[str]=None
     pic2: Optional[str]=None
     pic3: Optional[str]=None
+    memo: Optional[str]=None
 
 class OrderPic(BaseModel):
     pic1: Optional[str] = None
     pic2: Optional[str] = None
     pic3: Optional[str] = None
+    memo: Optional[str] = None
 
 
 # Properties to receive on item update

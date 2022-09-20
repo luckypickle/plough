@@ -35,3 +35,4 @@ class Order(Base):
     pic1 = Column(Text,default=None,comment="Pic1")
     pic2 = Column(Text,default=None,comment="Pic2")
     pic3 = Column(Text,default=None,comment="Pic3")
+    memo = Column(Text,default=None,comment="memo")
