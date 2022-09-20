@@ -57,7 +57,7 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
             sql =sql.filter(or_(User.phone==phone_or_email,User.email==phone_or_email))
         if master_name != "":
             sql = sql.filter(Master.name==master_name)
-
+        print(sql)
         return (sql.count(), sql.order_by(Comment.id.asc()).offset(skip).limit(limit).all())
 
     @staticmethod

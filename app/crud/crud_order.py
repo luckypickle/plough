@@ -85,6 +85,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         if name != "":
             conditions.append(Order.name == name)
         if master_name != "":
+            query = query.join(Master,Master.id == Order.master_id)
             conditions.append(Master.name == master_name)
         if prodcut_id != -1:
             conditions.append(Order.product_id == prodcut_id)
