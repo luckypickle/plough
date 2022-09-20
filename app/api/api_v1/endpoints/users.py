@@ -1,3 +1,4 @@
+import datetime
 from typing import Any, List
 import json
 import pytz
@@ -306,7 +307,32 @@ def delete_history( history_id:int ,
         return "success"
     else:
         return "failed"
-
+@router.get("/user_statistics",response_model=Any)
+def get_user_statistics(
+        *,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_superuser),
+)-> Any:
+    """
+    Get user statistics info
+    """
+    today = datetime.date.today()
+    oneday = datetime.timedelta(days=1)
+    yesterday = today - oneday
+    today_start=int(datetime.datetime(year=today.year,month=today.month,day=today.day).timestamp())
+    yesterday_start = int(datetime.datetime(year=yesterday.year,month=yesterday.month,day=yesterday.day).timestamp())
+    yesterday_count = crud.user.get_user_count_by_time(db,start_time=yesterday_start,end_time=today_start)
+    today_count = crud.user.get_user_count_by_time(db,start_time=today_start,end_time=9999999999)
+    total_count = crud.user.get_user_count_by_time(db,start_time=0,end_time=9999999999)
+    order_count = crud.order.get_order_count(db,user_id=None)
+    order_amount = crud.order.get_order_amount(db,user_id=None)
+    return schemas.UserStatistics(
+        yesterday_register=yesterday_count,
+        today_register=today_count,
+        total_register=total_count,
+        total_order_count=order_count,
+        total_payed_amount=order_amount
+    )
 
 
 @router.get("/{user_id}", response_model=schemas.User)

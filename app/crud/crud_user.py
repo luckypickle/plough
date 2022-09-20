@@ -15,7 +15,7 @@ from app.models.mpcode import MPCode
 from app.models.order import Order
 from app.models.invite import Invite
 from app.schemas.user import UserCreate, UserUpdate, UserSummary
-
+import datetime
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     @staticmethod
@@ -158,7 +158,13 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if not verify_password(password, user.hashed_password):
             return None
         return user
-
+    @staticmethod
+    def get_user_count_by_time(db:Session,*,start_time:int,end_time:int)->int:
+        conditions = []
+        conditions.append(User.create_time >= datetime.datetime.fromtimestamp(start_time))
+        conditions.append(User.create_time < datetime.datetime.fromtimestamp(end_time))
+        count = db.query(func.count(User.id)).filter(*conditions).first()
+        return count[0]
     @staticmethod
     def is_active(user: User) -> bool:
         if not isinstance(user, User):

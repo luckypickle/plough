@@ -1,7 +1,7 @@
 from .order import Order, OrderCreate, OrderQuery, OrderUpdate, OrderUpdateDivination,MasterOrderQuery,FavOrderQuery,FavOrder,OrderPic
 from .msg import Msg
 from .token import Token, TokenPayload
-from .user import User, UserCreate, UserInDB, UserUpdate, UserSummary
+from .user import User, UserCreate, UserInDB, UserUpdate, UserSummary,UserStatistics
 from .master import Master, MasterCreate, MasterUpdate, MasterRegister, MasterForOrder, MasterQuery,MasterRateQuery,MasterRate,MasterForOrderRate,MasterRewardQuery,MasterReward
 from .mpcode import MPCode, MPCodeCreate, MPCodeInDB, MPCodeUpdate
 from .product import Product, ProductCreate, ProductUpdate, ProductForOrder,ProductForOrderPrice
