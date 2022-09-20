@@ -419,7 +419,14 @@ def create_order(
     product = crud.product.get(db=db, id=order_in.product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    order_in.amount = master.price
+    price = crud.masterProduct.get_master_product_price_by_id(db, master.id)
+    if price is None:
+        order_in.amount = master.price
+    else:
+        order_in.amount = price.price
+
+
+
     order_in.shareRate = master.rate
     order = crud.order.create_with_owner(db=db, obj_in=order_in, owner_id=current_user.id)
     with open(settings.PRIVATE_KEY, "r") as f:

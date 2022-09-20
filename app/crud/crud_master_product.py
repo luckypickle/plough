@@ -33,6 +33,10 @@ class CRUDMasterProduct(CRUDBase[MasterProduct, MasterProdcutCreate, MasterProdc
     def get_master_product_price(db:Session,master_id:int):
         res = db.query(MasterProduct).filter(MasterProduct.master_id == master_id).all()
         return res
+    @staticmethod
+    def get_master_product_price_by_id(db:Session,master_id:int,product_id:int):
+        res = db.query(MasterProduct).filter(MasterProduct.master_id == master_id,MasterProduct.product_id==product_id).first()
+        return res
 
 
 
