@@ -10,6 +10,7 @@ class UserBase(BaseModel):
 
 # Properties to receive via API on creation
 class UserCreate(UserBase):
+    email: Optional[str] = None
     pass
 
 # Properties to show in Admin page

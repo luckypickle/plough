@@ -38,13 +38,17 @@ def withdraw_money(
         current_time=datetime.datetime.now()
         if last_withdraw_obj.create_time.year == current_time.year and last_withdraw_obj.create_time.month == current_time.month:
             raise HTTPException(status_code=400, detail="Only withdraw once money")
+    if current_user.phone is None:
+        phone = current_user.email
+    else:
+        phone = current_user.phone
     withdraw_obj = schemas.WithdrawCreate(
         user_id=current_user.id,
         pay_name=real_name,
         pay_card_num=card_num,
         pay_amount=amount,
         pay_status=0,
-        phone=current_user.phone,
+        phone=phone,
         create_user_time=current_user.create_time
     )
     crud.withdraw.create(db,obj_in=withdraw_obj)

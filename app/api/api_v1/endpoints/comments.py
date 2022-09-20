@@ -103,10 +103,14 @@ def get_list(
     for one_comm in comments:
         # print(one_comm.create_time)
         # print(one_comm[8])
+        if one_comm.phone is None:
+            phone = one_comm.email
+        else:
+            phone = one_comm.phone
         create_time = one_comm.create_time.strftime("%Y-%m-%d %H:%M:%S")
         ret.comments.append(schemas.CommentFullData(
             create_time=create_time,
-            user_id=one_comm.phone,
+            user_id=phone,
         master_name=one_comm.master_name,
         product_name=one_comm.product_name,
             id=one_comm.id,

@@ -6,7 +6,7 @@ from app.db.base_class import Base
 class Invite(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"), unique=True, index=True, nullable=False)
-    phone = Column(String, ForeignKey("user.phone"), unique=True, index=True)
+    phone = Column(String, unique=True, index=True)
     invite_code = Column(String, comment="邀请码", nullable=False)
     prev_invite = Column(Integer, index=True,default=0)
     prev_prev_invite = Column(Integer, index=True,default=0)

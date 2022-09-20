@@ -28,16 +28,20 @@ def get_invite_info(
     invite_info = crud.invite.get_invite_info(db, user_id=current_user.id)
     if invite_info is None:
         invite_code = utils.generate_invite_code()
+        if current_user.phone is None:
+            phone = current_user.email
+        else:
+            phone = current_user.phone
         invite_obj = schemas.InviteCreate(
             user_id=current_user.id,
-            phone=current_user.phone,
+            phone=phone,
             invite_code=invite_code,
             register_time=current_user.create_time.astimezone(tz)
         )
         crud.invite.create(db, obj_in=invite_obj)
         ret_obj = schemas.InviteForInfo(
             user_id=current_user.id,
-            phone=current_user.phone,
+            phone=phone,
             invite_code=invite_code,
             level=0,
             invited_count=0,
@@ -51,7 +55,10 @@ def get_invite_info(
         prev_user = crud.user.get(db, id=invite_info.prev_invite)
         prev_phone = ""
         if prev_user is not None:
-            prev_phone = prev_user.phone
+            if prev_user.phone is None:
+                prev_phone = prev_user.email
+            else:
+                prev_phone = prev_user.phone
         total_amount = crud.reward.get_first_total_reward(db,user_id=current_user.id)+ crud.reward.get_second_total_reward(db,user_id=current_user.id)
         ret_obj = schemas.InviteForInfo(
             user_id= invite_info.user_id,
@@ -231,7 +238,7 @@ def invite_order_info(
             )
         prev_user_id= prev_user_obj.id
     if prev_prev_phone is not None and prev_prev_phone != "":
-        prev_prev_user_obj = crud.user.get_by_phone(db, phone=prev_phone)
+        prev_prev_user_obj = crud.user.get_by_phone(db, phone=prev_prev_phone)
         if prev_prev_user_obj is None:
             raise HTTPException(
                 status_code=400,
@@ -253,11 +260,17 @@ def invite_order_info(
         if invited_user_obj.prev_invite is not None:
             prev_user = crud.user.get(db,id=invited_user_obj.prev_invite)
             if prev_user is not None:
-                prev_phone= prev_user.phone
+                if prev_user.phone is None:
+                    prev_phone = prev_user.email
+                else:
+                    prev_phone = prev_user.phone
         if invited_user_obj.prev_invite is not None:
             prev_prev_user = crud.user.get(db,id=invited_user_obj.prev_prev_invite)
             if prev_prev_user is not None:
-                prev_prev_phone= prev_prev_user.phone
+                if prev_prev_user.phone is None:
+                    prev_prev_phone = prev_prev_user.email
+                else:
+                    prev_prev_phone = prev_prev_user.phone
         ret.invite_orders.append(schemas.InviteOrder(
             phone=invited_user_obj.phone,
             register_time=invited_user_obj.register_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S"),

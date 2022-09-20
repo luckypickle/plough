@@ -31,21 +31,25 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             condition.append(Invite.current_level == level)
         if user_id is not None:
             condition.append(User.id == user_id)
-        query = db.query( User.phone, User.create_time, User.id,Invite.current_level) \
+        query = db.query(User.phone, User.create_time, User.id,Invite.current_level,User.email) \
             .join(Order, Order.owner_id == User.id, isouter=True) \
             .join(Invite,Invite.user_id==User.id, isouter=True)\
             .filter(User.is_superuser == False) \
             .filter(*condition)\
-            .group_by(User.phone, User.create_time, User.id,Invite.current_level)
+            .group_by(User.phone, User.create_time, User.id,Invite.current_level,User.email)
         ret_obj = []
         total = query.count()
         users = query.offset(skip).limit(limit).all()
         for i in users:
             order_count = db.query(func.count(Order.id)).filter(Order.owner_id == i.id,Order.status==1).first()
             order_amount = db.query(func.sum(Order.amount)).filter(Order.owner_id == i.id, Order.status == 1).first()
+            if i.phone is None:
+                phone = i.email
+            else:
+                phone = i.phone
             ret_obj.append(UserSummary(
                 id=i.id,
-                phone=i.phone,
+                phone=phone,
                 level=i.current_level,
                 create_time=str(i.create_time.strftime("%Y-%m-%d %H:%M:%S")),
                 order_count=order_count[0],
@@ -55,6 +59,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     @staticmethod
     def get_by_phone(db: Session, *, phone: str) -> Optional[User]:
+        if phone is None:
+            return None
+        if phone.count("@") != 0:
+            return db.query(User).filter(User.email == phone).first()
         return db.query(User).filter(User.phone == phone).first()
     def register(self ,db: Session, *, phone: str,verify_code: str) -> (bool,Optional[User]):
         user = CRUDUser.get_by_phone(db, phone=phone)
@@ -68,8 +76,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if mpcode and mpcode.code == verify_code:
             valid_mpcode = True
         if user is None and valid_mpcode:
-            user_in = UserCreate(
-                phone=phone)
+            if phone.count("@") != 0:
+                user_in = UserCreate(email=phone)
+            else:
+                user_in = UserCreate(phone=phone)
             return valid_mpcode, self.create(db,obj_in=user_in)
         else:
             return valid_mpcode, None
@@ -87,6 +97,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if phone == "11012345678" and verify_code=="778899":
             valid_mpcode = True
         if not user and valid_mpcode:
+            if phone.count("@") != 0:
+                return self.create(db, obj_in=UserCreate(email=phone))
             return self.create(db, obj_in=UserCreate(phone=phone))
         elif user is None:
             return None
@@ -118,6 +130,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db_obj.user_name = str(uuid.uuid4())
         db_obj.is_superuser = False
         db_obj.phone = obj_in.phone
+        db_obj.email = obj_in.email
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
