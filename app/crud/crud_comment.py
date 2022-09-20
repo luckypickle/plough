@@ -26,7 +26,7 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
 
     @staticmethod
     def get_by_master_id(db: Session, master_id: int, skip: int = 0, limit: int = 100) -> (int, int, Optional[Comment]):
-        sql = db.query(Comment).filter(Comment.master_id == master_id)
+        sql = db.query(Comment).filter(Comment.master_id == master_id).filter(Comment.status == 0)
         sum_sql = db.query(func.sum(Comment.rate)).filter(Comment.master_id == master_id).filter(Comment.status == 0)
 
         return (sum_sql.scalar(), sql.count(), sql.offset(skip).limit(limit).all())
