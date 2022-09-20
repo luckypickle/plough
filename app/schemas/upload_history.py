@@ -32,3 +32,6 @@ class UploadHistoryInDBBase(UploadHistoryBase):
 # Additional properties to return via API
 class UploadHistory(UploadHistoryInDBBase):
     pass
+
+class FileType(BaseModel):
+    file_type:str

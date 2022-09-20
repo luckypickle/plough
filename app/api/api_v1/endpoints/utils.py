@@ -1,6 +1,6 @@
 from typing import Any, List
 
-from fastapi import APIRouter, Depends, HTTPException,File
+from fastapi import APIRouter, Depends, HTTPException,File,Form
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
 from app import models, schemas, crud
@@ -139,7 +139,7 @@ def update_version(
 
 
 @router.post("/uploadFile",response_model=Any)
-async def uploadfile(file_type:str,file: bytes = File(),
+async def uploadfile(file: bytes = File(),file_type:str=Form(...),
                      db: Session = Depends(deps.get_db),
 current_user: models.User = Depends(deps.get_current_user),
     ):

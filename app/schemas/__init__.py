@@ -15,4 +15,4 @@ from .bill import BillQuery,BillCreate,BillList,BillUpdate
 from .master_product import MasterProduct,MasterProdcutCreate,MasterProdcutUpdate
 
 from .favorite import FavoriteCreate,Favorite,FavoriteUpdate
-from .upload_history import UploadHistory,UploadHistoryCreate,UploadHistoryUpdate
+from .upload_history import UploadHistory,UploadHistoryCreate,UploadHistoryUpdate,FileType
