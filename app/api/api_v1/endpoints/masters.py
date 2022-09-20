@@ -264,6 +264,14 @@ def generate_bill(db :Session):
     for one_data in all_unhandle_bill:
         bill_date = one_data.pay_time.strftime("%Y-%m")
         master_id = one_data.master_id
+        if one_data.shareRate is None:
+            shareRate = 0
+        else:
+            shareRate =  one_data.shareRate
+        if one_data.amount is None:
+            order_amount=0
+        else:
+            order_amount = one_data.amount
         if master_id in cache_change:
             if bill_date in cache_change[str(master_id)]:
                 cache_change[str(master_id)][bill_date] += one_data.amount * one_data.shareRate
