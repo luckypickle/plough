@@ -157,9 +157,9 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         return sql.all()
 
     def get_order_count(self,db:Session,user_id:int):
-        return db.query(Order).filter((Order.owner_id == user_id)).count()
+        return db.query(Order).filter(Order.owner_id == user_id,Order.status==1).count()
     def get_order_amount(self,db:Session,user_id:int):
-        total = db.query(func.sum(Order.amount)).filter(Order.owner_id == user_id).scalar()
+        total = db.query(func.sum(Order.amount)).filter(Order.owner_id == user_id,Order.status==1).scalar()
         if total is None:
             total = 0
         return total
