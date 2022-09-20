@@ -274,11 +274,11 @@ def generate_bill(db :Session):
             order_amount = one_data.amount
         if master_id in cache_change:
             if bill_date in cache_change[str(master_id)]:
-                cache_change[str(master_id)][bill_date] += one_data.amount * one_data.shareRate
+                cache_change[str(master_id)][bill_date] += order_amount * shareRate
             else:
-                cache_change[str(master_id)][bill_date] =  one_data.amount * one_data.shareRate
+                cache_change[str(master_id)][bill_date] = order_amount *shareRate
         else:
-            cache_change[str(master_id)] = {bill_date: one_data.amount * one_data.shareRate}
+            cache_change[str(master_id)] = {bill_date: order_amount * shareRate}
         crud.order.update(db,db_obj=one_data,obj_in=schemas.OrderUpdate(bill_state=1,product_id=one_data.product_id))
 
     for master_id,data in cache_change.items():
