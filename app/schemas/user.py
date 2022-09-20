@@ -47,7 +47,12 @@ class UserInDBBase(UserBase):
 # Additional properties to return via API
 class User(UserInDBBase):
     pass
-
+class UserStatistics(BaseModel):
+    yesterday_register : Optional[int]=0
+    today_register : Optional[int]=0
+    total_register: Optional[int]=0
+    total_order_count:Optional[int]=0
+    total_payed_amount:Optional[int]=0
 
 # Additional properties stored in DB
 class UserInDB(UserInDBBase):
