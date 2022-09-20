@@ -419,7 +419,7 @@ def create_order(
     product = crud.product.get(db=db, id=order_in.product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    price = crud.masterProduct.get_master_product_price_by_id(db, master.id)
+    price = crud.masterProduct.get_master_product_price_by_id(db, master.id,order_in.product_id)
     if price is None:
         order_in.amount = master.price
     else:
