@@ -159,4 +159,4 @@ current_user: models.User = Depends(deps.get_current_user),
         #存入数据库
         url = get_read_url(file_name+"."+file_type)
         crud.upload_history.create_upload(db,schemas.UploadHistoryCreate(file_name=file_name,url=url,status=1))
-        return make_return(1,url)
+        return make_return(200,url)
