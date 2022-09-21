@@ -15,13 +15,13 @@ def load_master_rate(db:Session):
     rates = {}
     counts ={}
 
-    res = crud.order.get_all_rate_orders(db,-1)
+    res = crud.comment.get_all(db,limit=100000)
     for one_data in res:
-        if one_data.comment_rate is None:
+        if one_data.rate is None:
             continue
-        if int(one_data.comment_rate)<1:
+        if int(one_data.rate)<1:
             continue
-        rate = int(one_data.comment_rate)
+        rate = int(one_data.rate)
         master_id = one_data.master_id
         if str(master_id) in rates:
             rates[str(master_id)]+=rate

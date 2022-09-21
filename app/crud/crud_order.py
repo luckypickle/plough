@@ -143,7 +143,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         if rate ==-1:
             sql =db.query(Order).filter(Order.comment_rate>=0)
         else:
-            sql =db.query(Order).filter(Order.comment_rate==rate)
+            sql =db.query(Order).filter().filter(Order.comment_rate==rate)
 
         return sql.all()
 
