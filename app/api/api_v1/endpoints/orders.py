@@ -41,7 +41,9 @@ def read_orders(
     """
     Retrieve orders (User & SuperUser).
     """
+    is_super = False
     if crud.user.is_superuser(current_user):
+        is_super = True
         total, orders = crud.order.get_multi_with_condition(db, order_number=order_number,
             name=name,
             master_name=master_name,
@@ -64,6 +66,16 @@ def read_orders(
 
         create_time = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         pay_time = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        if is_super:
+            pic1 = o.pic1
+            pic2 = o.pic2
+            pic3 = o.pic3
+            memo = o.memo
+        else:
+            pic1 = None
+            pic2 = None
+            pic3 = None
+            memo = None
         ret_obj.orders.append(schemas.Order(
             id=o.id,
             product_id=o.product_id,
@@ -90,6 +102,11 @@ def read_orders(
             comment_rate=o.comment_rate,
             owner_email= o.owner.email,
             owner_phone= o.owner.phone,
+            pic1=pic1,
+            pic2=pic2,
+            pic3=pic3,
+            memo=memo
+
         ))
     return ret_obj
 
