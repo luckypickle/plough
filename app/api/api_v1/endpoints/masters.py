@@ -321,6 +321,10 @@ def create_master_open(
     """
     Create new master without the need to be logged in.
     """
+    if phone =="":
+        phone = None
+    if email == "":
+        email= None
     if not settings.MASTERS_OPEN_REGISTRATION:
         raise HTTPException(
             status_code=403,
