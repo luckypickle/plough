@@ -22,10 +22,14 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
 
     @staticmethod
     def get_by_phone(db: Session, *, phone: str) -> Optional[Master]:
+        if phone is None:
+            return None
         return db.query(Master).filter(Master.phone == phone).first()
 
     @staticmethod
     def get_by_email(db: Session, *, email: str) -> Optional[Master]:
+        if email is None:
+            return None
         return db.query(Master).filter(Master.email == email).first()
 
     @staticmethod
