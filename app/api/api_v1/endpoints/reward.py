@@ -38,8 +38,13 @@ def reward_list(
             invited_user = crud.user.get(db,id=reward_obj.user_id)
             if invited_user is None:
                 continue
+            else:
+                if invited_user.phone is None or invited_user.phone == "":
+                    phone = invited_user.email
+                else:
+                    phone = invited_user.phone
             ret.reward_details.append(schemas.RewardDetail(
-                invited_user=invited_user.phone,
+                invited_user=phone,
                 order_amount=reward_obj.order_amount,
                 reward_amount=reward_obj.prev_amount,
                 order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -50,9 +55,19 @@ def reward_list(
             prev_invited_user =crud.user.get(db, id=reward_obj.prev_user_id)
             if invited_user is None or prev_invited_user is None:
                 continue
+            if invited_user is not None:
+                if invited_user.phone is None or invited_user.phone == "":
+                    user_phone = invited_user.email
+                else:
+                    user_phone = invited_user.phone
+            if prev_invited_user is not None:
+                if prev_invited_user.phone is None or prev_invited_user.phone == "":
+                    prev_invite_phone = prev_invited_user.email
+                else:
+                    prev_invite_phone = prev_invited_user.phone
             ret.reward_details.append(schemas.RewardDetail(
-                invited_user=invited_user.phone,
-                prev_invited_user = prev_invited_user.phone,
+                invited_user=user_phone,
+                prev_invited_user=prev_invite_phone,
                 order_amount=reward_obj.order_amount,
                 reward_amount=reward_obj.prev_prev_amount,
                 order_time=reward_obj.order_time.strftime("%Y-%m-%d %H:%M:%S"),
