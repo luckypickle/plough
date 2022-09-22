@@ -16,6 +16,7 @@ class CommentBase(BaseModel):
     order_id: Optional[int] = None
     content: Optional[str] = None
     rate: Optional[int] = None
+    type: Optional[int] = 0
 
 
 

@@ -15,3 +15,4 @@ class Comment(Base):
     rate = Column(Integer, nullable=False)
     status = Column(Integer, nullable=False)
     create_time = Column(DateTime, server_default=func.now(), index=True, comment="创建时间")
+    type = Column(Integer,default=0,comment="0 订单评论，1互动评论")
