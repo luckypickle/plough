@@ -22,8 +22,8 @@ class CRUDReward(CRUDBase[Reward, RewardCreate, RewardUpdate]):
     ) -> (int, List[Reward]):
         query = db.query(self.model)
         conditions = []
-        conditions.append(Reward.prev_user_id == user_id,Reward.prev_amount != 0)
-        conditions.append(Reward.prev_prev_user_id == user_id,Reward.prev_prev_amount != 0)
+        conditions.append(Reward.prev_user_id == user_id)
+        conditions.append(Reward.prev_prev_user_id == user_id)
         query = query.filter(or_(*conditions))
         return (
             query.count(),
