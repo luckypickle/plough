@@ -1,4 +1,4 @@
-from .order import Order, OrderCreate, OrderQuery, OrderUpdate, OrderUpdateDivination,MasterOrderQuery,FavOrderQuery,FavOrder,OrderPic
+from .order import Order, OrderCreate, OrderQuery, OrderUpdate, OrderUpdateDivination,MasterOrderQuery,FavOrderQuery,FavOrder,OrderPic,OpenOrderQuery,OpenOrder
 from .msg import Msg
 from .token import Token, TokenPayload
 from .user import User, UserCreate, UserInDB, UserUpdate, UserSummary,UserStatistics

@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Optional, List
 
 from pydantic import BaseModel
+from .comment import Comment
 
 
 class OrderStatus(Enum):
@@ -89,12 +90,20 @@ class Order(OrderInDBBase):
     owner_phone: Optional[str] = None
     owner_email: Optional[str] = None
 
-class FavOrder(Order):
+class OpenOrder(Order):
+    master_rate:Optional[str] = None
+    Comment_list: Optional[List[Comment]]
+
+class FavOrder(OpenOrder):
     favorite_id:Optional[int]=None
 
 class OrderQuery(BaseModel):
     total: int = 0
     orders: List[Order]
+
+class OpenOrderQuery(BaseModel):
+    total: int = 0
+    orders: List[OpenOrder]
 
 class FavOrderQuery(BaseModel):
     total: int = 0

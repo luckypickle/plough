@@ -112,7 +112,7 @@ def read_orders(
 
 
 
-@router.get("/openOrders", response_model=schemas.OrderQuery)
+@router.get("/openOrders", response_model=schemas.OpenOrderQuery)
 def read_orders(
         db: Session = Depends(deps.get_db),
         skip: int = 0,
@@ -122,7 +122,7 @@ def read_orders(
     """
     Retrieve open orders [all user].
     """
-
+    util.load_master_rate(db)
     total, orders = crud.order.get_open_orders(db,skip=skip, limit=limit)
     # FIXME, not check count
     ret_obj = schemas.OrderQuery(total=0, orders=[])
@@ -135,7 +135,18 @@ def read_orders(
 
         create_time = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         pay_time = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
-        ret_obj.orders.append(schemas.Order(
+        _,comments = crud.comment.get_interact_by_order_id(db,o.id,limit=3)
+        comment_ret = []
+        for one_com in comments:
+            create_time = one_com.create_time.strftime("%Y-%m-%d %H:%M:%S")
+            comment_ret.append(schemas.Comment(
+                id=one_com.id,
+                status=one_com.status,
+                order_id=one_com.order_id,
+                content=one_com.content,
+                create_time=create_time
+            ))
+        ret_obj.orders.append(schemas.OpenOrder(
             id=o.id,
             product_id=o.product_id,
             product=product,
@@ -158,7 +169,9 @@ def read_orders(
             master_avatar=o.master.avatar,
             owner=o.owner.user_name,
             is_open=o.is_open,
-            comment_rate=o.comment_rate
+            comment_rate=o.comment_rate,
+            master_rate=util.get_avg_rate(o.master_id),
+            Comment_list=comment_ret
         ))
     return ret_obj
 
@@ -173,7 +186,7 @@ def read_orders_by_favorite(
     """
     Retrieve open orders [all user].
     """
-
+    util.load_master_rate(db)
     total, orders = crud.order.get_favorite_open_orders(db,user_id=current_user.id,skip=skip, limit=limit)
     print(orders)
     # FIXME, not check count
@@ -188,6 +201,17 @@ def read_orders_by_favorite(
 
         create_time = o[0].create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         pay_time = o[0].pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        _, comments = crud.comment.get_interact_by_order_id(db, o[0].id, limit=3)
+        comment_ret = []
+        for one_com in comments:
+            create_time = one_com.create_time.strftime("%Y-%m-%d %H:%M:%S")
+            comment_ret.append(schemas.Comment(
+                id=one_com.id,
+                status=one_com.status,
+                order_id=one_com.order_id,
+                content=one_com.content,
+                create_time=create_time
+            ))
         ret_obj.orders.append(schemas.FavOrder(
             id=o[0].id,
             product_id=o[0].product_id,
@@ -212,7 +236,9 @@ def read_orders_by_favorite(
             owner=o[4],
             is_open=o[0].is_open,
             comment_rate=o[0].comment_rate,
-            favorite_id=o[1]
+            favorite_id=o[1],
+            master_rate=util.get_avg_rate(o[0].master_id),
+            Comment_list=comment_ret
         ))
     return ret_obj
 

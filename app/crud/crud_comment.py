@@ -20,18 +20,18 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
     def get_by_order_id(db: Session, order_id: int,type:int=0) -> Optional[Comment]:
         return db.query(Comment).filter(Comment.status == 0).filter(Comment.type==type).filter(Comment.order_id == order_id).first()
     @staticmethod
-    def get_interact_by_order_id(db: Session, order_id: int,type:int=1, skip: int = 0, limit: int = 100) ->  (int, int, Optional[Comment]):
+    def get_interact_by_order_id(db: Session, order_id: int,type:int=1, skip: int = 0, limit: int = 100) ->  (int, int, List[Comment]):
         sql = db.query(Comment).filter(Comment.order_id == order_id).filter(Comment.status == 0)
         if type != -1:
             sql = sql.filter(Comment.type == type)
-        return (sql.count(), sql.order_by(Comment.create_time.asc()).offset(skip).limit(limit).all())
+        return (sql.count(), sql.order_by(Comment.create_time.desc()).offset(skip).limit(limit).all())
 
     @staticmethod
     def get(db: Session, id: int) -> Optional[Comment]:
         return db.query(Comment).filter(Comment.status == 0).filter(Comment.id == id).first()
 
     @staticmethod
-    def get_by_master_id(db: Session, master_id: int,type:int=-1, skip: int = 0, limit: int = 100) -> (int, int, Optional[Comment]):
+    def get_by_master_id(db: Session, master_id: int,type:int=-1, skip: int = 0, limit: int = 100) -> (int, int, List[Comment]):
 
         sql = db.query(Comment).filter(Comment.master_id == master_id).filter(Comment.status == 0)
         sum_sql = db.query(func.sum(Comment.rate)).filter(Comment.master_id == master_id).filter(Comment.status == 0)
