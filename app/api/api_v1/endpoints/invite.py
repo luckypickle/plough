@@ -26,6 +26,10 @@ def get_invite_info(
     Get invite info
     """
     invite_info = crud.invite.get_invite_info(db, user_id=current_user.id)
+    outof_bind = 0
+    register_time = int(time.mktime(current_user.create_time.timetuple()))
+    if time.time() > register_time + 24 * 3600:
+        outof_bind = 1
     if invite_info is None:
         invite_code = utils.generate_invite_code()
         if current_user.phone is None:
@@ -49,7 +53,8 @@ def get_invite_info(
             prev_user_phone="",
             total_amount=0,
             uncollect_amount=0,
-            register_time=current_user.create_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")
+            register_time=current_user.create_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S"),
+            outof_bind_time=outof_bind
         )
     else:
         prev_user = crud.user.get(db, id=invite_info.prev_invite)
@@ -69,7 +74,8 @@ def get_invite_info(
             invited_place_order_count=crud.invite.get_prev_count(db,user_id=invite_info.user_id,status=2),
             prev_user_phone=prev_phone,
             total_amount=total_amount,
-            uncollect_amount=total_amount-crud.withdraw.get_withdraw_amount(db,user_id=current_user.id)
+            uncollect_amount=total_amount-crud.withdraw.get_withdraw_amount(db,user_id=current_user.id),
+            outof_bind_time=outof_bind
         )
     return ret_obj
 

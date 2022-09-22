@@ -36,6 +36,7 @@ class InviteForInfo(InviteBase):
     prev_user_phone: Optional[str] = None
     total_amount: Optional[int] = None
     uncollect_amount: Optional[int] = None
+    outof_bind_time:Optional[int] = None
 # Additional properties to return via API
 class InvitedUserDetail(InviteBase):
 
