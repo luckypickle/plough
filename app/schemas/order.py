@@ -92,7 +92,8 @@ class Order(OrderInDBBase):
 
 class OpenOrder(Order):
     master_rate:Optional[str] = None
-    Comment_list: Optional[List[Comment]]
+    comment:Optional[Comment] =None
+    interact_comment_list: Optional[List[Comment]] =None
 
 class FavOrder(OpenOrder):
     favorite_id:Optional[int]=None

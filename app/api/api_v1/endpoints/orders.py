@@ -146,6 +146,8 @@ def read_orders(
                 content=one_com.content,
                 create_time=create_time
             ))
+        comment = crud.comment.get_by_order_id(db,o.id,type=0)
+        comment.create_time  = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
         ret_obj.orders.append(schemas.OpenOrder(
             id=o.id,
             product_id=o.product_id,
@@ -171,7 +173,8 @@ def read_orders(
             is_open=o.is_open,
             comment_rate=o.comment_rate,
             master_rate=util.get_avg_rate(o.master_id),
-            Comment_list=comment_ret
+            comment=comment,
+            interact_comment_list=comment_ret
         ))
     return ret_obj
 
@@ -212,6 +215,8 @@ def read_orders_by_favorite(
                 content=one_com.content,
                 create_time=create_time
             ))
+        comment = crud.comment.get_by_order_id(db, o[0].id, type=0)
+        comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
         ret_obj.orders.append(schemas.FavOrder(
             id=o[0].id,
             product_id=o[0].product_id,
@@ -238,7 +243,8 @@ def read_orders_by_favorite(
             comment_rate=o[0].comment_rate,
             favorite_id=o[1],
             master_rate=util.get_avg_rate(o[0].master_id),
-            Comment_list=comment_ret
+            comment=comment,
+            interact_comment_list=comment_ret
         ))
     return ret_obj
 

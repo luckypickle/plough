@@ -210,6 +210,10 @@ def update_comment_by_id(
     #         detail="Order not found",
     #     )
     comment = crud.comment.update_by_id(db=db, obj_in=obj_in, comment_id=comment_id)
+    if obj_in.status==1 and comment is not None:
+        order = crud.order.get(db, id=comment.order_id)
+        order_in = {"comment_rate": 0}
+        crud.order.update(db=db, db_obj=order, obj_in=order_in)
     if comment is not None:
         comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
     return comment
