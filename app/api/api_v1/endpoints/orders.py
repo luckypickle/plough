@@ -147,7 +147,8 @@ def read_orders(
                 create_time=create_time
             ))
         comment = crud.comment.get_by_order_id(db,o.id,type=0)
-        comment.create_time  = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
+        if comment is not None:
+            comment.create_time  = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
         ret_obj.orders.append(schemas.OpenOrder(
             id=o.id,
             product_id=o.product_id,
@@ -216,7 +217,8 @@ def read_orders_by_favorite(
                 create_time=create_time
             ))
         comment = crud.comment.get_by_order_id(db, o[0].id, type=0)
-        comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
+        if comment is not None:
+            comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
         ret_obj.orders.append(schemas.FavOrder(
             id=o[0].id,
             product_id=o[0].product_id,
