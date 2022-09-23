@@ -21,6 +21,7 @@ class ProductForOrderPrice(BaseModel):
     id: Optional[int] = None
     desc: Optional[str] = None
     price: Optional[int] = None
+    show_status: Optional[int] = None
 
 
 # Properties to receive via API on creation

@@ -51,7 +51,8 @@ def read_product(
     products = crud.product.get_multi_by_sort(db, skip=skip, limit=limit)
     prices = crud.masterProduct.get_master_product_price(db,master_id)
     master = crud.master.get(db,master_id)
-    if not crud.user.is_superuser(current_user):
+    is_super = crud.user.is_superuser(current_user)
+    if not is_super:
         if master is None or master.status!=1:
             raise HTTPException(status_code=400, detail="The master id not in this system.",)
     ret_obj = []
@@ -64,13 +65,16 @@ def read_product(
         normal_price = int(master.price)
     for r in prices:
         cache_p[str(r.product_id)] = r.price
-        if r.status ==0:
-            skip_p[str(r.product_id)] =1
+        skip_p[str(r.product_id)] = r.status
     for p in products:
         if p.status !=1:
             continue
+        show_status =None
         if str(p.id) in skip_p:
-            continue
+            show_status = skip_p[str(p.id)]
+        if not is_super:
+            if show_status ==0:
+                continue
         if str(p.id) in cache_p:
             tmp_price = cache_p[str(p.id)]
         else:
@@ -80,7 +84,8 @@ def read_product(
             id=p.id,
             name=p.name,
             desc=p.desc,
-            price=tmp_price
+            price=tmp_price,
+            show_status=show_status
         ))
     return ret_obj
 
