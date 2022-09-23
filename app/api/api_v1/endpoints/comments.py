@@ -29,7 +29,7 @@ def read_comment_by_order(
     return comment
 
 
-@router.get("/interact_comment_by_order", response_model=schemas.CommentQuery)
+@router.get("/interact_comment_by_order", response_model=schemas.InteractCommentQuery)
 def read_interact_comment_by_order(
         order_id: int,
         skip: int = 0,
@@ -40,20 +40,22 @@ def read_interact_comment_by_order(
     """
     Retrieve interact comment by order.
     """
-    ( total, comments) = crud.comment.get_interact_by_order_id(db, order_id=order_id,type=1)
-    ret_obj = schemas.CommentQuery(rate="", total=0, comments=[])
+    ( total, comments) = crud.comment.get_interact_by_order_id_full_data(db, order_id=order_id,type=1)
+    ret_obj = schemas.InteractCommentQuery(rate="", total=0, comments=[])
 
     ret_obj.total = total
     for one_com in comments:
         # create_time = one_com.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         # print(one_com.create_time)
-        create_time = one_com.create_time.strftime("%Y-%m-%d %H:%M:%S")
-        ret_obj.comments.append(schemas.Comment(
-            id=one_com.id,
-            status=one_com.status,
-            order_id=one_com.order_id,
-            content=one_com.content,
-            create_time=create_time
+        create_time = one_com[0].create_time.strftime("%Y-%m-%d %H:%M:%S")
+        user_name = one_com[1][:3]+"****"+one_com[1][-4:] if one_com[1] is not None else one_com[2]
+        ret_obj.comments.append(schemas.InteractComment(
+            id=one_com[0].id,
+            status=one_com[0].status,
+            order_id=one_com[0].order_id,
+            content=one_com[0].content,
+            create_time=create_time,
+            user_name=user_name
         ))
 
     return ret_obj

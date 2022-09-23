@@ -140,7 +140,7 @@ def read_orders(
         for one_com in comments:
             print(one_com)
             create_time = one_com[0].create_time.strftime("%Y-%m-%d %H:%M:%S")
-            user_name = one_com[1] if one_com[1] is not None else one_com[2]
+            user_name = one_com[1][:3]+"****"+one_com[1][-4:] if one_com[1] is not None else one_com[2]
             comment_ret.append(schemas.InteractComment(
                 id=one_com[0].id,
                 status=one_com[0].status,

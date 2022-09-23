@@ -65,3 +65,7 @@ class CommentQuery(BaseModel):
     total:int =0
     rate:str = ""
     comments:List[Comment]
+class InteractCommentQuery(BaseModel):
+    total:int =0
+    rate:str = ""
+    comments:List[InteractComment]
