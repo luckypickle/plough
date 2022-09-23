@@ -380,9 +380,9 @@ def get_reward_amount(level,amount,prev):
     level_percent=[0,8,10,12,15]
     level_prev_percent=[0,2,3,4,5]
     if prev:
-        return amount*level_prev_percent[level]/100
+        return int(amount*level_prev_percent[level]//100)
     else:
-        return amount*level_percent[level]/100
+        return int(amount*level_percent[level]//100)
 def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
     for i in range(12):
         if isTestPay():
