@@ -134,6 +134,7 @@ def get_list(
 
     total,comments = crud.comment.get_all_merge_order(db, phone_or_email=phone,master_name=master_name,start_time=startTime,end_time=endTime,type=type, skip=skip, limit=limit)
     ret = schemas.CommentListQuery(total=0,comments=[])
+    ret.total=total
     for one_comm in comments:
         # print(one_comm.create_time)
         # print(one_comm[8])
