@@ -138,6 +138,7 @@ def read_orders(
         _,comments = crud.comment.get_interact_by_order_id_full_data(db,o.id,type=1,limit=3)
         comment_ret = []
         for one_com in comments:
+            print(one_com)
             create_time = one_com[0].create_time.strftime("%Y-%m-%d %H:%M:%S")
             user_name = one_com[1] if one_com[1] is not None else one_com[2]
             comment_ret.append(schemas.InteractComment(
