@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional, List
+from typing import Optional, List,Any
 
 from pydantic import BaseModel
 from .comment import Comment,InteractComment
@@ -94,6 +94,7 @@ class OpenOrder(Order):
     master_rate:Optional[str] = None
     comment:Optional[Comment] =None
     interact_comment_list: Optional[List[InteractComment]] =None
+    sizhu:Optional[Any]=None
 
 class FavOrder(OpenOrder):
     favorite_id:Optional[int]=None

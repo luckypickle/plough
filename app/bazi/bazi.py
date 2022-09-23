@@ -6,6 +6,7 @@ import sxtwl
 from .common import *
 from . import datas
 
+
 Gans = collections.namedtuple("Gans", "year month day time")
 Zhis = collections.namedtuple("Zhis", "year month day time")
 
@@ -244,6 +245,41 @@ def get_birthday_by_bazi(year,month,day,hour):
         # print("\t{}年{}{}月{}日 {}时".format(day.getLunarYear(), Lleap, day.getLunarMonth(), day.getLunarDay(),cal_hour(t.h)))
         ret_data.append({"solar":"%d-%d-%d %d:%d" % (t.Y, t.M, t.D, t.h, t.m),"lunar":"{}年{}{}月{}日 {}时".format(day.getLunarYear(), Lleap, day.getLunarMonth(), day.getLunarDay(),cal_hour(t.h))})
     return ret_data
+
+def get_bazi_by_birthday(year,month,day_,hour,minute):
+    day = sxtwl.fromSolar(
+        year, month, day_)
+
+    yGZ = day.getYearGZ()
+    mGZ = day.getMonthGZ()
+    dGZ = day.getDayGZ()
+    hGZ = day.getHourGZ(hour)
+    if day.hasJieQi():
+        jd = day.getJieQiJD()
+        jieqi_t = sxtwl.JD2DD(jd)
+        if jieqi_t.h > int(hour) or (jieqi_t.h == hour and jieqi_t.m >= minute):
+            tmp_day = day.before(1)
+            yGZ = tmp_day.getYearGZ()
+            mGZ = tmp_day.getMonthGZ()
+        if jieqi_t.h == 23 and int(hour) >= 23 and jieqi_t.m < minute:
+            tmp_day = day.after(1)
+            dGZ = tmp_day.getDayGZ()
+    else:
+        if int(hour) >= 23:
+            tmp_day = day.after(1)
+            dGZ = tmp_day.getDayGZ()
+    gans = Gans(
+        year=datas.Gan[yGZ.tg], month=datas.Gan[mGZ.tg],
+        day=datas.Gan[dGZ.tg], time=datas.Gan[hGZ.tg])
+    zhis = Zhis(
+        year=datas.Zhi[yGZ.dz], month=datas.Zhi[mGZ.dz],
+        day=datas.Zhi[dGZ.dz], time=datas.Zhi[hGZ.dz])
+
+    return {
+        'gans': ' '.join(list(gans)),
+        'zhis': ' '.join(list(zhis))
+    }
+
 
 def convert_lunar_to_solar(year,month,day,isRun):
     day = sxtwl.fromLunar(year,month,day,isRun==1)

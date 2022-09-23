@@ -18,6 +18,7 @@ from app.api import deps
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 from app.api import util
+from app.bazi.bazi import get_bazi_by_birthday
 
 router = APIRouter()
 def isTestPay():
@@ -137,6 +138,11 @@ def read_orders(
         pay_time = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         _,comments = crud.comment.get_interact_by_order_id_full_data(db,o.id,type=1,limit=3)
         comment_ret = []
+        sizhu = None
+        birthday = datetime.datetime.strptime(o.birthday,"%Y-%m-%d %H:%M")
+        if birthday is not None:
+            sizhu = get_bazi_by_birthday(birthday.year,birthday.month,birthday.day,birthday.hour,birthday.minute)
+
         for one_com in comments:
             print(one_com)
             create_time = one_com[0].create_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -178,7 +184,8 @@ def read_orders(
             comment_rate=o.comment_rate,
             master_rate=util.get_avg_rate(o.master_id),
             comment=comment,
-            interact_comment_list=comment_ret
+            interact_comment_list=comment_ret,
+            sizhu=sizhu,
         ))
     return ret_obj
 
@@ -221,6 +228,11 @@ def read_orders_by_favorite(
                 create_time=create_time,
                 user_name=user_name
             ))
+        birthday = datetime.datetime.strptime(o.birthday, "%Y-%m-%d %H:%M")
+        sizhu=None
+        if birthday is not None:
+            sizhu = get_bazi_by_birthday(birthday.year, birthday.month, birthday.day, birthday.hour, birthday.minute)
+
         comment = crud.comment.get_by_order_id(db, o[0].id, type=0)
         if comment is not None:
             comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -251,7 +263,8 @@ def read_orders_by_favorite(
             favorite_id=o[1],
             master_rate=util.get_avg_rate(o[0].master_id),
             comment=comment,
-            interact_comment_list=comment_ret
+            interact_comment_list=comment_ret,
+            sizhu=sizhu
         ))
     return ret_obj
 
