@@ -46,8 +46,11 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
             limit).all()
 
     @staticmethod
-    def get_all(db: Session, skip: int = 0, limit: int = 100) -> Optional[Comment]:
-        return db.query(Comment).filter(Comment.status == 0).order_by(Comment.id.asc()).offset(skip).limit(limit).all()
+    def get_all(db: Session,type:int=-1, skip: int = 0, limit: int = 100) -> Optional[Comment]:
+        sql = db.query(Comment).filter(Comment.status == 0)
+        if type !=-1:
+            sql = sql.filter(Comment.type==type)
+        return sql.order_by(Comment.id.asc()).offset(skip).limit(limit).all()
 
     @staticmethod
     def get_all_merge_order(db: Session,phone_or_email:str="",type:int=-1,master_name:str="",start_time:int=0,end_time:int=999999999, skip: int = 0, limit: int = 100) -> (int, Optional[Comment]):

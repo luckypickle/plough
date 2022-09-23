@@ -15,7 +15,7 @@ def load_master_rate(db:Session):
     rates = {}
     counts ={}
 
-    res = crud.comment.get_all(db,limit=100000)
+    res = crud.comment.get_all(db,type=0,limit=100000)
     for one_data in res:
         if one_data.rate is None:
             continue
