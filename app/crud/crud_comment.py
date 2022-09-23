@@ -66,7 +66,7 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
                        Comment.user_id,Comment.type,
                        Comment.create_time, User.phone, Master.name.label('master_name'),
                        Product.name.label('product_name'),User.email).filter(Comment.order_id == Order.id).join(User,Comment.user_id==User.id). \
-            filter(Order.product_id == Product.id).filter(Order.owner_id == User.id).filter(
+            filter(Order.product_id == Product.id).filter(
             Order.master_id == Master.id). \
             filter(Comment.status == 0)
         if start_time != 0 :
