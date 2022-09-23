@@ -56,6 +56,7 @@ def read_product(
             raise HTTPException(status_code=400, detail="The master id not in this system.",)
     ret_obj = []
     cache_p = {}
+    skip_p ={}
     if master.price is None:
 
         normal_price = 0
@@ -63,8 +64,12 @@ def read_product(
         normal_price = int(master.price)
     for r in prices:
         cache_p[str(r.product_id)] = r.price
+        if r.status ==0:
+            skip_p[str(r.product_id)] =1
     for p in products:
         if p.status !=1:
+            continue
+        if str(p.id) in skip_p:
             continue
         if str(p.id) in cache_p:
             tmp_price = cache_p[str(p.id)]

@@ -8,6 +8,7 @@ class MasterProdcutBase(BaseModel):
     master_id:Optional[int] = None
     product_id: Optional[int] = None
     price: Optional[int] = None
+    status: Optional[int] = 1
 
 
 
