@@ -79,8 +79,7 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
             sql = sql.filter(Master.name==master_name)
         if type != -1:
             sql =sql.filter(Comment.type == type)
-        print(type)
-        print(sql.order_by(Comment.id.asc()).offset(skip).limit(limit))
+
         return (sql.count(), sql.order_by(Comment.id.asc()).offset(skip).limit(limit).all())
 
     @staticmethod
