@@ -151,7 +151,8 @@ def get_list(
         status=one_comm.status,
             rate=one_comm.rate,
             content=one_comm.content,
-            order_id=one_comm.order_id
+            order_id=one_comm.order_id,
+            type=one_comm.type
                                                     ))
     return ret
 

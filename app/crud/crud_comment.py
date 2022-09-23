@@ -63,7 +63,7 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
     @staticmethod
     def get_all_merge_order(db: Session,phone_or_email:str="",type:int=-1,master_name:str="",start_time:int=0,end_time:int=999999999, skip: int = 0, limit: int = 100) -> (int, Optional[Comment]):
         sql = db.query(Comment.id, Comment.order_id, Comment.status, Comment.master_id, Comment.rate, Comment.content,
-                       Comment.user_id,
+                       Comment.user_id,Comment.type,
                        Comment.create_time, User.phone, Master.name.label('master_name'),
                        Product.name.label('product_name'),User.email).filter(Comment.order_id == Order.id). \
             filter(Order.product_id == Product.id).filter(Order.owner_id == User.id).filter(
@@ -79,6 +79,8 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
             sql = sql.filter(Master.name==master_name)
         if type != -1:
             sql =sql.filter(Comment.type == type)
+        print(type)
+        print(sql.order_by(Comment.id.asc()).offset(skip).limit(limit))
         return (sql.count(), sql.order_by(Comment.id.asc()).offset(skip).limit(limit).all())
 
     @staticmethod
