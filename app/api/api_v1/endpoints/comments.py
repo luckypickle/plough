@@ -40,7 +40,7 @@ def read_interact_comment_by_order(
     """
     Retrieve interact comment by order.
     """
-    ( total, comments) = crud.comment.get_interact_by_order_id_full_data(db, order_id=order_id,type=1)
+    ( total, comments) = crud.comment.get_interact_by_order_id_full_data(db, order_id=order_id,type=1,skip=skip,limit=limit)
     ret_obj = schemas.InteractCommentQuery(rate="", total=0, comments=[])
 
     ret_obj.total = total
@@ -181,7 +181,7 @@ def create_comment(
             detail="User is not order owner",
         )
 
-    comment = crud.comment.create(db, obj_in=obj_in, master_id=order.master_id, user_id=order.owner_id)
+    comment = crud.comment.create(db, obj_in=obj_in, master_id=order.master_id, user_id=current_user.id)
     if comment is not  None:
         order = crud.order.get(db, id=obj_in.order_id)
         order_in={"comment_rate":obj_in.rate}
