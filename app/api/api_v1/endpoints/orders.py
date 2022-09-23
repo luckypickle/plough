@@ -139,7 +139,7 @@ def read_orders(
         _,comments = crud.comment.get_interact_by_order_id_full_data(db,o.id,type=1,limit=3)
         comment_ret = []
         sizhu = None
-        birthday = datetime.datetime.strptime(o[0].birthday,"%Y-%m-%d %H:%M")
+        birthday = datetime.datetime.strptime(o.birthday,"%Y-%m-%d %H:%M")
         if birthday is not None:
             sizhu = get_bazi_by_birthday(birthday.year,birthday.month,birthday.day,birthday.hour,birthday.minute)
 
@@ -228,7 +228,7 @@ def read_orders_by_favorite(
                 create_time=create_time,
                 user_name=user_name
             ))
-        birthday = datetime.datetime.strptime(o.birthday, "%Y-%m-%d %H:%M")
+        birthday = datetime.datetime.strptime(o[0].birthday, "%Y-%m-%d %H:%M")
         sizhu=None
         if birthday is not None:
             sizhu = get_bazi_by_birthday(birthday.year, birthday.month, birthday.day, birthday.hour, birthday.minute)
