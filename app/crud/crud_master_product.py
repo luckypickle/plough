@@ -18,7 +18,7 @@ class CRUDMasterProduct(CRUDBase[MasterProduct, MasterProdcutCreate, MasterProdc
         if res is None:
             self.create(db, obj_in=masterProduct)
         else:
-            upobj = MasterProdcutUpdate(price = masterProduct.price)
+            upobj = MasterProdcutUpdate(price = masterProduct.price,status=masterProduct.status)
             self.update(db,db_obj=res,obj_in=upobj)
         return True
 
