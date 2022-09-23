@@ -43,6 +43,9 @@ class Comment(CommentInDBBase):
     create_time: Optional[str] = None
 
 
+class InteractComment(Comment):
+    user_name:Optional[str] = None
+
 
 # Additional properties stored in DB
 class CommentInDB(CommentInDBBase):

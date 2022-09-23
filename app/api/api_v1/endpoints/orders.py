@@ -135,16 +135,18 @@ def read_orders(
 
         create_time = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         pay_time = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
-        _,comments = crud.comment.get_interact_by_order_id(db,o.id,limit=3)
+        _,comments = crud.comment.get_interact_by_order_id_full_data(db,o.id,type=1,limit=3)
         comment_ret = []
         for one_com in comments:
-            create_time = one_com.create_time.strftime("%Y-%m-%d %H:%M:%S")
-            comment_ret.append(schemas.Comment(
-                id=one_com.id,
-                status=one_com.status,
-                order_id=one_com.order_id,
-                content=one_com.content,
-                create_time=create_time
+            create_time = one_com[0].create_time.strftime("%Y-%m-%d %H:%M:%S")
+            user_name = one_com[1] if one_com[1] is not None else one_com[2]
+            comment_ret.append(schemas.InteractComment(
+                id=one_com[0].id,
+                status=one_com[0].status,
+                order_id=one_com[0].order_id,
+                content=one_com[0].content,
+                create_time=create_time,
+                user_name=user_name
             ))
         comment = crud.comment.get_by_order_id(db,o.id,type=0)
         if comment is not None:
@@ -205,16 +207,18 @@ def read_orders_by_favorite(
 
         create_time = o[0].create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         pay_time = o[0].pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
-        _, comments = crud.comment.get_interact_by_order_id(db, o[0].id, limit=3)
+        _, comments = crud.comment.get_interact_by_order_id_full_data(db, o[0].id, limit=3)
         comment_ret = []
         for one_com in comments:
-            create_time = one_com.create_time.strftime("%Y-%m-%d %H:%M:%S")
-            comment_ret.append(schemas.Comment(
-                id=one_com.id,
-                status=one_com.status,
-                order_id=one_com.order_id,
-                content=one_com.content,
-                create_time=create_time
+            create_time = one_com[0].create_time.strftime("%Y-%m-%d %H:%M:%S")
+            user_name = one_com[1] if one_com[1] is not None else one_com[2]
+            comment_ret.append(schemas.InteractComment(
+                id=one_com[0].id,
+                status=one_com[0].status,
+                order_id=one_com[0].order_id,
+                content=one_com[0].content,
+                create_time=create_time,
+                user_name=user_name
             ))
         comment = crud.comment.get_by_order_id(db, o[0].id, type=0)
         if comment is not None:

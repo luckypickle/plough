@@ -5,7 +5,7 @@ from .user import User, UserCreate, UserInDB, UserUpdate, UserSummary,UserStatis
 from .master import Master, MasterCreate, MasterUpdate, MasterRegister, MasterForOrder, MasterQuery,MasterRateQuery,MasterRate,MasterForOrderRate,MasterRewardQuery,MasterReward
 from .mpcode import MPCode, MPCodeCreate, MPCodeInDB, MPCodeUpdate
 from .product import Product, ProductCreate, ProductUpdate, ProductForOrder,ProductForOrderPrice
-from .comment import Comment, CommentCreate, CommentUpdate,CommentQuery,CommentListQuery,CommentFullData
+from .comment import Comment, CommentCreate, CommentUpdate,CommentQuery,CommentListQuery,CommentFullData,InteractComment
 from .version import Version, VersionCreate, VersionUpdate
 from .history import History, HistoryCreate, HistoryUpdate
 from .invite import Invite, InviteCreate, InviteUpdate, InviteForInfo, InvitedDetailUsers,InvitedUserDetail,InviteOrder,InviteOrderInfo,InviteSummary

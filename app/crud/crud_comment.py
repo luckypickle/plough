@@ -27,6 +27,14 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
         return (sql.count(), sql.order_by(Comment.create_time.desc()).offset(skip).limit(limit).all())
 
     @staticmethod
+    def get_interact_by_order_id_full_data(db: Session, order_id: int, type: int = 1, skip: int = 0, limit: int = 100) -> (
+    int, int, List[Comment]):
+        sql = db.query(Comment,User.phone,User.email).filter(Comment.order_id == order_id).filter(Comment.status == 0)
+        if type != -1:
+            sql = sql.filter(Comment.type == type)
+        return (sql.count(), sql.order_by(Comment.create_time.desc()).offset(skip).limit(limit).all())
+
+    @staticmethod
     def get(db: Session, id: int) -> Optional[Comment]:
         return db.query(Comment).filter(Comment.status == 0).filter(Comment.id == id).first()
 

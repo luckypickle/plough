@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional, List
 
 from pydantic import BaseModel
-from .comment import Comment
+from .comment import Comment,InteractComment
 
 
 class OrderStatus(Enum):
@@ -93,7 +93,7 @@ class Order(OrderInDBBase):
 class OpenOrder(Order):
     master_rate:Optional[str] = None
     comment:Optional[Comment] =None
-    interact_comment_list: Optional[List[Comment]] =None
+    interact_comment_list: Optional[List[InteractComment]] =None
 
 class FavOrder(OpenOrder):
     favorite_id:Optional[int]=None
