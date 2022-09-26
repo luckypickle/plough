@@ -13,3 +13,4 @@ from .favorite import Favorite
 from .bill import  Bill
 from .master_product import MasterProduct
 from .upload_history import UploadHistory
+from .video import Video

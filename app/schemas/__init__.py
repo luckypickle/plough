@@ -16,3 +16,4 @@ from .master_product import MasterProduct,MasterProdcutCreate,MasterProdcutUpdat
 
 from .favorite import FavoriteCreate,Favorite,FavoriteUpdate
 from .upload_history import UploadHistory,UploadHistoryCreate,UploadHistoryUpdate,FileType
+from .video import Video,VideoCreate,VideoUpdate,VideoInDBBase,VideoQuery
