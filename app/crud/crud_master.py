@@ -38,6 +38,8 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
         query = db.query(Master)
         if status >= 0:
             query = query.filter(Master.status == status)
+        if status ==-2:
+            query = query.filter(Master.status !=2)
         if name != "":
             query.filter(Master.name==name)
         return (
