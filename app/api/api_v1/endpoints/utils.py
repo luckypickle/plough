@@ -90,7 +90,7 @@ def get_year_jie_qi(
     return ret
 
 @router.get("/todayColor")
-def get_today_color(year,month,day,hour,minute,daydelta):
+def get_today_color(year:int,month:int,day:int,hour:int,minute:int,daydelta:int=0):
     color = cal_wuxing_color(year,month,day,hour,minute,daydelta)
     return color
 
