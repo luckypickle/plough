@@ -369,7 +369,7 @@ def cal_wuxing_color(year,month,day_,hour,minute,day_delta:int=0):
     me_attrs_ = ten_deities[me].inverse
     strong = tgan_scores[me_attrs_['比']] + tgan_scores[me_attrs_['劫']] \
              + tgan_scores[me_attrs_['枭']] + tgan_scores[me_attrs_['印']]
-    print(strong)
+    #print(strong)
     if strong>49:
         if tgan_scores[me_attrs_['印']]>tgan_scores[me]:
             main_wuxing = me_attrs_["财"]
