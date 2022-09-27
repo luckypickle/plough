@@ -305,3 +305,100 @@ def getYearJieQi(year):
     return ret
 
 
+
+def cal_wuxing_color(year,month,day_,hour,minute,day_delta=0):
+    day = sxtwl.fromSolar(
+        year, month, day_)
+
+    yGZ = day.getYearGZ()
+    mGZ = day.getMonthGZ()
+    dGZ = day.getDayGZ()
+    hGZ = day.getHourGZ(hour)
+    if day.hasJieQi():
+        jd = day.getJieQiJD()
+        jieqi_t = sxtwl.JD2DD(jd)
+        if jieqi_t.h > int(hour) or (jieqi_t.h == hour and jieqi_t.m >= minute):
+            tmp_day = day.before(1)
+            yGZ = tmp_day.getYearGZ()
+            mGZ = tmp_day.getMonthGZ()
+        if jieqi_t.h == 23 and int(hour) >= 23 and jieqi_t.m < minute:
+            tmp_day = day.after(1)
+            dGZ = tmp_day.getDayGZ()
+    else:
+        if int(hour) >= 23:
+            tmp_day = day.after(1)
+            dGZ = tmp_day.getDayGZ()
+    gans = Gans(
+        year=Gan[yGZ.tg], month=Gan[mGZ.tg],
+        day=Gan[dGZ.tg], time=Gan[hGZ.tg])
+    zhis = Zhis(
+        year=Zhi[yGZ.dz], month=Zhi[mGZ.dz],
+        day=Zhi[dGZ.dz], time=Zhi[hGZ.dz])
+
+    todaydate = datetime.date.today() + datetime.timedelta(days=day_delta)
+    today = sxtwl.fromSolar(
+        todaydate.year, todaydate.month, todaydate.day)
+    tyGZ = today.getYearGZ()
+    tmGZ = today.getMonthGZ()
+    tdGZ = today.getDayGZ()
+    tgans = [Gan[tyGZ.tg],Gan[tmGZ.tg],Gan[tdGZ.tg]]
+    tzhis = [Zhi[tyGZ.dz],Zhi[tmGZ.dz],Zhi[tdGZ.dz]]
+
+
+    me = gans.day
+    gan_scores = {"甲": 0, "乙": 0, "丙": 0, "丁": 0, "戊": 0, "己": 0, "庚": 0, "辛": 0,
+                  "壬": 0, "癸": 0}
+    tgan_scores = {"甲": 0, "乙": 0, "丙": 0, "丁": 0, "戊": 0, "己": 0, "庚": 0, "辛": 0,
+                  "壬": 0, "癸": 0}
+    for item in gans:
+        gan_scores[item] += 5
+        tgan_scores[item] += 5
+
+    for item in list(zhis) + [zhis.month]:
+        for gan in zhi5[item]:
+            gan_scores[gan] += zhi5[item][gan]
+            tgan_scores[gan] += zhi5[item][gan]
+
+    for item in tgans:
+        tgan_scores[item] += 5
+    for item in tzhis:
+        for gan in zhi5[item]:
+            tgan_scores[gan] += zhi5[item][gan]
+
+    me_attrs_ = ten_deities[me].inverse
+    strong = gan_scores[me_attrs_['比']] + gan_scores[me_attrs_['劫']] \
+             + gan_scores[me_attrs_['枭']] + gan_scores[me_attrs_['印']]
+
+    if strong>29:
+        if tgan_scores[me_attrs_['印']]>tgan_scores[me]:
+            main_wuxing = me_attrs_["财"]
+            sec_wuxing = me_attrs_["食"]
+        else:
+
+            main_wuxing=me_attrs_["官"]
+            sec_wuxing = me_attrs_["食"]
+
+    else:
+        if tgan_scores[me_attrs_['印']]>tgan_scores[me]:
+            main_wuxing = me_attrs_["比"]
+            sec_wuxing  =   me_attrs_["印"]
+        else:
+            main_wuxing=me_attrs_["印"]
+            sec_wuxing = me_attrs_["比"]
+
+
+    main_wuxing = gan5[main_wuxing]
+    sec_wuxing = gan5[sec_wuxing]
+
+    color_map = {'木':['绿色','淡青色'],
+                 '火': ['红色', '紫色'],
+                 '土': ['黄色', '棕色'],
+                 '金': ['白色', '银色'],
+                 '水': ['黑色', '深蓝色'],
+                }
+    ret = color_map[main_wuxing]
+    ret.append(color_map[sec_wuxing][0])
+    return ret
+    # print('今日颜色:',color_map[main_wuxing],color_map[sec_wuxing][0])
+
+

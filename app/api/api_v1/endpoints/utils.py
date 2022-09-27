@@ -8,7 +8,7 @@ from app.api import deps
 # from app.core.celery_app import celery_app
 from app.utils import send_test_email
 from app.bazi.citys import cal_zone
-from app.bazi.bazi import getYearJieQi,get_birthday_by_bazi
+from app.bazi.bazi import getYearJieQi,get_birthday_by_bazi,cal_wuxing_color
 from app.api.util import make_return
 import hashlib
 import os
@@ -88,6 +88,13 @@ def get_year_jie_qi(
 ) -> Any:
     ret = get_birthday_by_bazi(year,month,day,time)
     return ret
+
+@router.get("/todayColor")
+def get_today_color(year,month,day,hour,minute,daydelta):
+    color = cal_wuxing_color(year,month,day,hour,minute,daydelta)
+    return color
+
+
 
 
 @router.post("/retrieve-version/", response_model=List[schemas.Version])
