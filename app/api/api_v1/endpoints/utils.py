@@ -86,6 +86,9 @@ def get_year_jie_qi(
         day:str,
         time:str
 ) -> Any:
+    """
+        get solar birthday by bazi.
+    """
     ret = get_birthday_by_bazi(year,month,day,time)
     return ret
 
@@ -94,6 +97,13 @@ def get_today_color(year:int,month:int,day:int,hour:int,minute:int,daydelta:int=
     color = cal_wuxing_color(year,month,day,hour,minute,daydelta)
     return color
 
+@router.get("/baziByBirthday")
+def get_bazi_by_birthday(year:int,month:int,day:int,hour:int,minute:int):
+    """
+        get bazi by solar birthday.
+    """
+    ret = get_bazi_by_birthday(year,month,day,hour,minute)
+    return ret
 
 
 

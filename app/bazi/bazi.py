@@ -306,7 +306,7 @@ def getYearJieQi(year):
 
 
 
-def cal_wuxing_color(year,month,day_,hour,minute,day_delta=0):
+def cal_wuxing_color(year,month,day_,hour,minute,day_delta:int=0):
     day = sxtwl.fromSolar(
         year, month, day_)
 
@@ -336,6 +336,7 @@ def cal_wuxing_color(year,month,day_,hour,minute,day_delta=0):
         day=Zhi[dGZ.dz], time=Zhi[hGZ.dz])
 
     todaydate = datetime.date.today() + datetime.timedelta(days=day_delta)
+    print(todaydate)
     today = sxtwl.fromSolar(
         todaydate.year, todaydate.month, todaydate.day)
     tyGZ = today.getYearGZ()
