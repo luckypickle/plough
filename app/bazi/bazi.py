@@ -369,27 +369,34 @@ def cal_wuxing_color(year,month,day_,hour,minute,day_delta:int=0):
     me_attrs_ = ten_deities[me].inverse
     strong = tgan_scores[me_attrs_['比']] + tgan_scores[me_attrs_['劫']] \
              + tgan_scores[me_attrs_['枭']] + tgan_scores[me_attrs_['印']]
-    #print(strong)
-    if strong>49:
+    wuxing = ["","",""]
+    wuxing_len = 3
+    if strong>52:
         if tgan_scores[me_attrs_['印']]>tgan_scores[me]:
-            main_wuxing = me_attrs_["财"]
-            sec_wuxing = me_attrs_["食"]
+            print(1)
+            wuxing[0] = me_attrs_["财"]
+            wuxing[1] = me_attrs_["食"]
+            wuxing[2] = me_attrs_["官"]
         else:
-
-            main_wuxing=me_attrs_["官"]
-            sec_wuxing = me_attrs_["食"]
+            print(2)
+            wuxing[0]=me_attrs_["官"]
+            wuxing[1] = me_attrs_["食"]
+            wuxing[2] = me_attrs_["财"]
 
     else:
+        wuxing_len =2
         if tgan_scores[me_attrs_['印']]>tgan_scores[me]:
-            main_wuxing = me_attrs_["比"]
-            sec_wuxing  =   me_attrs_["印"]
+            print(3)
+            wuxing[0]= me_attrs_["比"]
+            wuxing[1]  =   me_attrs_["印"]
         else:
-            main_wuxing=me_attrs_["印"]
-            sec_wuxing = me_attrs_["比"]
+            print(4)
+            wuxing[0]=me_attrs_["印"]
+            wuxing[1]= me_attrs_["比"]
 
 
-    main_wuxing = gan5[main_wuxing]
-    sec_wuxing = gan5[sec_wuxing]
+    for i in range(wuxing_len):
+        wuxing[i] = gan5[wuxing[i]]
 
     color_map = {'木':['绿色','淡青色'],
                  '火': ['红色', '紫色'],
@@ -397,8 +404,13 @@ def cal_wuxing_color(year,month,day_,hour,minute,day_delta:int=0):
                  '金': ['白色', '银色'],
                  '水': ['黑色', '深蓝色'],
                 }
-    ret = color_map[main_wuxing]
-    ret.append(color_map[sec_wuxing][0])
+    if wuxing_len==2:
+        gan_num = tdGZ.tg %4
+    else:
+        gan_num = tdGZ.tg % 8
+    ret =[]
+    for i in range(wuxing_len):
+        ret.append( color_map[wuxing[i]][(gan_num>>i)&0x1]   )
     return ret
     # print('今日颜色:',color_map[main_wuxing],color_map[sec_wuxing][0])
 
