@@ -411,7 +411,20 @@ def cal_wuxing_color(year,month,day_,hour,minute,day_delta:int=0):
     ret =[]
     for i in range(wuxing_len):
         ret.append( color_map[wuxing[i]][(gan_num>>i)&0x1]   )
-    return ret
+    month_map = ["正", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "腊"]
+    day_map = ["初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十", "十一", "十二", "十三", "十四", "十五", "十六", "十七",
+               "十八", "十九", "二十",
+               "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"]
+    Lleap = "闰" if day.isLunarLeap() else ""
+    lunar_str = "{}年{}{}月{}".format(Gan[tyGZ.tg] + Zhi[tyGZ.dz], Lleap, month_map[day.getLunarMonth() - 1],
+                                    day_map[day.getLunarDay() - 1])
+    jieqi_map = ["冬至", "小寒", "大寒", "立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑",
+                 "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪"]
+    jieqi = ""
+    if today.hasJieQi():
+        jieqi = jieqi_map[today.getJieQi()]
+
+    return {"color":ret,"lunar":lunar_str,"jieqi":jieqi}
     # print('今日颜色:',color_map[main_wuxing],color_map[sec_wuxing][0])
 
 
