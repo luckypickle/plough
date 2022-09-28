@@ -416,7 +416,7 @@ def cal_wuxing_color(year,month,day_,hour,minute,day_delta:int=0):
                "十八", "十九", "二十",
                "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"]
     Lleap = "闰" if day.isLunarLeap() else ""
-    lunar_str = "{}年{}{}月{}".format(Gan[tyGZ.tg] + Zhi[tyGZ.dz], Lleap, month_map[day.getLunarMonth() - 1],
+    lunar_str = "{}年  {}{}月{}".format(Gan[tyGZ.tg] + Zhi[tyGZ.dz], Lleap, month_map[day.getLunarMonth() - 1],
                                     day_map[day.getLunarDay() - 1])
     jieqi_map = ["冬至", "小寒", "大寒", "立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑",
                  "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪"]
