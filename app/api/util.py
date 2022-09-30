@@ -7,7 +7,7 @@ def make_return(code,memo):
 
 cache_master_rate={}
 cache_master_rate_time=0
-cache_master_rate_refresh_interval=7200
+cache_master_rate_refresh_interval=900
 def load_master_rate(db:Session):
     global cache_master_rate_time, cache_master_rate
     if int(time.time())-cache_master_rate_time<cache_master_rate_refresh_interval:
