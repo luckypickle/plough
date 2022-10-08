@@ -344,11 +344,11 @@ def create_master_open(
             status_code=400,
             detail="The master with this email already exists in the system",
         )
-    # if not crud.mpcode.verify_mpcode(db=db, phone=phone, verify_code=verify_code) and not crud.mpcode.verify_mpcode(db=db, phone=email, verify_code=verify_code):
-    #     raise HTTPException(
-    #         status_code=400,
-    #         detail="Invalid verify code",
-    #     )
+    if not crud.mpcode.verify_mpcode(db=db, phone=phone, verify_code=verify_code) and not crud.mpcode.verify_mpcode(db=db, phone=email, verify_code=verify_code):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid verify code",
+        )
     avatar_url = ""
     try:
         image_str = avatar
