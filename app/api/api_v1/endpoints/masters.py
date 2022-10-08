@@ -11,7 +11,9 @@ from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 from app.bazi import BaZi
 from app.api.util import make_return
-
+import base64
+import hashlib
+from app.cos_utils import upload_file_to_cos,get_read_url
 
 router = APIRouter()
 
@@ -347,10 +349,36 @@ def create_master_open(
             status_code=400,
             detail="Invalid verify code",
         )
+    avatar_url = ""
+    try:
+        image_str = avatar
+        image_data = base64.b16decode(image_str)
+        file_name = hashlib.md5(image_data).hexdigest()
+
+        res = crud.upload_history.get_by_file_name(db, file_name)
+        if res is not None:
+            # if os.path.exists("./uploadfile/"+file_name):
+            return make_return(200, res.url)
+            # 文件已存在从数据库中查找
+
+        else:
+            with open("./uploadfile/" + file_name + ".jpg" , "wb") as fx:
+                fx.write(image_data)
+            res = upload_file_to_cos(file_name + ".jpg")
+            if res:
+                # 存入数据库
+                avatar_url = get_read_url(file_name + ".jpg")
+                crud.upload_history.create_upload(db,
+                                                  schemas.UploadHistoryCreate(file_name=file_name, url=avatar_url, status=1))
+            else:
+                return make_return(400, "upload file to cos failed,please contact admin!")
+    except :
+        avatar_url = ""
+
     data_in = schemas.MasterRegister(
         verify_code=verify_code,
         name=name,
-        avatar=avatar,
+        avatar=avatar_url,
         phone=phone,
         email=email)
     master = crud.master.register(db, obj_in=data_in)
