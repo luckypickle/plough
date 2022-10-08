@@ -352,7 +352,7 @@ def create_master_open(
     avatar_url = ""
     try:
         image_str = avatar
-        image_data = base64.b16decode(image_str)
+        image_data = base64.b64decode(image_str)
         file_name = hashlib.md5(image_data).hexdigest()
 
         res = crud.upload_history.get_by_file_name(db, file_name)
