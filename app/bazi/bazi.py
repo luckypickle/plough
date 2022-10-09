@@ -360,10 +360,10 @@ def cal_wuxing_color(year,month,day_,hour,minute,day_delta:int=0):
             tgan_scores[gan] += zhi5[item][gan]
 
     for item in tgans:
-        tgan_scores[item] += 5
+        tgan_scores[item] += 10
     for item in tzhis:
         for gan in zhi5[item]:
-            tgan_scores[gan] += zhi5[item][gan]
+            tgan_scores[gan] += zhi5[item][gan]*2
 
     me_attrs_ = ten_deities[me].inverse
     strong = tgan_scores[me_attrs_['比']] + tgan_scores[me_attrs_['劫']] \
@@ -372,12 +372,11 @@ def cal_wuxing_color(year,month,day_,hour,minute,day_delta:int=0):
     wuxing_len = 3
     if strong>52:
         if tgan_scores[me_attrs_['印']]>tgan_scores[me]:
-            print(1)
+
             wuxing[0] = me_attrs_["财"]
             wuxing[1] = me_attrs_["食"]
             wuxing[2] = me_attrs_["官"]
         else:
-            print(2)
             wuxing[0]=me_attrs_["官"]
             wuxing[1] = me_attrs_["食"]
             wuxing[2] = me_attrs_["财"]
@@ -385,11 +384,9 @@ def cal_wuxing_color(year,month,day_,hour,minute,day_delta:int=0):
     else:
         wuxing_len =2
         if tgan_scores[me_attrs_['印']]>tgan_scores[me]:
-            print(3)
             wuxing[0]= me_attrs_["比"]
             wuxing[1]  =   me_attrs_["印"]
         else:
-            print(4)
             wuxing[0]=me_attrs_["印"]
             wuxing[1]= me_attrs_["比"]
 
