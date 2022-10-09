@@ -370,7 +370,8 @@ def cal_wuxing_color(year,month,day_,hour,minute,day_delta:int=0):
              + tgan_scores[me_attrs_['枭']] + tgan_scores[me_attrs_['印']]
     wuxing = ["","",""]
     wuxing_len = 3
-    if strong>52:
+    print(strong)
+    if strong>60:
         if tgan_scores[me_attrs_['印']]>tgan_scores[me]:
 
             wuxing[0] = me_attrs_["财"]
