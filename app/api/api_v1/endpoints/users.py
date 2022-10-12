@@ -156,7 +156,7 @@ def create_user_open(
     phone_or_email = phone
     ret = register_account(get_read_url("366003ea558671f8f170707b79ca5392.png"), 0, phone_or_email, phone_or_email)
     if ret:
-        crud.user.update(db,user,schemas.UserUpdate(im_status=1))
+        crud.user.update(db,db_obj=user,obj_in=schemas.UserUpdate(im_status=1))
     if not valid_mpcod:
         raise HTTPException(
             status_code=400,

@@ -66,7 +66,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return db.query(User).filter(User.phone == phone).first()
 
     @staticmethod
-    def get_by_im_status(db: Session, *, status: str) -> Optional[User]:
+    def get_by_im_status(db: Session, status: str) -> Optional[User]:
         if status ==0:
             return db.query(User).filter((User.im_status==0)|(User.im_status==None)).all()
         return db.query(User).filter((User.im_status==status)).all()
