@@ -13,6 +13,7 @@ from app.api.util import make_return
 import hashlib
 import os
 from app.cos_utils import upload_file_to_cos,get_read_url
+from app.im_utils import register_account
 router = APIRouter()
 
 
@@ -179,3 +180,22 @@ current_user: models.User = Depends(deps.get_current_user),
             return make_return(200,url)
         else:
             return make_return(400,"upload file to cos failed,please contact admin!")
+
+@router.get("/register_all_account")
+def register_all_account(
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    res = crud.user.get_by_im_status(db,status=0)
+    for one_ret in res:
+        phone = one_ret.phone if one_ret.phone=="" or one_ret.phone==None else one_ret.email
+        res = register_account(get_read_url("366003ea558671f8f170707b79ca5392.png"),0,phone,phone)
+        if res :
+            crud.user.update(db,one_ret,schemas.UserUpdate(im_status=1))
+    master_res = crud.master.get_by_im_status(db,0)
+    for one_ret in master_res:
+        phone = one_ret.phone if one_ret.phone=="" or one_ret.phone==None else one_ret.email
+        res = register_account(one_ret.avatar,1,phone,one_ret.name)
+        if res:
+            crud.master.update(db,one_ret,schemas.MasterUpdate(im_status=1))
+    return make_return(200,"success")

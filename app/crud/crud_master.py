@@ -27,6 +27,12 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
         return db.query(Master).filter(Master.phone == phone).first()
 
     @staticmethod
+    def get_by_im_status(db: Session, *, status: str) -> Optional[Master]:
+        if status == 0:
+            return db.query(Master).filter((Master.im_status == 0) | (Master.im_status == None)).all()
+        return db.query(Master).filter((Master.im_status == status)).all()
+
+    @staticmethod
     def get_by_email(db: Session, *, email: str) -> Optional[Master]:
         if email is None  or email =="":
             return None

@@ -15,6 +15,8 @@ from app.core.settings.app import AppSettings
 from app.bazi import BaZi
 from app.bazi.bazi import  convert_lunar_to_solar
 import time
+from app.cos_utils import get_read_url
+from  app.im_utils import register_account
 
 router = APIRouter()
 
@@ -151,6 +153,10 @@ def create_user_open(
             detail="Open user registration is forbidden on this server",
         )
     valid_mpcod,user = crud.user.register(db,phone=phone,verify_code=password)
+    phone_or_email = phone
+    ret = register_account(get_read_url("366003ea558671f8f170707b79ca5392.png"), 0, phone_or_email, phone_or_email)
+    if ret:
+        crud.user.update(db,user,schemas.UserUpdate(im_status=1))
     if not valid_mpcod:
         raise HTTPException(
             status_code=400,

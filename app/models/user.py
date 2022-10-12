@@ -22,3 +22,4 @@ class User(Base):
     orders = relationship("Order", back_populates="owner")
     history = relationship("History", back_populates="owner")
     create_time = Column(DateTime, server_default=func.now(), index=True, comment="创建时间")
+    im_status = Column(Integer,server_default=0)

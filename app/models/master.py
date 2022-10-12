@@ -19,4 +19,5 @@ class Master(Base):
     orders = relationship("Order", back_populates="master")
     order_amount = Column(Integer, default=0, comment="订单金额")
     sort_weight = Column(Integer,default=1,comment="排序权重")
+    im_status = Column(Integer, server_default=0)
 

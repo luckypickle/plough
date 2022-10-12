@@ -14,6 +14,7 @@ from app.api.util import make_return
 import base64
 import hashlib
 from app.cos_utils import upload_file_to_cos,get_read_url
+from app.im_utils import register_account
 
 router = APIRouter()
 
@@ -372,8 +373,8 @@ def create_master_open(
                                                   schemas.UploadHistoryCreate(file_name=file_name, url=avatar_url, status=1))
             else:
                 return make_return(400, "upload file to cos failed,please contact admin!")
-    except :
-        print("xxxxxxx")
+    except Exception as ex:
+        print(ex)
         avatar_url = ""
 
     data_in = schemas.MasterRegister(
@@ -382,6 +383,11 @@ def create_master_open(
         avatar=avatar_url,
         phone=phone,
         email=email)
+
+    phone_or_email = phone if phone !=None else email
+    ret = register_account(avatar_url,1,phone_or_email,name)
+    if ret :
+        data_in.im_status=1
     master = crud.master.register(db, obj_in=data_in)
     return master
 

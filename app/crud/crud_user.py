@@ -64,6 +64,13 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if phone.count("@") != 0:
             return db.query(User).filter(User.email == phone).first()
         return db.query(User).filter(User.phone == phone).first()
+
+    @staticmethod
+    def get_by_im_status(db: Session, *, status: str) -> Optional[User]:
+        if status ==0:
+            return db.query(User).filter((User.im_status==0)|(User.im_status==None)).all()
+        return db.query(User).filter((User.im_status==status)).all()
+
     def register(self ,db: Session, *, phone: str,verify_code: str) -> (bool,Optional[User]):
         user = CRUDUser.get_by_phone(db, phone=phone)
         valid_mpcode = False

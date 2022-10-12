@@ -18,6 +18,7 @@ class MasterBase(BaseModel):
     name: Optional[str] = None
     avatar: Optional[str] = None
     sort_weight: Optional[int]= None
+    im_status: Optional[int] = None
 
 
 # Properties to receive via API on creation
