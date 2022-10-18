@@ -88,6 +88,7 @@ def login_access_token(
             data={"sub": str(entity.id), "scopes": form_data.scopes},
             expires_delta=access_token_expires
         ),
+        "account_id":str(entity.id),
         "token_type": "bearer",
     }
 
