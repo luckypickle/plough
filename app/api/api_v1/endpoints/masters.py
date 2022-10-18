@@ -384,11 +384,10 @@ def create_master_open(
         phone=phone,
         email=email)
 
-    phone_or_email = phone if phone !=None else email
-    ret = register_account(avatar_url,1,phone_or_email,name)
-    if ret :
-        data_in.im_status=1
+
+    data_in.im_status=1
     master = crud.master.register(db, obj_in=data_in)
+    register_account(avatar_url, 1, "master_"+str(master.id), name)
     return master
 
 

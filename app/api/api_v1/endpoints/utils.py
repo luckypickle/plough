@@ -188,14 +188,16 @@ def register_all_account(
 ) -> Any:
     res = crud.user.get_by_im_status(db,status=0)
     for one_ret in res:
-        phone = one_ret.phone if one_ret.phone=="" or one_ret.phone==None else one_ret.email
-        res = register_account(get_read_url("366003ea558671f8f170707b79ca5392.png"),0,phone,phone)
+        account = "user_"+str(one_ret.id)
+        phone =one_ret.phone[:3]+"****"+one_ret.phone[-4:] if one_ret.phone=="" or one_ret.phone==None else one_ret.email
+        res = register_account(get_read_url("366003ea558671f8f170707b79ca5392.png"),0,account,phone)
         if res :
             crud.user.update(db,db_obj=one_ret,obj_in=schemas.UserUpdate(im_status=1))
     master_res = crud.master.get_by_im_status(db,0)
     for one_ret in master_res:
-        phone = one_ret.phone if one_ret.phone=="" or one_ret.phone==None else one_ret.email
-        res = register_account(one_ret.avatar,1,phone,one_ret.name)
+        account = "master_"+str(one_ret.id)
+        #phone = one_ret.phone if one_ret.phone=="" or one_ret.phone==None else one_ret.email
+        res = register_account(one_ret.avatar,1,account,one_ret.name)
         if res:
             crud.master.update(db,db_obj=one_ret,obj_in=schemas.MasterUpdate(im_status=1))
     return make_return(200,"success")

@@ -154,7 +154,7 @@ def create_user_open(
         )
     valid_mpcod,user = crud.user.register(db,phone=phone,verify_code=password)
     phone_or_email = phone
-    ret = register_account(get_read_url("366003ea558671f8f170707b79ca5392.png"), 0, phone_or_email, phone_or_email)
+    ret = register_account(get_read_url("366003ea558671f8f170707b79ca5392.png"), 0, "user_"+str(user.id), phone_or_email)
     if ret:
         crud.user.update(db,db_obj=user,obj_in=schemas.UserUpdate(im_status=1))
     if not valid_mpcod:

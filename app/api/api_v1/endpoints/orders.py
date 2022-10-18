@@ -90,8 +90,6 @@ def read_orders(
             shareRate=o.shareRate,
             owner_id=o.owner_id,
             master_id=o.master_id,
-            master_phone=o.master.phone,
-            master_email=o.master.email,
             divination=o.divination,
             reason=o.reason,
             create_time=create_time,
@@ -319,8 +317,6 @@ def read_orders_master(
             master=o.master.name,
             master_avatar=o.master.avatar,
             owner=o.owner.user_name,
-            owner_phone=o.owner.phone,
-            owner_email=o.owner.email,
             comment_rate=o.comment_rate
         ))
     return ret_obj

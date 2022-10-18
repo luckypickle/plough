@@ -84,8 +84,6 @@ class OrderInDBBase(OrderCreate):
 class Order(OrderInDBBase):
     master: Optional[str] = None
     master_avatar: Optional[str] = None
-    master_phone: Optional[str] = None
-    master_email: Optional[str] = None
     owner: Optional[str] = None
     product: Optional[str] = None
     comment_rate: Optional[int] = None
