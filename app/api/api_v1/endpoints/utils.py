@@ -194,7 +194,7 @@ def register_all_account(
         else:
             phone = one_ret.phone[:3] + "****" + one_ret.phone[-4:]
 
-        res = register_account(get_read_url("366003ea558671f8f170707b79ca5392.png"),0,account,phone)
+        res = register_account(get_read_url("3bf8616fe6c23c0c465527ec80397b24.png"),0,account,phone)
         if res :
             crud.user.update(db,db_obj=one_ret,obj_in=schemas.UserUpdate(im_status=1))
     master_res = crud.master.get_by_im_status(db,0)
