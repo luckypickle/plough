@@ -13,7 +13,7 @@ from app.api.util import make_return
 import hashlib
 import os
 from app.cos_utils import upload_file_to_cos,get_read_url
-from app.im_utils import register_account
+from app.im_utils import register_account,query_message_list,query_message_detail
 router = APIRouter()
 
 
@@ -180,6 +180,42 @@ current_user: models.User = Depends(deps.get_current_user),
             return make_return(200,url)
         else:
             return make_return(400,"upload file to cos failed,please contact admin!")
+
+@router.get("/messageList")
+def super_user_get_message_list( db: Session = Depends(deps.get_db),
+                      skip:int =0,limit:int=20,master_id:str="",user_Phone:str="",
+                      current_user: models.User = Depends(deps.get_current_active_superuser), ) ->Any:
+    page_num = int(skip/limit+1)
+    page_size = limit
+    msg_data = query_message_list(page_num,page_size,master_id,user_Phone)
+    if len(msg_data)==0:
+        return {
+            "total":0,
+            "messageList":[]
+        }
+    return {
+        "total": msg_data['total'],
+        "messageList":msg_data["rows"]
+    }
+
+@router.get("/messageDetail")
+def super_user_get_message_list( db: Session = Depends(deps.get_db),
+                      skip:int =0,limit:int=20,friend_name:str="",user_name:str="",
+                      current_user: models.User = Depends(deps.get_current_active_superuser), ) ->Any:
+    page_num = int(skip/limit+1)
+    page_size = limit
+    msg_data = query_message_detail(page_num,page_size,friend_name,user_name)
+    if len(msg_data)==0:
+        return {
+            "total":0,
+            "messageList":[]
+        }
+    return {
+        "total": msg_data['count'],
+        "messageList":msg_data["messageList"]
+    }
+
+
 
 @router.get("/register_all_account")
 def register_all_account(

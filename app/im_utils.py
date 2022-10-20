@@ -24,6 +24,38 @@ def register_account(avatar,fortune,mobile,nickName):
         return False
 
 
+def query_message_list(page_num, page_size,teacherId,userPhone):
+    url = url_base + "/api/custom/talklist"
+
+    querystring = {"pageNum": page_num, "pageSize": page_size, "teacherId": str(teacherId), "userPhone": str(userPhone)}
+
+    response = requests.request("POST", url, params=querystring)
+
+    data = response.json()
+
+    print(response.text)
+    if data["code"] == 200:
+        return data["data"]
+    return {}
+
+def query_message_detail(page_num,page_size,friend_name,user_name):
+    url = url_base + "/api/custom/messagelist"
+
+    querystring = {"pageNum": page_num, "pageSize": page_size, "friendname": str(friend_name ), "username": str(user_name)}
+
+    response = requests.request("POST", url, params=querystring)
+
+    data = response.json()
+
+    #print(response.text)
+    if data["code"] == 200:
+        return data["data"]
+    return {}
+
 if __name__ == "__main__":
-    res =register_account("https://wuxingyanyi-1254113200.cos.ap-shanghai.myqcloud.com/07ad11ef4ad91101cdb7caed890a1ed6.jpg",0,15601598786,15601598786)
+    # res =register_account("https://wuxingyanyi-1254113200.cos.ap-shanghai.myqcloud.com/07ad11ef4ad91101cdb7caed890a1ed6.jpg",0,15601598786,15601598786)
+    # print(res)
+    res =query_message_list(1,10,"","")
+    print(res)
+    res =query_message_detail(1,10,"master_10","user_37")
     print(res)
