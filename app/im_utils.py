@@ -3,10 +3,10 @@ from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 import requests
 
-#settings: AppSettings = get_app_settings()
+settings: AppSettings = get_app_settings()
 
-#url_base = settings.IM_URL
-url_base="http://134.175.102.61:18080"
+url_base = settings.IM_URL
+#url_base="http://134.175.102.61:18080"
 
 def register_account(avatar,fortune,mobile,nickName):
     try:
