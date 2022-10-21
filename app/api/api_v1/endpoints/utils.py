@@ -235,9 +235,13 @@ def register_all_account(
             crud.user.update(db,db_obj=one_ret,obj_in=schemas.UserUpdate(im_status=1))
     master_res = crud.master.get_by_im_status(db,0)
     for one_ret in master_res:
+
         account = "master_"+str(one_ret.id)
         #phone = one_ret.phone if one_ret.phone=="" or one_ret.phone==None else one_ret.email
-        res = register_account(one_ret.avatar,1,account,one_ret.name)
+        if one_ret.avatar.endswith(".png"):
+            res = register_account(one_ret.avatar,1,account,one_ret.name)
+        else:
+            res = register_account(get_read_url("3bf8616fe6c23c0c465527ec80397b24.png"), 1, account, one_ret.name)
         if res:
             crud.master.update(db,db_obj=one_ret,obj_in=schemas.MasterUpdate(im_status=1))
     return make_return(200,"success")
