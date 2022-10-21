@@ -53,6 +53,8 @@ class AppSettings(BaseAppSettings):
     COS_REGION = ""
     COS_REQUEST_URL=""
 
+    IM_URL=""
+
     mpcode_request_interval = 60
     emailcode_request_interval = 600
     debug: bool = False
