@@ -29,6 +29,7 @@ def read_orders(
         db: Session = Depends(deps.get_db),
         order_number: str = "",
         name: str = "",
+        user_account:str = "",
         master_name:str = "",
         product_id:int = -1,
         arrange_status:int = -1,
@@ -47,6 +48,7 @@ def read_orders(
         is_super = True
         total, orders = crud.order.get_multi_with_condition(db, order_number=order_number,
             name=name,
+            user_phone=user_account,
             master_name=master_name,
             product_id=product_id,
             arrange_status=arrange_status,

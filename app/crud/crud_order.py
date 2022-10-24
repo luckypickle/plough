@@ -63,6 +63,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             role_id: int,
             order_number: str = "",
             name: str = "",
+            user_phone:str= "",
             master_name: str = "",
             product_id: int = -1,
             arrange_status: int = -1,
@@ -84,6 +85,9 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             conditions.append(Order.order_number == order_number)
         if name != "":
             conditions.append(Order.name == name)
+        if user_phone !="":
+            query = query.join(User, User.id == Order.owner_id)
+            conditions.append(User.phone ==user_phone | User.email==user_phone)
         if master_name != "":
             query = query.join(Master,Master.id == Order.master_id)
             conditions.append(Master.name == master_name)
