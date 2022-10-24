@@ -5,7 +5,7 @@ from string import ascii_letters, digits
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc,case
+from sqlalchemy import func, desc,case,or_
 
 from app.crud.base import CRUDBase
 from app.models.order import Order
@@ -87,7 +87,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             conditions.append(Order.name == name)
         if user_phone !="":
             query = query.join(User, User.id == Order.owner_id)
-            conditions.append(User.phone ==user_phone | User.email==user_phone)
+            conditions.append(or_( User.phone ==user_phone , User.email==user_phone))
         if master_name != "":
             query = query.join(Master,Master.id == Order.master_id)
             conditions.append(Master.name == master_name)
