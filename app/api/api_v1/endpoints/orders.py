@@ -19,7 +19,8 @@ from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 from app.api import util
 from app.bazi.bazi import get_bazi_by_birthday
-
+from app.models.user import User
+from app.models.master import Master
 router = APIRouter()
 def isTestPay():
     return False
@@ -188,6 +189,79 @@ def read_orders(
             comment=comment,
             interact_comment_list=comment_ret,
             sizhu=sizhu,
+        ))
+    return ret_obj
+
+
+
+@router.get('/user_arrange_order', response_model=schemas.OrderQuery)
+def get_user_arramge_order(
+        db: Session = Depends(deps.get_db),
+        id:int = -1,
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_user),
+):
+    if isinstance(current_user, User):
+        #user
+        if current_user.is_active:
+            total,orders = crud.order.get_arrange_orders(db,current_user.id,id,skip,limit)
+        else:
+            total = 0
+            orders = []
+    elif isinstance(current_user,Master):
+        #master
+        if current_user.is_active():
+            total, orders = crud.order.get_arrange_orders(db, id, current_user.id, skip, limit)
+        else:
+            total = 0
+            orders = []
+
+    ret_obj = schemas.OrderQuery(total=0, orders=[])
+    ret_obj.total = total
+    products = crud.product.get_multi(db=db)
+    for o in orders:
+        for p in products:
+            if p.id == o.product_id:
+                product = p.name
+
+        create_time = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        pay_time = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+        pic1 = None
+        pic2 = None
+        pic3 = None
+        memo = None
+        ret_obj.orders.append(schemas.Order(
+            id=o.id,
+            product_id=o.product_id,
+            product=product,
+            order_number=o.order_number,
+            name=o.name,
+            sex=o.sex,
+            birthday=o.birthday,
+            location=o.location,
+            amount=o.amount,
+            shareRate=o.shareRate,
+            owner_id=o.owner_id,
+            master_id=o.master_id,
+            divination=o.divination,
+            reason=o.reason,
+            create_time=create_time,
+            pay_time=pay_time,
+            arrange_status=o.arrange_status,
+            status=o.status,
+            master=o.master.name,
+            master_avatar=o.master.avatar,
+            owner=o.owner.user_name,
+            is_open=o.is_open,
+            comment_rate=o.comment_rate,
+            owner_email=o.owner.email,
+            owner_phone=o.owner.phone,
+            pic1=pic1,
+            pic2=pic2,
+            pic3=pic3,
+            memo=memo
         ))
     return ret_obj
 
