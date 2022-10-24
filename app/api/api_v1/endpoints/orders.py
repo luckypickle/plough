@@ -204,14 +204,14 @@ def get_user_arramge_order(
 ):
     if isinstance(current_user, User):
         #user
-        if current_user.is_active:
+        if crud.user.is_active(current_user):
             total,orders = crud.order.get_arrange_orders(db,current_user.id,id,skip,limit)
         else:
             total = 0
             orders = []
     elif isinstance(current_user,Master):
         #master
-        if current_user.is_active():
+        if crud.master.is_active(current_user):
             total, orders = crud.order.get_arrange_orders(db, id, current_user.id, skip, limit)
         else:
             total = 0
