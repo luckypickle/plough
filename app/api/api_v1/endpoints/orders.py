@@ -361,10 +361,13 @@ def read_orders_master(
     )
     # FIXME, not check count
     products = crud.product.get_multi(db=db)
-    ret_obj = schemas.MasterOrderQuery(total=0,total_reward=0.0, orders=[])
+    ret_obj = schemas.MasterOrderQuery(total=0,total_reward=0.0, orders=[],count_rate="",amount_rate="")
     ret_obj.total = total
     if total_reward is not None:
         ret_obj.total_reward= total_reward/100
+    count_rate,amount_rate = crud.order.get_master_order_rate(db,current_master.id)
+    ret_obj.count_rate = count_rate
+    ret_obj.amount_rate = amount_rate
     for o in orders:
         for p in products:
             if p.id == o.product_id:

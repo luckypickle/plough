@@ -1,6 +1,6 @@
 from typing import Generator, Any
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status,Security
 from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from jose import jwt
 from pydantic import ValidationError
@@ -72,7 +72,7 @@ def get_current_user(
 
 
 def get_current_active_master(
-        current_master: models.Master = Depends(get_current_user),
+        current_master: models.Master = Security(get_current_user,scopes=["master","user"]),
 ) -> models.Master:
     if not crud.master.is_active(current_master):
         raise HTTPException(status_code=400, detail="Inactive master")
@@ -80,7 +80,7 @@ def get_current_active_master(
 
 
 def get_current_active_user(
-        current_user: models.User = Depends(get_current_user),
+        current_user: models.User = Security(get_current_user,scopes=["master","user"]),
 ) -> models.User:
     if not crud.user.is_active(current_user):
         raise HTTPException(status_code=400, detail="Inactive user")
@@ -88,7 +88,7 @@ def get_current_active_user(
 
 
 def get_current_active_superuser(
-        current_user: models.User = Depends(get_current_user),
+        current_user: models.User =Security(get_current_user,scopes=["master","user"]),
 ) -> models.User:
     if not crud.user.is_superuser(current_user):
         raise HTTPException(

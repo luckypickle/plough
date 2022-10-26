@@ -114,6 +114,8 @@ class FavOrderQuery(BaseModel):
 
 class MasterOrderQuery(OrderQuery):
     total_reward: float = 0.0
+    count_rate: str = None
+    amount_rate: str = None
 
 # Properties properties stored in DB
 class OrderInDB(OrderInDBBase):

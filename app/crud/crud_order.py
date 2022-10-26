@@ -130,6 +130,22 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
         )
 
+    def get_master_order_rate(self,db: Session,master_id:int) ->(str,str):
+        sql  = db.query(func.sum(Order.amount),func.count(1)).filter(Order.status==1)
+        sql1  = db.query(func.sum(Order.amount),func.count(1)).filter(Order.status==1).filter(Order.master_id==master_id)
+        total_res = sql.first()
+        if total_res is None:
+            return "0.00%", "0.00%"
+        print(total_res)
+        user_res = sql1.first()
+        if total_res[1] ==0:
+            return "0.00%","0.00%"
+
+        return ("%.2f"%(float(user_res[1])*100/ total_res[1])+"%","%.2f"%(float(user_res[0])*100/ total_res[0])+"%")
+
+
+
+
     def get_open_orders(
             self, db: Session, *,
             skip: int = 0, limit: int = 100
@@ -182,7 +198,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         return total
 
     def get_arrange_orders(self,db:Session,user_id,master_id,skip: int = 0, limit: int = 100):
-        sql = db.query(Order).filter(Order.owner_id==user_id).filter(Order.master_id==master_id).filter(Order.status==1).filter(Order.arrange_status!=3)
+        sql = db.query(Order).filter(Order.owner_id==user_id).filter(Order.master_id==master_id).filter(Order.status==1)
 
         return (sql.count(),sql.order_by(Order.id.desc()).offset(skip).limit(limit).all())
 
