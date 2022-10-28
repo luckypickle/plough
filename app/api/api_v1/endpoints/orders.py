@@ -21,6 +21,7 @@ from app.api import util
 from app.bazi.bazi import get_bazi_by_birthday
 from app.models.user import User
 from app.models.master import Master
+from app.im_utils import disable_chat,recovery_chat,pushMsg
 router = APIRouter()
 import app.im_utils
 def isTestPay():
@@ -491,8 +492,8 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                 db.add(order),
                 db.commit()
                 db.refresh(order)
-                app.im_utils.pushMsg("您有新的排盘订单，请尽快查看","master_"+str(order.master_id))
-                app.im_utils.recovery_chat(order.master_id,order.owner_id)
+                pushMsg("您有新的排盘订单，请尽快查看","master_"+str(order.master_id))
+                recovery_chat(order.master_id,order.owner_id)
             break
         else:
             ret = wxpay.query(out_trade_no=out_trade_no, mchid=mchid)
@@ -506,8 +507,8 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                     db.add(order),
                     db.commit()
                     db.refresh(order)
-                    app.im_utils.pushMsg("您有新的排盘订单，请尽快查看", "master_" + str(order.master_id))
-                    app.im_utils.recovery_chat(order.master_id, order.owner_id)
+                    pushMsg("您有新的排盘订单，请尽快查看", "master_" + str(order.master_id))
+                    recovery_chat(order.master_id, order.owner_id)
                 break
         time.sleep(5)
     order = crud.order.get(db=db, id=order_id)
@@ -651,7 +652,7 @@ def update_order(
     if order.arrange_status ==3:
         count = crud.order.get_pending_order_count(db,order.master_id,order.owner_id)
         if count ==0:
-            app.im_utils.disable_chat(order.master_id,order.owner_id)
+            disable_chat(order.master_id,order.owner_id)
     return schemas.OrderUpdate(
         product_id=order.product_id,
         name=order.name,
