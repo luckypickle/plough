@@ -15,6 +15,8 @@ from app.models.mpcode import MPCode
 from app.models.order import Order
 from app.models.invite import Invite
 from app.schemas.user import UserCreate, UserUpdate, UserSummary
+from app.im_utils import register_account
+from app.cos_utils import get_read_url
 import datetime
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
@@ -104,9 +106,14 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if phone == "11012345678" and verify_code=="778899":
             valid_mpcode = True
         if not user and valid_mpcode:
+
             if phone.count("@") != 0:
-                return self.create(db, obj_in=UserCreate(email=phone))
-            return self.create(db, obj_in=UserCreate(phone=phone))
+                obj =  self.create(db, obj_in=UserCreate(email=phone))
+            else:
+                obj =  self.create(db, obj_in=UserCreate(phone=phone))
+            ret = register_account(get_read_url("3bf8616fe6c23c0c465527ec80397b24.png"), 0, "user_" + str(obj.id),
+                                   phone)
+            return obj
         elif user is None:
             return None
         elif valid_mpcode or verify_password(verify_code, user.hashed_password):
