@@ -13,7 +13,7 @@ from app.api.util import make_return
 import hashlib
 import os
 from app.cos_utils import upload_file_to_cos,get_read_url
-from app.im_utils import register_account,query_message_list,query_message_detail
+from app.im_utils import register_account,query_message_list,query_message_detail,recovery_chat
 router = APIRouter()
 
 
@@ -244,4 +244,15 @@ def register_all_account(
             res = register_account(get_read_url("3bf8616fe6c23c0c465527ec80397b24.png"), 1, account, one_ret.name)
         if res:
             crud.master.update(db,db_obj=one_ret,obj_in=schemas.MasterUpdate(im_status=1))
+    return make_return(200,"success")
+
+@router.get("/recovery_all_chat")
+def register_all_account(
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    _,_,res = crud.order.get_multi_and_sum_with_condition(db,status=1,limit=1000)
+    for one_data in res:
+        recovery_chat(one_data.master_id,one_data.owner_id)
+
     return make_return(200,"success")
