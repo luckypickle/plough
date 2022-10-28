@@ -202,6 +202,10 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
 
         return (sql.count(),sql.order_by(Order.id.desc()).offset(skip).limit(limit).all())
 
+    def get_pending_order_count(self,db:Session,master_id,user_id):
+        sql  = db.query(Order).filter(Order.owner_id==user_id).filter(Order.master_id==master_id).filter(Order.status==1).filter(Order.arrange_status!=3)
+        return sql.count()
+
 
     def get_favorite_open_orders(
             self, db: Session, *,

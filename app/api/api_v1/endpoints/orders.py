@@ -649,7 +649,9 @@ def update_order(
     #     raise HTTPException(status_code=400, detail="Not enough permissions")
     order = crud.order.update(db=db, db_obj=order, obj_in=order_in)
     if order.arrange_status ==3:
-        app.im_utils.disable_chat(order.master_id,order.owner_id)
+        count = crud.order.get_pending_order_count(db,order.master_id,order.owner_id)
+        if count ==0:
+            app.im_utils.disable_chat(order.master_id,order.owner_id)
     return schemas.OrderUpdate(
         product_id=order.product_id,
         name=order.name,
