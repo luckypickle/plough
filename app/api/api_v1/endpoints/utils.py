@@ -253,6 +253,7 @@ def register_all_account(
 ) -> Any:
     _,_,res = crud.order.get_multi_and_sum_with_condition(db,status=1,limit=1000)
     for one_data in res:
-        recovery_chat(one_data.master_id,one_data.owner_id)
+        if one_data.arrange_status!=3:
+            recovery_chat(one_data.master_id,one_data.owner_id)
 
     return make_return(200,"success")
