@@ -22,6 +22,7 @@ from app.bazi.bazi import get_bazi_by_birthday
 from app.models.user import User
 from app.models.master import Master
 router = APIRouter()
+import app.im_utils
 def isTestPay():
     return False
 
@@ -490,6 +491,8 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                 db.add(order),
                 db.commit()
                 db.refresh(order)
+                app.im_utils.pushMsg("您有新的排盘订单，请尽快查看","master_"+str(order.master_id))
+                app.im_utils.recovery_chat(order.master_id,order.owner_id)
             break
         else:
             ret = wxpay.query(out_trade_no=out_trade_no, mchid=mchid)
@@ -503,6 +506,8 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                     db.add(order),
                     db.commit()
                     db.refresh(order)
+                    app.im_utils.pushMsg("您有新的排盘订单，请尽快查看", "master_" + str(order.master_id))
+                    app.im_utils.recovery_chat(order.master_id, order.owner_id)
                 break
         time.sleep(5)
     order = crud.order.get(db=db, id=order_id)
@@ -594,6 +599,7 @@ def create_order(
     if isTestPay():
         code=200
         message=json.dumps({'prepay_id':'123456665878'})
+
     else:
         code, message = wxpay.pay(
             description=product.name,
@@ -642,6 +648,8 @@ def update_order(
     # if not crud.user.is_superuser(current_user) and (order.owner_id != current_user.id):
     #     raise HTTPException(status_code=400, detail="Not enough permissions")
     order = crud.order.update(db=db, db_obj=order, obj_in=order_in)
+    if order.arrange_status ==3:
+        app.im_utils.disable_chat(order.master_id,order.owner_id)
     return schemas.OrderUpdate(
         product_id=order.product_id,
         name=order.name,

@@ -8,6 +8,14 @@ settings: AppSettings = get_app_settings()
 url_base = settings.IM_URL
 #url_base="http://134.175.102.61:18080"
 
+def safe_post(url,querystring):
+    try:
+        response = requests.request("POST", url, params=querystring)
+        return response.json()
+    except Exception as ex:
+        print(ex)
+        return {"data":100,"error":str(ex)}
+
 def register_account(avatar,fortune,mobile,nickName):
     try:
 
@@ -29,9 +37,10 @@ def query_message_list(page_num, page_size,teacherId,userPhone):
 
     querystring = {"pageNum": page_num, "pageSize": page_size, "teacherId": str(teacherId), "userPhone": str(userPhone)}
 
-    response = requests.request("POST", url, params=querystring)
+    response = safe_post(url,querystring)
 
-    data = response.json()
+
+    data = response
 
     print(response.text)
     if data["code"] == 200:
@@ -43,14 +52,55 @@ def query_message_detail(page_num,page_size,friend_name,user_name):
 
     querystring = {"pageNum": page_num, "pageSize": page_size, "friendname": str(friend_name ), "username": str(user_name)}
 
-    response = requests.request("POST", url, params=querystring)
+    response = safe_post(url, querystring)
 
-    data = response.json()
-
+    data = response
     #print(response.text)
     if data["code"] == 200:
         return data["data"]
     return {}
+
+def recovery_chat(master_id,user_id):
+    url = url_base + "/api/custom/recoveryChat"
+
+    querystring = {"mastername": "master_"+str(master_id),
+                   "username": "user_"+str(user_id)}
+
+    response = safe_post(url, querystring)
+
+    data = response
+    # print(response.text)
+    if data["code"] == 200:
+        return data["data"]
+    return {}
+def disable_chat(master_id,user_id):
+    url = url_base + "/api/custom/disableChat"
+
+    querystring = {"mastername": "master_"+str(master_id),
+                   "username": "user_"+str(user_id)}
+
+    response = safe_post(url, querystring)
+
+    data = response
+    # print(response.text)
+    if data["code"] == 200:
+        return data["data"]
+    return {}
+def pushMsg(content,user_name):
+    url = url_base + "/api/xinge/pushMsg"
+
+    querystring = {"content": content,
+                   "username": str(user_name)}
+
+    response = safe_post(url, querystring)
+
+    data = response
+    # print(response.text)
+    if data["code"] == 200:
+        return data["data"]
+    return {}
+
+
 
 if __name__ == "__main__":
     # res =register_account("https://wuxingyanyi-1254113200.cos.ap-shanghai.myqcloud.com/07ad11ef4ad91101cdb7caed890a1ed6.jpg",0,15601598786,15601598786)
