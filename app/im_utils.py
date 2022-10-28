@@ -71,7 +71,7 @@ def recovery_chat(master_id,user_id):
     data = response
     # print(response.text)
     if data["code"] == 200:
-        return data["data"]
+        return data["msg"]
     return {}
 def disable_chat(master_id,user_id):
     url = url_base + "/api/custom/disableChat"
@@ -84,7 +84,7 @@ def disable_chat(master_id,user_id):
     data = response
     # print(response.text)
     if data["code"] == 200:
-        return data["data"]
+        return data["msg"]
     return {}
 def pushMsg(content,user_name):
     url = url_base + "/api/xinge/pushMsg"
@@ -97,7 +97,7 @@ def pushMsg(content,user_name):
     data = response
     # print(response.text)
     if data["code"] == 200:
-        return data["data"]
+        return data["msg"]
     return {}
 
 
