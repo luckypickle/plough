@@ -251,7 +251,7 @@ def register_all_account(
         db: Session = Depends(deps.get_db),
         current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
-    _,_,res = crud.order.get_multi_and_sum_with_condition(db,status=1,limit=1000)
+    res = crud.order.get_all_pending_order(db)
     for one_data in res:
         if one_data.arrange_status!=3:
             recovery_chat(one_data.master_id,one_data.owner_id)

@@ -144,7 +144,8 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         return ("%.2f"%(float(user_res[1])*100/ total_res[1])+"%","%.2f"%(float(user_res[0])*100/ total_res[0])+"%")
 
 
-
+    def get_all_pending_order(self,db:Session):
+        return db.query(self.model).filter(Order.status==1).filter(Order.arrange_status!=3).all()
 
     def get_open_orders(
             self, db: Session, *,
