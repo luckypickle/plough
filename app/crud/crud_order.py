@@ -1,5 +1,5 @@
 import time
-from typing import List,Optional
+from typing import List,Optional,Any
 from random import sample
 from string import ascii_letters, digits
 
@@ -227,5 +227,19 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
             query.count(),
             query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
         )
+
+
+    def get_user_type_order(self, db: Session, *,
+                           user_id: int, name:str)->Any:
+        product_obj = db.query(Product).filter(Product.name == name,Product.status==1).first()
+        if product_obj is None:
+            return None
+        order_obj = db.query(Order).filter(Order.owner_id == user_id,
+                                           Order.product_id == product_obj.id,
+                                           Order.status == 1).first()
+        if order_obj is None:
+            return False
+        else:
+            return True
 
 order = CRUDOrder(Order)
