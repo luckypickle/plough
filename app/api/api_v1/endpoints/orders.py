@@ -802,7 +802,7 @@ def create_free_order(
     user_exist_free_order, free_product_id = crud.order.get_user_type_order(db, user_id=current_user.id,name='折扣排盘')
     if user_exist_free_order:
         raise HTTPException(status_code=404, detail="Cant place free order again")
-    if product.name != 'free':
+    if product.name != '折扣排盘':
         raise HTTPException(status_code=404, detail="Cant use this to place order")
     invite_count = crud.invite.get_prev_count(db, user_id=current_user.id, status=2)
     if isTestPay():
