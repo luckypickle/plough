@@ -41,8 +41,8 @@ def query_message_list(page_num, page_size,teacherId,userPhone):
 
 
     data = response
-
-    print(response.text)
+    #
+    # print(response.text)
     if data["code"] == 200:
         return data["data"]
     return {}
