@@ -560,6 +560,60 @@ def get_reward_amount(level,amount,prev):
         return int(amount*level_prev_percent[level]//100)
     else:
         return int(amount*level_percent[level]//100)
+def update_free_order_status(db, order_id):
+    order = crud.order.get(db=db, id=order_id)
+    if order:
+        order.status = 1
+        order.pay_time = datetime.datetime.now(),
+        db.add(order),
+        db.commit()
+        db.refresh(order)
+        pushMsg("您有新的排盘订单，请尽快查看", "master_" + str(order.master_id))
+        recovery_chat(order.master_id, order.owner_id)
+    order = crud.order.get(db=db, id=order_id)
+    if order is not None and order.status == 1:
+        if order.status == 1:
+            invite_obj = crud.invite.get_invite_info(db, user_id=order.owner_id)
+            if invite_obj is None:
+                return
+            if invite_obj.order_status == 1:
+                invite_obj.order_status = 2
+                invite_obj.first_order_time = order.pay_time
+                db.add(invite_obj),
+                db.commit()
+                db.refresh(invite_obj)
+            prev_amount = 0
+            prev_prev_amount = 0
+            prev_invite_obj = crud.invite.get_invite_info(db, user_id=invite_obj.prev_invite)
+            if prev_invite_obj is not None:
+                prev_invite_obj.current_level = get_user_level(
+                    crud.invite.get_prev_count(db, user_id=invite_obj.prev_invite))
+                db.add(prev_invite_obj),
+                db.commit()
+                db.refresh(prev_invite_obj)
+                if prev_invite_obj.current_level is None:
+                    prev_obj_level = 0
+                else:
+                    prev_obj_level = prev_invite_obj.current_level
+                prev_amount = get_reward_amount(prev_obj_level, order.amount, False)
+                prev_prev_invite_obj = crud.invite.get_invite_info(db, user_id=invite_obj.prev_prev_invite)
+                if prev_prev_invite_obj is not None:
+                    if prev_prev_invite_obj.current_level is None:
+                        prev_prev_obj_level = 0
+                    else:
+                        prev_prev_obj_level = prev_prev_invite_obj.current_level
+                    prev_prev_amount = get_reward_amount(prev_prev_obj_level, order.amount, True)
+                reward_obj = models.Reward(
+                    order_id=order.id,
+                    user_id=order.owner_id,
+                    order_amount=order.amount,
+                    prev_user_id=invite_obj.prev_invite,
+                    prev_prev_user_id=invite_obj.prev_prev_invite,
+                    prev_amount=prev_amount,
+                    prev_prev_amount=prev_prev_amount,
+                    order_time=order.pay_time
+                )
+                crud.reward.create(db, obj_in=reward_obj)
 def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
     for i in range(12):
         if isTestPay():
@@ -709,7 +763,114 @@ def create_order(
     else:
         return {'code': -1, 'result': {'reason': result.get('code')}}
 
+@router.get("/offOrderInfo", response_model=Any)
+def get_off_order_info(
+        *,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user),
+) -> Any:
+    user_exist_dot_order = crud.order.get_user_type_order(db, user_id=current_user.id,name='点盘')
+    user_exist_free_order = crud.order.get_user_type_order(db, user_id=current_user.id,name='折扣排盘')
+    if user_exist_dot_order is None or user_exist_free_order is None:
+        raise HTTPException(status_code=400, detail="Don't exist product yet")
+    invite_count = crud.invite.get_prev_count(db, user_id=current_user.id, status=2)
+    if (not user_exist_dot_order) and user_exist_free_order:
+        raise HTTPException(status_code=400, detail="Order State error")
+    return {'exist_dot_order': user_exist_dot_order,
+            'exist_free_order': user_exist_free_order,
+            'invite_count': invite_count}
 
+@router.post('create_free_order')
+def create_free_order(
+        *,
+        task: BackgroundTasks,
+        db: Session = Depends(deps.get_db),
+        order_in: schemas.OrderCreate,
+        current_user: models.User = Depends(deps.get_current_active_user),
+        settings: AppSettings = Depends(get_app_settings)
+) -> Any:
+    """
+    Create new free order.
+    """
+    master = crud.master.get(db=db, id=order_in.master_id)
+    if not master:
+        raise HTTPException(status_code=404, detail="Master not found")
+    product = crud.product.get(db=db, id=order_in.product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    user_exist_free_order = crud.order.get_user_type_order(db, user_id=current_user.id,name='折扣排盘')
+    if user_exist_free_order:
+        raise HTTPException(status_code=404, detail="Cant place free order again")
+    if product.name != 'free':
+        raise HTTPException(status_code=404, detail="Cant use this to place order")
+    invite_count = crud.invite.get_prev_count(db, user_id=current_user.id, status=2)
+    if isTestPay():
+        invite_count = 12
+    order_in.amount = (100 - min(100, 10*invite_count))*100
+    order_in.shareRate = master.rate
+    order = crud.order.create_with_owner(db=db, obj_in=order_in, owner_id=current_user.id)
+    if order_in.amount != 0:
+        with open(settings.PRIVATE_KEY, "r") as f:
+            pkey = f.read()
+        wxpay = WeChatPay(
+            wechatpay_type=WeChatPayType.APP,
+            mchid=settings.MCHID,
+            private_key=pkey,
+            cert_serial_no=settings.CERT_SERIAL_NO,
+            apiv3_key=settings.APIV3_KEY,
+            appid=settings.APPID,
+            notify_url=settings.NOTIFY_URL,
+            cert_dir=settings.CERT_DIR,
+            logger=None,
+            partner_mode=settings.PARTNER_MODE,
+            proxy=None)
+        if isTestPay():
+            code=200
+            message=json.dumps({'prepay_id':'123456665878'})
+
+        else:
+            code, message = wxpay.pay(
+                description=product.name,
+                out_trade_no=order.order_number,
+                amount={'total': order.amount}
+            )
+        result = json.loads(message)
+        if code in range(200, 300):
+            prepay_id = result.get('prepay_id')
+            timearray = time.strptime(order_in.create_time, "%Y-%m-%d %H:%M:%S")
+            timestamp = int(time.mktime(timearray))
+            noncestr = ''.join(sample(ascii_letters + digits, 8))
+            package = 'Sign=WXPay'
+            paysign = wxpay.sign([settings.APPID, str(timestamp), noncestr, prepay_id])
+            task.add_task(update_order_status, db, wxpay, order.id, order.order_number, settings.MCHID)
+            return {'code': 0, 'result': {
+                'ordernumber': order.order_number,
+                'appid': settings.APPID,
+                'partnerid': settings.MCHID,
+                'prepayid': prepay_id,
+                'package': package,
+                'nonceStr': noncestr,
+                'timestamp': timestamp,
+                'price': order.amount,
+                'sign': paysign
+            }}
+        else:
+            return {'code': -1, 'result': {'reason': result.get('code')}}
+    else:
+        timearray = time.strptime(order_in.create_time, "%Y-%m-%d %H:%M:%S")
+        timestamp = int(time.mktime(timearray))
+        task.add_task(update_free_order_status, db,  order.id)
+        return {'code': 0, 'result': {
+            'ordernumber': order.order_number,
+            'appid': settings.APPID,
+            'partnerid': settings.MCHID,
+            'prepayid': '',
+            'package': '',
+            'nonceStr': '',
+            'timestamp': timestamp,
+            'price': order.amount,
+            'sign': ''
+        }}
 @router.put("/{id}", response_model=schemas.OrderUpdate)
 def update_order(
         *,
@@ -840,3 +1001,5 @@ def read_order_by_id(
         owner=order.owner.user_name,
         comment_rate=order.comment_rate
     )
+
+
