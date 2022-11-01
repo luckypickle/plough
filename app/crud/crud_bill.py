@@ -4,6 +4,7 @@ import time
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app.crud.base import CRUDBase
 from app.models.bill import Bill
@@ -22,6 +23,10 @@ class CRUDBill(CRUDBase[Bill, BillCreate, BillUpdate]):
     @staticmethod
     def get_by_bill_date_master_id(db:Session,master_id:int,bill_date:str)-> Optional[Bill]:
         return db.query(Bill).filter(Bill.master_id == master_id,Bill.bill_date == bill_date).first()
+    @staticmethod
+    def get_paid_amount_by_master_id(db:Session,master_id:int)-> Optional[Bill]:
+        return db.query(func.sum(Bill.value)).filter(Bill.master_id==master_id,Bill.status==1).scalar()
+
 
     @staticmethod
     def create_bill(db: Session,bill:BillCreate):

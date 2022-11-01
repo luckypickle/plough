@@ -5,7 +5,7 @@ from string import ascii_letters, digits
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc,case,or_
+from sqlalchemy import func, desc,case,or_,text
 
 from app.crud.base import CRUDBase
 from app.models.order import Order
@@ -191,6 +191,10 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         if total is None:
             total = 0
         return total
+
+    def get_top_master_info(self,db:Session):
+        res = db.query(func.sum(Order.amount*Order.shareRate/100),func.count(1),Master.name).join(Master,Order.master_id==Master.id).filter(Order.status==1).group_by(Order.master_id,Master.name).order_by(text("sum_1 desc")).limit(3).all()
+        return res
 
     def get_order_reward_by_master(self,db:Session,master_id:int):
         total = db.query(func.sum(Order.amount*Order.shareRate/100)).filter(Order.master_id==master_id,Order.status==1).scalar()

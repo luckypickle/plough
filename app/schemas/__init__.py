@@ -2,7 +2,7 @@ from .order import Order, OrderCreate, OrderQuery, OrderUpdate, OrderUpdateDivin
 from .msg import Msg
 from .token import Token, TokenPayload
 from .user import User, UserCreate, UserInDB, UserUpdate, UserSummary,UserStatistics
-from .master import Master, MasterCreate, MasterUpdate, MasterRegister, MasterForOrder, MasterQuery,MasterRateQuery,MasterRate,MasterForOrderRate,MasterRewardQuery,MasterReward
+from .master import Master, MasterCreate, MasterUpdate, MasterRegister, MasterForOrder, MasterQuery,MasterRateQuery,MasterRate,MasterForOrderRate,MasterRewardQuery,MasterReward,TopMaster,TopMasterDetail
 from .mpcode import MPCode, MPCodeCreate, MPCodeInDB, MPCodeUpdate
 from .product import Product, ProductCreate, ProductUpdate, ProductForOrder,ProductForOrderPrice
 from .comment import Comment, CommentCreate, CommentUpdate,CommentQuery,CommentListQuery,CommentFullData,InteractComment,InteractCommentQuery

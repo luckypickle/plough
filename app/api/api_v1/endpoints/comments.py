@@ -18,7 +18,7 @@ router = APIRouter()
 def read_comment_by_order(
         order_id: int,
         db: Session = Depends(deps.get_db),
-        current_user: models.User = Depends(deps.get_current_active_user),
+        # current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve comment by order.
@@ -35,7 +35,7 @@ def read_interact_comment_by_order(
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(deps.get_db),
-        current_user: models.User = Depends(deps.get_current_active_user),
+        # current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve interact comment by order.
@@ -184,7 +184,7 @@ def create_comment(
         )
 
     comment = crud.comment.create(db, obj_in=obj_in, master_id=order.master_id, user_id=current_user.id)
-    if comment is not  None:
+    if comment is not  None and obj_in.type !=1:
         order = crud.order.get(db, id=obj_in.order_id)
         order_in={"comment_rate":obj_in.rate}
         crud.order.update(db=db, db_obj=order, obj_in=order_in)
@@ -194,6 +194,36 @@ def create_comment(
     #crud.order.updateOrderRate(db, order_id=order.id, rate=obj_in.rate)
     return comment
 
+@router.post("/createInteract", response_model=schemas.Comment)
+def create_comment(
+        *,
+        db: Session = Depends(deps.get_db),
+        obj_in: schemas.CommentCreate,
+
+        settings: AppSettings = Depends(get_app_settings)
+) -> Any:
+    """
+    Create new comment.
+    """
+    if obj_in.type!=1:
+        raise HTTPException(
+            status_code=403,
+            detail="only support interact comment",
+        )
+    order = crud.order.get(db, id=obj_in.order_id)
+    if not order:
+        raise HTTPException(
+            status_code=403,
+            detail="Order not found",
+        )
+
+    comment = crud.comment.create(db, obj_in=obj_in, master_id=order.master_id, user_id=-1)
+    if comment is not  None:
+        comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
+    else:
+        comment = schemas.Comment()
+    #crud.order.updateOrderRate(db, order_id=order.id, rate=obj_in.rate)
+    return comment
 
 
 @router.put("/{comment_id}", response_model=schemas.Comment)

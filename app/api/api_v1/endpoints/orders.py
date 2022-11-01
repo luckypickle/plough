@@ -196,6 +196,84 @@ def read_orders(
 
 
 
+
+@router.get("/openOrderById", response_model=schemas.OpenOrder)
+def read_orders(
+        db: Session = Depends(deps.get_db),
+        id: int = 0,
+        # current_user: models.User = Depends(deps.get_current_user),
+) -> Any:
+    """
+    Retrieve open orders [all user].
+    """
+    util.load_master_rate(db)
+    o = crud.order.get(db,id=id)
+    if o.is_open !=1:
+        raise HTTPException(status_code=404, detail="Order not found")
+    # FIXME, not check count
+    products = crud.product.get_multi(db=db)
+    for p in products:
+        if p.id == o.product_id:
+            product = p.name
+
+    create_time = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+    pay_time = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+    _, comments = crud.comment.get_interact_by_order_id_full_data(db, o.id, type=1, limit=3)
+    comment_ret = []
+    sizhu = None
+    birthday = datetime.datetime.strptime(o.birthday, "%Y-%m-%d %H:%M")
+    if birthday is not None:
+        sizhu = get_bazi_by_birthday(birthday.year, birthday.month, birthday.day, birthday.hour, birthday.minute)
+
+    for one_com in comments:
+        print(one_com)
+        create_time = one_com[0].create_time.strftime("%Y-%m-%d %H:%M:%S")
+        user_name = one_com[1][:3] + "****" + one_com[1][-4:] if one_com[1] is not None else one_com[2]
+        comment_ret.append(schemas.InteractComment(
+            id=one_com[0].id,
+            status=one_com[0].status,
+            order_id=one_com[0].order_id,
+            content=one_com[0].content,
+            create_time=create_time,
+            user_name=user_name
+        ))
+    comment = crud.comment.get_by_order_id(db, o.id, type=0)
+    if comment is not None:
+        comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
+
+    ret_obj =schemas.OpenOrder(
+        id=o.id,
+        product_id=o.product_id,
+        product=product,
+        order_number=o.order_number,
+        name=o.name,
+        sex=o.sex,
+        birthday=o.birthday,
+        location=o.location,
+        amount=o.amount,
+        shareRate=o.shareRate,
+        owner_id=o.owner_id,
+        master_id=o.master_id,
+        divination=o.divination,
+        reason=o.reason,
+        create_time=create_time,
+        pay_time=pay_time,
+        arrange_status=o.arrange_status,
+        status=o.status,
+        master=o.master.name,
+        master_avatar=o.master.avatar,
+        owner=o.owner.user_name,
+        is_open=o.is_open,
+        comment_rate=o.comment_rate,
+        master_rate=util.get_avg_rate(o.master_id),
+        comment=comment,
+        interact_comment_list=comment_ret,
+        sizhu=sizhu,
+    )
+    return ret_obj
+
+
+
 @router.get('/user_arrange_order', response_model=schemas.OrderQuery)
 def get_user_arramge_order(
         db: Session = Depends(deps.get_db),

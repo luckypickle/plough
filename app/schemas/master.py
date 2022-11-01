@@ -83,6 +83,19 @@ class MasterReward(MasterInDBBase):
     total_reward: Optional[int]=None
 
 
+class TopMasterDetail(BaseModel):
+    name:Optional[str] = None
+    total_reward: Optional[float] = None
+    total_count : Optional[int] = None
+
+class TopMaster(BaseModel):
+    total_reward :Optional[float]=None
+    count_rate :Optional[str]=None
+    amount_rate :Optional[str]=None
+    total: Optional[str]= None
+    paid_amount:Optional[float]=None
+    top_detail: List[TopMasterDetail] =None
+
 
 class MasterRate(MasterInDBBase):
     avg_rate:Optional[str]=None
