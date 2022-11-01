@@ -237,14 +237,14 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
                            user_id: int, name:str)->Any:
         product_obj = db.query(Product).filter(Product.name == name,Product.status==1).first()
         if product_obj is None:
-            return None
+            return None,None
         order_obj = db.query(Order).filter(Order.owner_id == user_id,
                                            Order.product_id == product_obj.id,
                                            Order.status == 1).first()
         if order_obj is None:
-            return False
+            return False,product_obj.id
         else:
-            return True
+            return True,product_obj.id
 
 
     def get_master_by_order_id(self,db: Session, * , order_id:int)->Optional[Master]:

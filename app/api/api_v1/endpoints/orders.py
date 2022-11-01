@@ -769,8 +769,8 @@ def get_off_order_info(
         db: Session = Depends(deps.get_db),
         current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    user_exist_dot_order = crud.order.get_user_type_order(db, user_id=current_user.id,name='点盘')
-    user_exist_free_order = crud.order.get_user_type_order(db, user_id=current_user.id,name='折扣排盘')
+    user_exist_dot_order,dot_product_id = crud.order.get_user_type_order(db, user_id=current_user.id,name='点盘')
+    user_exist_free_order,free_product_id = crud.order.get_user_type_order(db, user_id=current_user.id,name='折扣排盘')
     if user_exist_dot_order is None or user_exist_free_order is None:
         raise HTTPException(status_code=400, detail="Don't exist product yet")
     invite_count = crud.invite.get_prev_count(db, user_id=current_user.id, status=2)
@@ -778,6 +778,7 @@ def get_off_order_info(
         raise HTTPException(status_code=400, detail="Order State error")
     return {'exist_dot_order': user_exist_dot_order,
             'exist_free_order': user_exist_free_order,
+            'free_product_id':free_product_id,
             'invite_count': invite_count}
 
 @router.post('create_free_order')
@@ -798,7 +799,7 @@ def create_free_order(
     product = crud.product.get(db=db, id=order_in.product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    user_exist_free_order = crud.order.get_user_type_order(db, user_id=current_user.id,name='折扣排盘')
+    user_exist_free_order, free_product_id = crud.order.get_user_type_order(db, user_id=current_user.id,name='折扣排盘')
     if user_exist_free_order:
         raise HTTPException(status_code=404, detail="Cant place free order again")
     if product.name != 'free':
