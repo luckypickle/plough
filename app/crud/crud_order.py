@@ -246,4 +246,11 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         else:
             return True
 
+
+    def get_master_by_order_id(self,db: Session, * , order_id:int)->Optional[Master]:
+        master_id_obj = db.query(Order.master_id).filter(Order.id == order_id).first()
+        if master_id_obj is None:
+            return None
+        return db.query(Master).filter(Master.id == master_id_obj.master_id).first()
+
 order = CRUDOrder(Order)
