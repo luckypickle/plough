@@ -871,6 +871,14 @@ def create_free_order(
             'price': order.amount,
             'sign': ''
         }}
+
+@router.get("/get_master_by_order_id",response_model=schemas.Master)
+def get_master_by_order_id(
+        order_id: int,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user),
+)->schemas.Master:
+    return crud.order.get_master_by_order_id(db,order_id=order_id)
 @router.put("/{id}", response_model=schemas.OrderUpdate)
 def update_order(
         *,
