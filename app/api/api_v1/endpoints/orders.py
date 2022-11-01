@@ -728,7 +728,7 @@ def create_free_order(
     invite_count = crud.invite.get_prev_count(db, user_id=current_user.id, status=2)
     if isTestPay():
         invite_count = 12
-    order_in.amount = 100 - min(100, 10*invite_count)
+    order_in.amount = (100 - min(100, 10*invite_count))*100
     order_in.shareRate = master.rate
     order = crud.order.create_with_owner(db=db, obj_in=order_in, owner_id=current_user.id)
     if order_in.amount != 0:
