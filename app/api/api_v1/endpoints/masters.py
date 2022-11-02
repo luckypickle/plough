@@ -74,7 +74,7 @@ def read_masters(
     """
     Retrieve masters. (superuser only)
     """
-    total, masters = crud.master.get_multi_with_conditions(db=db, name=name,status=status, skip=skip, limit=limit)
+    total, masters = crud.master.get_multi_with_conditions(db=db, name=name,status=status, skip=skip, limit=limit,is_order=1)
     ret_obj = schemas.MasterRewardQuery(
         total=total,
         masters=[]

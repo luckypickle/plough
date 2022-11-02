@@ -38,7 +38,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             .join(Invite,Invite.user_id==User.id, isouter=True)\
             .filter(User.is_superuser == False) \
             .filter(*condition)\
-            .group_by(User.phone, User.create_time, User.id,Invite.current_level,User.email)
+            .group_by(User.phone, User.create_time, User.id,Invite.current_level,User.email).order_by(User.create_time.desc())
         ret_obj = []
         total = query.count()
         users = query.offset(skip).limit(limit).all()

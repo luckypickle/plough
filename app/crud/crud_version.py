@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional,List
 import uuid
 import time
 
@@ -17,6 +17,13 @@ class CRUDVersion(CRUDBase[Version, VersionCreate, VersionUpdate]):
             .filter(Version.product == product) \
             .order_by(Version.release_time.desc()) \
             .first()
+
+    @staticmethod
+    def get_multi_by_order(
+             db: Session, *, skip: int = 0, limit: int = 100
+    ) ->  List[Version]:
+        return db.query(Version).order_by(Version.release_time.desc()).offset(skip).limit(limit).all()
+
 
     @staticmethod
     def release_version(db: Session, *, obj_in: VersionCreate) -> Optional[Version]:

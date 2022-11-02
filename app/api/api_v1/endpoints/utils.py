@@ -118,7 +118,7 @@ def release_version(
     """
     Retrieve version.
     """
-    versions = crud.version.get_multi(db=db, skip=skip, limit=limit)
+    versions = crud.version.get_multi_by_order(db=db, skip=skip, limit=limit)
     return versions
 
 

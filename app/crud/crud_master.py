@@ -39,7 +39,7 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
         return db.query(Master).filter(Master.email == email).first()
 
     @staticmethod
-    def get_multi_with_conditions(db: Session, *, status: int, name:str = "", skip: int = 0, limit: int = 100) -> (int, Optional[
+    def get_multi_with_conditions(db: Session, *, status: int, name:str = "", skip: int = 0, limit: int = 100 ,is_order:int=0) -> (int, Optional[
         Master]):
         query = db.query(Master)
         if status >= 0:
@@ -48,6 +48,11 @@ class CRUDMaster(CRUDBase[Master, MasterCreate, MasterUpdate]):
             query = query.filter(Master.status !=2)
         if name != "":
             query.filter(Master.name==name)
+        if is_order==1:
+            return (
+                query.count(),
+                query.order_by(Master.create_time.desc()).offset(skip).limit(limit).all()
+            )
         return (
             query.count(),
             query.order_by(Master.sort_weight.desc()).offset(skip).limit(limit).all()
