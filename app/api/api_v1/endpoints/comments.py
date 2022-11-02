@@ -217,7 +217,7 @@ def create_comment(
             detail="Order not found",
         )
 
-    comment = crud.comment.create(db, obj_in=obj_in, master_id=order.master_id, user_id=-1)
+    comment = crud.comment.create(db, obj_in=obj_in, master_id=order.master_id, user_id=1)
     if comment is not  None:
         comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
     else:
