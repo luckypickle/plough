@@ -193,7 +193,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         return total
 
     def get_top_master_info(self,db:Session):
-        res = db.query(func.sum(Order.amount*Order.shareRate/100),func.count(1),Master.name).join(Master,Order.master_id==Master.id).filter(Order.status==1).group_by(Order.master_id,Master.name).order_by(text("sum_1 desc")).limit(3).all()
+        res = db.query(func.sum(Order.amount* func.coalesce(Order.shareRate,0)/100),func.count(1),Master.name).join(Master,Order.master_id==Master.id).filter(Order.status==1).group_by(Order.master_id,Master.name).order_by(text("sum_1 desc")).limit(3).all()
         return res
 
     def get_order_reward_by_master(self,db:Session,master_id:int):
