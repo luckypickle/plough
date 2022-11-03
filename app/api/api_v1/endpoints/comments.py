@@ -48,7 +48,7 @@ def read_interact_comment_by_order(
         # create_time = one_com.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         # print(one_com.create_time)
         create_time = one_com[0].create_time.strftime("%Y-%m-%d %H:%M:%S")
-        if one_com.user_id==1:
+        if one_com[0].user_id==1:
             user_name="匿名用户"
         else:
             user_name = one_com[1][:3]+"****"+one_com[1][-4:] if one_com[1] is not None else one_com[2]
