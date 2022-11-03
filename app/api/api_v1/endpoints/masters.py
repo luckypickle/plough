@@ -320,7 +320,7 @@ def get_top_masters(db: Session = Depends(deps.get_db),
     count_rate, amount_rate = crud.order.get_master_order_rate(db, current_master.id)
     ret_obj =  schemas.TopMaster( total_reward=0.0,paid_amount=0.0,count_rate ="0.0%",    amount_rate ="0.0%",total=0, top_detail=[])
     bill_amount = crud.bill.get_paid_amount_by_master_id(db,current_master.id)
-    ret_obj.total_reward = total_reward
+    ret_obj.total_reward = float(total_reward)/100
     if bill_amount is None:
         ret_obj.paid_amount = 0.0
     else:
@@ -329,7 +329,7 @@ def get_top_masters(db: Session = Depends(deps.get_db),
     ret_obj.amount_rate = amount_rate
     ret_obj.total = total
     for one_res in res:
-        ret_obj.top_detail.append(schemas.TopMasterDetail(total_reward=float(one_res[0])/100,name=one_res[2],total_count=one_res[1]))
+        ret_obj.top_detail.append(schemas.TopMasterDetail(total_reward=one_res[0],name=one_res[2],total_count=one_res[1]))
 
 
     return ret_obj
