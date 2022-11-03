@@ -329,7 +329,7 @@ def get_top_masters(db: Session = Depends(deps.get_db),
     ret_obj.amount_rate = amount_rate
     ret_obj.total = total
     for one_res in res:
-        ret_obj.top_detail.append(schemas.TopMasterDetail(total_reward=one_res[0],name=one_res[2],total_count=one_res[1]))
+        ret_obj.top_detail.append(schemas.TopMasterDetail(total_reward=float(one_res[0])/100,name=one_res[2],total_count=one_res[1]))
 
 
     return ret_obj
