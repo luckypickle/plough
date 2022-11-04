@@ -109,10 +109,13 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
             if phone.count("@") != 0:
                 obj =  self.create(db, obj_in=UserCreate(email=phone))
+                phone_or_email = phone
             else:
                 obj =  self.create(db, obj_in=UserCreate(phone=phone))
+                phone_or_email = phone_or_email = phone[:3] + "****" + phone[-4:]
+
             ret = register_account(get_read_url("3bf8616fe6c23c0c465527ec80397b24.png"), 0, "user_" + str(obj.id),
-                                   phone)
+                                   phone_or_email)
             return obj
         elif user is None:
             return None
