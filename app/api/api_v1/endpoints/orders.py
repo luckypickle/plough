@@ -211,8 +211,8 @@ def read_orders(
     """
     util.load_master_rate(db)
     o = crud.order.get(db,id=id)
-    if o.is_open !=1:
-        raise HTTPException(status_code=404, detail="Order not found")
+    is_open = o.is_open
+
     # FIXME, not check count
     products = crud.product.get_multi(db=db)
     for p in products:
@@ -248,24 +248,16 @@ def read_orders(
         id=o.id,
         product_id=o.product_id,
         product=product,
-        order_number=o.order_number,
         name=o.name,
         sex=o.sex,
-        birthday=o.birthday,
-        location=o.location,
-        amount=o.amount,
-        shareRate=o.shareRate,
         owner_id=o.owner_id,
         master_id=o.master_id,
-        divination=o.divination,
+        divination=o.divination if is_open==1 else None,
         reason=o.reason,
-        create_time=create_time,
-        pay_time=pay_time,
         arrange_status=o.arrange_status,
         status=o.status,
         master=o.master.name,
         master_avatar=o.master.avatar,
-        owner=o.owner.user_name,
         is_open=o.is_open,
         comment_rate=o.comment_rate,
         master_rate=util.get_avg_rate(o.master_id),
