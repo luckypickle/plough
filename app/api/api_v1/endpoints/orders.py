@@ -211,8 +211,10 @@ def read_orders(
     """
     util.load_master_rate(db)
     o = crud.order.get(db,id=id)
-    is_open = o.is_open
-
+    util.load_master_rate(db)
+    o = crud.order.get(db, id=id)
+    if o.is_open != 1:
+        raise HTTPException(status_code=404, detail="Order not found")
     # FIXME, not check count
     products = crud.product.get_multi(db=db)
     for p in products:
@@ -244,26 +246,32 @@ def read_orders(
     if comment is not None:
         comment.create_time = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
 
-    ret_obj =schemas.OpenOrder(
+    ret_obj = schemas.OpenOrder(
         id=o.id,
         product_id=o.product_id,
         product=product,
+        order_number=o.order_number,
         name=o.name,
         sex=o.sex,
+        birthday=o.birthday,
+        location=o.location,
+        amount=o.amount,
+        shareRate=o.shareRate,
         owner_id=o.owner_id,
         master_id=o.master_id,
-        divination=o.divination if is_open==1 else None,
+        divination=o.divination,
         reason=o.reason,
+        create_time=create_time,
+        pay_time=pay_time,
         arrange_status=o.arrange_status,
         status=o.status,
         master=o.master.name,
         master_avatar=o.master.avatar,
+        owner=o.owner.user_name,
         is_open=o.is_open,
         comment_rate=o.comment_rate,
         master_rate=util.get_avg_rate(o.master_id),
         comment=comment,
-        interact_comment_list=comment_ret,
-        sizhu=sizhu,
     )
     return ret_obj
 
