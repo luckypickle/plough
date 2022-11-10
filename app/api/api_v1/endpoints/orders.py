@@ -785,8 +785,15 @@ def get_off_order_info(
     invite_count = crud.invite.get_prev_count(db, user_id=current_user.id, status=2)
     if (not user_exist_dot_order) and user_exist_free_order:
         raise HTTPException(status_code=400, detail="Order State error")
+    limit_time = 1668047054
+    obj = crud.order.get_order_by_time(db, time=limit_time, user_id=current_user.id, product_id=dot_product_id)
+    if obj is not None:
+        user_recent_dot_order = True
+    else:
+        user_recent_dot_order = False
     return {'exist_dot_order': user_exist_dot_order,
             'exist_free_order': user_exist_free_order,
+            'exist_recent_dot_order':user_recent_dot_order,
             'free_product_id':free_product_id,
             'invite_count': invite_count}
 
