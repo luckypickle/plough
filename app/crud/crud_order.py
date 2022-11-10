@@ -14,7 +14,7 @@ from app.models.favorite import Favorite
 from app.models.master import Master
 from app.models.user import User
 from app.models.product import Product
-
+import datetime
 
 
 class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
@@ -252,5 +252,13 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         if master_id_obj is None:
             return None
         return db.query(Master).filter(Master.id == master_id_obj.master_id).first()
+
+
+    def get_order_by_time(self,db:Session, *, time:int, user_id:int, product_id:int):
+
+        return db.query(Order).filter(Order.status == 1,
+                                      Order.product_id == product_id,
+                                      Order.owner_id == user_id,
+                                      Order.pay_time >= datetime.datetime.fromtimestamp(time)).first()
 
 order = CRUDOrder(Order)

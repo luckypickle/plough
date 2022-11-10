@@ -25,7 +25,7 @@ from app.im_utils import disable_chat,recovery_chat,pushMsg
 router = APIRouter()
 import app.im_utils
 def isTestPay():
-    return False
+    return True
 
 @router.get("/", response_model=schemas.OrderQuery)
 def read_orders(
@@ -705,6 +705,7 @@ def create_order(
     master = crud.master.get(db=db, id=order_in.master_id)
     if not master:
         raise HTTPException(status_code=404, detail="Master not found")
+    print(order_in.product_id)
     product = crud.product.get(db=db, id=order_in.product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -714,6 +715,11 @@ def create_order(
     else:
         order_in.amount = price.price
 
+    if product.name == '点盘':
+        limit_time = 1668047054
+        obj = crud.order.get_order_by_time(db,time=limit_time, user_id=current_user.id, product_id=order_in.product_id)
+        if obj is not None:
+            raise HTTPException(status_code=404, detail="您已经下过点盘")
 
 
     order_in.shareRate = master.rate
