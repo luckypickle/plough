@@ -25,7 +25,7 @@ from app.im_utils import disable_chat,recovery_chat,pushMsg
 router = APIRouter()
 import app.im_utils
 def isTestPay():
-    return True
+    return False
 
 @router.get("/", response_model=schemas.OrderQuery)
 def read_orders(
