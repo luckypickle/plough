@@ -289,12 +289,19 @@ def invite_order_info(
                     prev_prev_phone = prev_prev_user.email
                 else:
                     prev_prev_phone = prev_prev_user.phone
+        temp_phone = invited_user_obj.phone
+        if invited_user_obj.phone is None or invited_user_obj.phone == "":
+            user_obj = crud.user.get(db, id=invited_user_obj.user_id)
+            temp_phone = user_obj.email
+
         ret.invite_orders.append(schemas.InviteOrder(
-            phone=invited_user_obj.phone,
+            phone=temp_phone,
             register_time=invited_user_obj.register_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S"),
             prev_phone=prev_phone,
             prev_prev_phone=prev_prev_phone,
             order_count=crud.order.get_order_count(db,user_id=invited_user_obj.user_id),
             order_amount=crud.order.get_order_amount(db,user_id=invited_user_obj.user_id)
         ))
+        if invited_user_obj.phone is None or invited_user_obj.phone == "":
+            crud.invite.update(db,db_obj=invited_user_obj,obj_in={"phone":temp_phone})
     return ret
