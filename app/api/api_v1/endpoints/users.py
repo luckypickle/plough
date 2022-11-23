@@ -186,7 +186,7 @@ def create_user_open(
         invite_code_user = utils.generate_invite_code()
         invite_obj = schemas.InviteCreate(
             user_id=user.id,
-            phone=user.phone,
+            phone=phone,
             invite_code=invite_code_user,
             register_time=user.create_time.astimezone(tz),
             prev_invite=prev_user.user_id,
@@ -197,7 +197,7 @@ def create_user_open(
         invite_code_user = utils.generate_invite_code()
         invite_obj = schemas.InviteCreate(
             user_id=user.id,
-            phone=user.phone,
+            phone=phone,
             invite_code=invite_code_user,
             register_time=user.create_time.astimezone(tz)
         )

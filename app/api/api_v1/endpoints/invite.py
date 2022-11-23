@@ -65,9 +65,13 @@ def get_invite_info(
             else:
                 prev_phone = prev_user.phone
         total_amount = crud.reward.get_first_total_reward(db,user_id=current_user.id)+ crud.reward.get_second_total_reward(db,user_id=current_user.id)
+        temp_phone = invite_info.phone
+        if invite_info.phone is None or invite_info.phone == "":
+            user_obj = crud.user.get(db, id=invite_info.user_id)
+            temp_phone = user_obj.email
         ret_obj = schemas.InviteForInfo(
             user_id= invite_info.user_id,
-            phone= invite_info.phone,
+            phone= temp_phone,
             invite_code=invite_info.invite_code,
             level=invite_info.current_level,
             invited_count=crud.invite.get_prev_count(db, user_id=invite_info.user_id, status=1)+crud.invite.get_prev_count(db, user_id=invite_info.user_id, status=2),
@@ -77,6 +81,8 @@ def get_invite_info(
             uncollect_amount=total_amount-crud.withdraw.get_withdraw_amount(db,user_id=current_user.id),
             outof_bind_time=outof_bind
         )
+        if invite_info.phone is None or invite_info.phone == "":
+            crud.invite.update(db,db_obj=invite_info,obj_in={"phone":temp_phone})
     return ret_obj
 
 @router.get("/invite_url",response_model=Any)
@@ -198,14 +204,20 @@ def invite_users(
         if invited_user_obj.first_order_time is not None:
             order_time = invited_user_obj.first_order_time.strftime("%Y-%m-%d %H:%M:%S")
         register_time = (invited_user_obj.register_time+datetime.timedelta(hours=8)).astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")
+        temp_phone = invited_user_obj.phone
+        if invited_user_obj.phone is None or invited_user_obj.phone == "":
+            user_obj = crud.user.get(db,id=invited_user_obj.user_id)
+            temp_phone = user_obj.email
         ret.invited_users.append(schemas.InvitedUserDetail(
             user_id=invited_user_obj.user_id,
-            phone=invited_user_obj.phone,
+            phone=temp_phone,
             register_time=register_time,
             first_order_time=order_time,
             status=invited_user_obj.order_status,
-
         ))
+        if invited_user_obj.phone is None or invited_user_obj.phone == "":
+            crud.invite.update(db,db_obj=invited_user_obj,obj_in={"phone":temp_phone})
+
     ret.invited_count = crud.invite.get_prev_count(db, user_id=user_obj.id, status=1)+crud.invite.get_prev_count(db, user_id=user_obj.id, status=2)
     ret.invited_order_count = crud.invite.get_prev_count(db, user_id=user_obj.id, status=2)
     return ret
