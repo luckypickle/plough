@@ -154,6 +154,11 @@ def create_user_open(
             detail="Open user registration is forbidden on this server",
         )
     valid_mpcod,user = crud.user.register(db,phone=phone,verify_code=password)
+    if user is None:
+        raise HTTPException(
+            status_code=400,
+            detail="您已完成注册，请打开五行演义APP进行排盘批盘吧！",
+        )
     phone_or_email = phone
     if phone_or_email.count("@") != 0:
         phone_or_email = phone
