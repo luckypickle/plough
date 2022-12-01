@@ -60,10 +60,11 @@ def query_message_detail(page_num,page_size,friend_name,user_name):
         return data["data"]
     return {}
 
-def recovery_chat(master_id,user_id):
+def recovery_chat(master_id,user_id,memo = ""):
     url = url_base + "/api/custom/recoveryChat"
 
     querystring = {"mastername": "master_"+str(master_id),
+                   "memo": memo,
                    "username": "user_"+str(user_id)}
 
     response = safe_post(url, querystring)

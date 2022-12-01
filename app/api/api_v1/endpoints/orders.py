@@ -572,7 +572,7 @@ def update_free_order_status(db, order_id):
         db.commit()
         db.refresh(order)
         pushMsg("您有新的排盘订单，请尽快查看", "master_" + str(order.master_id))
-        recovery_chat(order.master_id, order.owner_id)
+        recovery_chat(order.master_id, order.owner_id,order.memo)
     order = crud.order.get(db=db, id=order_id)
     if order is not None and order.status == 1:
         if order.status == 1:
@@ -628,7 +628,7 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                 db.commit()
                 db.refresh(order)
                 pushMsg("您有新的排盘订单，请尽快查看","master_"+str(order.master_id))
-                recovery_chat(order.master_id,order.owner_id)
+                recovery_chat(order.master_id,order.owner_id,order.memo)
             break
         else:
             ret = wxpay.query(out_trade_no=out_trade_no, mchid=mchid)
@@ -643,7 +643,7 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                     db.commit()
                     db.refresh(order)
                     pushMsg("您有新的排盘订单，请尽快查看", "master_" + str(order.master_id))
-                    recovery_chat(order.master_id, order.owner_id)
+                    recovery_chat(order.master_id, order.owner_id,order.memo)
                 break
         time.sleep(5)
     order = crud.order.get(db=db, id=order_id)
