@@ -14,6 +14,7 @@ import hashlib
 import os
 from app.cos_utils import upload_file_to_cos,get_read_url
 from app.im_utils import register_account,query_message_list,query_message_detail,recovery_chat
+import app.im_utils
 router = APIRouter()
 
 
@@ -132,6 +133,9 @@ def release_version(
     Release a new version.
     """
     version = crud.version.release_version(db=db, obj_in=obj_in)
+    if obj_in.product=="IOS" and obj_in.vstr is not None and obj_in.desc is not None:
+        template = "版本号:%s，更新内容:%s"%(obj_in.vstr,obj_in.desc)
+        app.im_utils.send_system_message(template)
     return version
 
 

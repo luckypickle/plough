@@ -74,6 +74,20 @@ def recovery_chat(master_id,user_id,memo = ""):
     if data["code"] == 200:
         return data["msg"]
     return {}
+
+def send_system_message(message):
+    url = url_base + "/api/custom/sendSystemMessage"
+    querystring = {
+        "message":message
+    }
+    response = safe_post(url, querystring)
+
+    data = response
+    # print(response.text)
+    if data["code"] == 200:
+        return data["msg"]
+    return ""
+
 def disable_chat(master_id,user_id):
     url = url_base + "/api/custom/disableChat"
 
