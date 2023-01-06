@@ -111,7 +111,8 @@ def read_orders(
             pic1=pic1,
             pic2=pic2,
             pic3=pic3,
-            memo=memo
+            memo=memo,
+            isNorth=o.isNorth
 
         ))
     return ret_obj
@@ -194,6 +195,7 @@ def read_orders(
             comment=comment,
             interact_comment_list=comment_ret,
             sizhu=sizhu,
+            isNorth=o.isNorth
         ))
     return ret_obj
 
@@ -272,6 +274,7 @@ def read_orders(
         comment_rate=o.comment_rate,
         master_rate=util.get_avg_rate(o.master_id),
         comment=comment,
+        isNorth=o.isNorth
     )
     return ret_obj
 
@@ -344,7 +347,8 @@ def get_user_arramge_order(
             pic1=pic1,
             pic2=pic2,
             pic3=pic3,
-            memo=memo
+            memo=memo,
+            isNorth=o.isNorth
         ))
     return ret_obj
 
@@ -479,7 +483,9 @@ def read_orders_master(
             master=o.master.name,
             master_avatar=o.master.avatar,
             owner=o.owner.user_name,
-            comment_rate=o.comment_rate
+            comment_rate=o.comment_rate,
+            isNorth=o.isNorth
+
         ))
     return ret_obj
 
@@ -975,7 +981,8 @@ def master_update_order(
         master=order.master.name,
         master_avatar=order.master.avatar,
         owner=order.owner.user_name,
-        comment_rate=order.comment_rate
+        comment_rate=order.comment_rate,
+        isNorth=order.isNorth
     )
 
 
@@ -1024,7 +1031,8 @@ def read_order_by_id(
         master=order.master.name,
         master_avatar=order.master.avatar,
         owner=order.owner.user_name,
-        comment_rate=order.comment_rate
+        comment_rate=order.comment_rate,
+        isNorth=order.isNorth
     )
 
 

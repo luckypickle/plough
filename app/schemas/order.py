@@ -33,6 +33,7 @@ class OrderCreate(OrderBase):
     pic2: Optional[str]=None
     pic3: Optional[str]=None
     memo: Optional[str]=None
+    isNorth: Optional[bool]=None
 
 class OrderPic(BaseModel):
     pic1: Optional[str] = None
@@ -74,6 +75,7 @@ class OrderInDBBase(OrderCreate):
     arrange_status: Optional[int] = None
     status: Optional[int] = OrderStatus.init.value
     is_open: Optional[int] = 0
+    isNorth:Optional[bool]=True
 
 
     class Config:

@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, func,Text
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, func,Text,Boolean
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -36,3 +36,4 @@ class Order(Base):
     pic2 = Column(Text,default=None,comment="Pic2")
     pic3 = Column(Text,default=None,comment="Pic3")
     memo = Column(Text,default=None,comment="memo")
+    isNorth = Column(Boolean,default=True,comment="是否北半球")

@@ -7,7 +7,7 @@ from app import models, schemas, crud
 from app.api import deps
 # from app.core.celery_app import celery_app
 from app.utils import send_test_email
-from app.bazi.citys import cal_zone
+from app.bazi.citys import cal_zone,cal_zone_and_lat
 from app.bazi.bazi import getYearJieQi,get_birthday_by_bazi,cal_wuxing_color,get_bazi_by_birthday
 from app.api.util import make_return
 import hashlib
@@ -56,16 +56,32 @@ def get_latest_version(
 
 @router.get("/cityzone")
 def get_latest_version(
+
         province: str,
         city: str,
         area: str,
+        country:str="中国",
         db: Session = Depends(deps.get_db),
 ) -> Any:
     """
     Get latest version.
     """
 
-    return cal_zone(province, city, area)
+    return cal_zone(country,province, city, area)
+@router.get("/cityzone_lat")
+def get_latest_version(
+
+        province: str,
+        city: str,
+        area: str,
+        country:str="中国",
+        db: Session = Depends(deps.get_db),
+) -> Any:
+    """
+    Get latest version.
+    """
+    zone,lat = cal_zone_and_lat(country,province, city, area)
+    return {"zone":zone,"North":lat}
 
 
 year_jieqi = {}
