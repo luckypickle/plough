@@ -293,6 +293,7 @@ def get_saved_divination(
 def get_history(
         skip: int = 0,
         limit: int = 100,
+        user_name:str ="",
         db: Session = Depends(deps.get_db),
         current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
@@ -302,6 +303,9 @@ def get_history(
     history = crud.history.get_multi_by_owner(db=db, owner_id=current_user.id, skip=skip, limit=limit)
     rets = []
     for h in history:
+        if user_name!="":
+            if h.name.find(user_name)==-1:
+                continue
         rets.append(schemas.History(
             id=h.id,
             name=h.name,
