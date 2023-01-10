@@ -21,4 +21,12 @@ def cal_zone_and_lat(country,province,city,area):
     if key in datas:
         lng = float(datas[key]["lng"])
         zone = (int(lng) - 120) *4
-    return zone,float(datas[key]["lat"])>0
+        lat = float(datas[key]["lat"])>0
+        return zone,lat
+    key = country+"_"+city+"_"+city+"_"+area
+    if key in datas:
+        lng = float(datas[key]["lng"])
+        zone = (int(lng) - 120) * 4
+        lat = float(datas[key]["lat"]) > 0
+        return zone, lat
+    return zone,True
