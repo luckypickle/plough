@@ -11,6 +11,7 @@ class HistoryBase(BaseModel):
     sex: Optional[int] = 1
     location: Optional[str] = ''
     divination: Optional[str] = ''
+    isNorth:Optional[bool]=True
 
 
 # Properties to receive via API on creation

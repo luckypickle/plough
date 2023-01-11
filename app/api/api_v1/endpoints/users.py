@@ -266,6 +266,7 @@ def get_saved_divination(
         lunar:int = 0,
         run:int =0,
         location: str = '',
+        is_north:bool = True,
         current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """
@@ -283,7 +284,8 @@ def get_saved_divination(
         sex=sex,
         location=location,
         status=0,
-        divination=json.dumps(divination)
+        divination=json.dumps(divination),
+        isNorth=is_north
     )
     crud.history.create_owner_divination(db, history=history)
     return divination
@@ -313,7 +315,8 @@ def get_history(
             sex=h.sex,
             location=h.location,
             divination=h.divination,
-            create_time=h.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+            create_time=h.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            isNorth=h.isNorth
         ))
     return rets
 
