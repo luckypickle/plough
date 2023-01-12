@@ -127,7 +127,7 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         return (
             query.count(),
             sql.scalar(),
-            query.order_by(Order.id.desc()).order_by(Order.arrange_status.asc()).offset(skip).limit(limit).all()
+            query.order_by(Order.arrange_status.asc()).offset(skip).limit(limit).all()
         )
 
     def get_master_order_rate(self,db: Session,master_id:int) ->(str,str):

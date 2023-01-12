@@ -274,7 +274,8 @@ def read_orders(
         comment_rate=o.comment_rate,
         master_rate=util.get_avg_rate(o.master_id),
         comment=comment,
-        isNorth=o.isNorth
+        isNorth=o.isNorth,
+        sizhu=sizhu
     )
     return ret_obj
 
@@ -427,7 +428,8 @@ def read_orders_by_favorite(
             master_rate=util.get_avg_rate(o[0].master_id),
             comment=comment,
             interact_comment_list=comment_ret,
-            sizhu=sizhu
+            sizhu=sizhu,
+            isNorth=o[0].isNorth
         ))
     return ret_obj
 
