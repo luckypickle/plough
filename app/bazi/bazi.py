@@ -191,6 +191,14 @@ class BaZi():
                     check_gan(gan2_, gans2),
                     zhi2_, yinyang(zhi2_), datas.ten_deities[me][zhi2_], zhi6_, zhi__, empty)
                 dayunData.append(out)
+            #流年集合添加重复的一年
+            day2_dup = sxtwl.fromSolar(value[1] + 10, 5, 1)
+            yTG_dup = day2_dup.getYearGZ()
+            gan2_dup = datas.Gan[yTG_dup.tg]
+            zhi2_dup = datas.Zhi[yTG_dup.dz]
+            dayunYears[str(int(value[1]))].append(
+                {"age":int(value[0]) + 10,"year": value[1] + 10, "dayun": gan2_dup + zhi2_dup, "first": '',
+                "second": ''})  
         detail['dayun'] = dayunData
         detail['dayunbig'] = dayunBig
         detail['dayunyear'] = dayunYears
