@@ -91,7 +91,7 @@ class Order(OrderInDBBase):
     comment_rate: Optional[int] = None
     owner_phone: Optional[str] = None
     owner_email: Optional[str] = None
-    isFolder: Optional[bool]=None
+    isFolder: Optional[bool]=True
 
 class OpenOrder(Order):
     master_rate:Optional[str] = None
