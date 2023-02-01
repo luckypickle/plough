@@ -19,6 +19,7 @@ class FolderUpdate(FolderBase):
     pass
 
 class FolderQuery(FolderBase):
+    id: Optional[int] = None
     count: int = 0
 
 class FolderIds(BaseModel):
