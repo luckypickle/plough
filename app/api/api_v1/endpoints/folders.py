@@ -188,12 +188,25 @@ def read_folder_orders(
     return ret_obj
 
 @router.delete('/folder_orders')
-def delete_folder_order(folderOrderIds_in: schemas.FolderOrderIds,
+def delete_folder_order(id: int,
         db: Session = Depends(deps.get_db),
         current_master: models.Master = Depends(deps.get_current_active_master)):
-    for id in folderOrderIds_in.ids:
-        crud.folder_order.delete_folder_order(db=db,id=id,master_id=current_master.id)
-    return "success" 
+    res=crud.folder_order.delete_folder_order(db=db,id=id,master_id=current_master.id)
+    if res:
+        return "success"
+    else:
+        return "failed"
+
+@router.delete('/folder_orders_by_order')
+def delete_folder_orders_by_order(order_id: int,
+        db: Session = Depends(deps.get_db),
+        current_master: models.Master = Depends(deps.get_current_active_master)):
+    res=crud.folder_order.delete_folder_orders_by_order(db=db,order_id=order_id,master_id=current_master.id)
+    if res:
+        return "success"
+    else:
+        return "failed"
+   
 
 
 

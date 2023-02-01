@@ -47,6 +47,16 @@ class CRUDFolderOrder(CRUDBase[FolderOrder, FolderOrderCreate, FolderOrderUpdate
             return True
         return False
 
+    @staticmethod
+    def delete_folder_orders_by_order(db: Session,order_id:int,master_id:int) ->bool:
+        objs = db.query(FolderOrder) \
+            .filter(FolderOrder.order_id == order_id,FolderOrder.master_id == master_id, FolderOrder.status == 0) \
+            .all()
+        for obj in objs:
+            db.delete(obj)
+        db.commit()
+        return True
+
         
     @staticmethod
     def delete_folder_orders(db: Session,folder_id:int) ->bool:
