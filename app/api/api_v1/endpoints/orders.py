@@ -463,6 +463,10 @@ def read_orders_master(
                 product = p.name
         create_time = o.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         pay_time = o.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+        count = crud.folder_order.get_count_by_master_and_order(db=db, master_id=current_master.id,order_id=o.id)
+        isFolder = False
+        if(count > 0):
+            isFolder = True
         ret_obj.orders.append(schemas.Order(
             id=o.id,
             product_id=o.product_id,
@@ -486,8 +490,8 @@ def read_orders_master(
             master_avatar=o.master.avatar,
             owner=o.owner.user_name,
             comment_rate=o.comment_rate,
-            isNorth=o.isNorth
-
+            isNorth=o.isNorth,
+            isFolder=isFolder
         ))
     return ret_obj
 

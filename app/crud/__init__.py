@@ -14,6 +14,9 @@ from .crud_bill import bill
 from .crud_master_product import masterProduct
 from .crud_upload_history import upload_history
 from .crud_video import video
+
+from .crud_folder import folder
+from .crud_folder_order import folder_order
 # For a new basic set of CRUD operations you could just do
 
 # from .base import CRUDBase
