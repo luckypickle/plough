@@ -37,11 +37,11 @@ class CRUDFolderOrder(CRUDBase[FolderOrder, FolderOrderCreate, FolderOrderUpdate
             )
 
     @staticmethod
-    def delete_folder_order(db: Session,id:int,folder_id:int) ->bool:
+    def delete_folder_order(db: Session,id:int,master_id:int) ->bool:
         obj = db.query(FolderOrder).get(id)
         if obj is None:
             return False
-        if obj.folder_id == folder_id:
+        if obj.master_id == master_id:
             db.delete(obj)
             db.commit()
             return True
