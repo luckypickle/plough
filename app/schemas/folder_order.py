@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional,List
 from pydantic import BaseModel
 
 
@@ -12,7 +12,8 @@ class FolderOrderBase(BaseModel):
 class FolderOrderCreate(FolderOrderBase):
     status: Optional[int] = 0
 
-
+class FolderOrderIds(BaseModel):
+    ids: List[int]
 
 # Properties to receive via API on update
 class FolderOrderUpdate(FolderOrderBase):

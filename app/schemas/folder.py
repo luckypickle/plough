@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional,List
 
 from pydantic import BaseModel
 
@@ -20,6 +20,9 @@ class FolderUpdate(FolderBase):
 
 class FolderQuery(FolderBase):
     count: int = 0
+
+class FolderIds(BaseModel):
+    ids: List[int]
 
 class FolderInDBBase(FolderBase):
     id: Optional[int] = None

@@ -87,10 +87,10 @@ def get_folders(
     return rets
 
 @router.delete('/folders')
-def delete_folder( ids:list ,
+def delete_folder(  folderIds_in: schemas.FolderIds,
         db: Session = Depends(deps.get_db),
         current_master: models.Master = Depends(deps.get_current_active_master)):
-    for id in ids:
+    for id in folderIds_in.ids:
          #先删除关联关系
         res = crud.folder_order.delete_folder_orders(db=db,folder_id=id)
         if res:
@@ -183,15 +183,15 @@ def read_folder_orders(
             owner=o.owner.user_name,
             comment_rate=o.comment_rate,
             isNorth=o.isNorth
-
+            
         ))
     return ret_obj
 
 @router.delete('/folder_orders')
-def delete_folder_order( ids:list ,
+def delete_folder_order(folderOrderIds_in: schemas.FolderOrderIds,
         folder_id:int ,
         db: Session = Depends(deps.get_db)):
-    for id in ids:
+    for id in folderOrderIds_in.ids:
         crud.folder_order.delete_folder_order(db=db,id=id,folder_id=folder_id)
     return "success" 
 
