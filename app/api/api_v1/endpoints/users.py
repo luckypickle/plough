@@ -267,7 +267,7 @@ def get_saved_divination(
         run:int =0,
         location: str = '',
         is_north:bool = True,
-        selectyear:int,
+        selectyear:int = 0,
         current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """
@@ -275,7 +275,7 @@ def get_saved_divination(
     """
     bazi = BaZi(year, month, day, hour, sex,lunar,run,minute)
     beat_info = None
-    if(selectyear is not None):
+    if(selectyear > 0):
         beat_info = get_wuxing_by_selectyear(selectyear)
     divination = bazi.get_detail()
     total = crud.history.get_count_by_owner(db, current_user.id)
