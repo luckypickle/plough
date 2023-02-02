@@ -290,10 +290,10 @@ def get_saved_divination(
         status=0,
         divination=json.dumps(divination),
         isNorth=is_north,
-        beat_info=json.dumps(beatInfo)
+        beat_info=str(beatInfo)
     )
     crud.history.create_owner_divination(db, history=history)
-    divination['beat_info'] = json.dumps(beatInfo)
+    divination['beat_info'] = str(beatInfo)
     return divination
    
 
