@@ -290,12 +290,12 @@ def get_saved_divination(
         status=0,
         divination=json.dumps(divination),
         isNorth=is_north,
-        beat_info=beatInfo
+        beat_info=json.dumps(beatInfo)
     )
     crud.history.create_owner_divination(db, history=history)
-    divination['beat_info'] = beatInfo
+    divination['beat_info'] = json.dumps(beatInfo)
     return divination
-
+   
 
 @router.get("/history", response_model=List[schemas.History])
 def get_history(

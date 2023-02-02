@@ -514,5 +514,5 @@ def get_wuxing_by_selectyear(selectyear):
         ganWuxing = gan5[y[0]]
         zhiWuxing = zhi_map[y[1]]
         if(ganWuxing == zhiWuxing and ganWuxing == selectWuxing):
-            return({"year":syear,"wuxing":ganWuxing})
+            return {"year":syear,"wuxing":ganWuxing}
 
