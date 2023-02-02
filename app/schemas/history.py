@@ -12,7 +12,7 @@ class HistoryBase(BaseModel):
     location: Optional[str] = ''
     divination: Optional[str] = ''
     isNorth:Optional[bool]=True
-
+    beat_info: Optional[str] = None
 
 # Properties to receive via API on creation
 class HistoryCreate(HistoryBase):

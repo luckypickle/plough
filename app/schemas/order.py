@@ -34,6 +34,7 @@ class OrderCreate(OrderBase):
     pic3: Optional[str]=None
     memo: Optional[str]=None
     isNorth: Optional[bool]=None
+    beat_info: Optional[str] = None
 
 class OrderPic(BaseModel):
     pic1: Optional[str] = None
@@ -76,7 +77,7 @@ class OrderInDBBase(OrderCreate):
     status: Optional[int] = OrderStatus.init.value
     is_open: Optional[int] = 0
     isNorth:Optional[bool]=True
-
+    beat_info: Optional[str] = ''
 
     class Config:
         orm_mode = True
@@ -91,7 +92,7 @@ class Order(OrderInDBBase):
     comment_rate: Optional[int] = None
     owner_phone: Optional[str] = None
     owner_email: Optional[str] = None
-    isFolder: Optional[bool]=True
+    isFolder: Optional[bool]=None
 
 class OpenOrder(Order):
     master_rate:Optional[str] = None

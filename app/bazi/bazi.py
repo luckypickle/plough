@@ -433,3 +433,86 @@ def cal_wuxing_color(year,month,day_,hour,minute,day_delta:int=0):
     # print('今日颜色:',color_map[main_wuxing],color_map[sec_wuxing][0])
 
 
+
+def get_wuxings_by_birthyear(birthyear,nowyear):
+    jiazhi_map = ["甲子", "乙丑", "丙寅", "丁卯", "戊辰", "己巳", "庚午", "辛未", "壬申", "癸酉", "甲戌", "乙亥",
+            "丙子", "丁丑", "戊寅", "己卯", "庚辰", "辛巳", "壬午", "癸未", "甲申", "乙酉", "丙戌", "丁亥", "戊子", "己丑", "庚寅", "辛卯", "壬辰", "癸巳",
+            "甲午", "乙未", "丙申", "丁酉", "戊戌", "己亥", "庚子", "辛丑", "壬寅", "癸卯", "甲辰", "乙巳", "丙午", "丁未", "戊申", "己酉", "庚戌", "辛亥",
+            "壬子", "癸丑", "甲寅", "乙卯", "丙辰", "丁巳", "戊午", "己未", "庚申", "辛酉", "壬戌", "癸亥"]
+    zhi_map = {"子":"水",
+           "丑":"土",
+           "寅":"木",
+           "卯":"木",
+           "辰":"土",
+           "巳":"火",
+           "午":"火",
+           "未":"土",
+           "申":"金",
+           "酉":"金",
+           "戌":"土",
+           "亥":"水"}   
+    year=nowyear-1      
+    wuxingMap={}
+    while year > birthyear:
+        #1204年是甲子年，每隔六十年一个甲子
+        idx = (year - 1204) % 60
+        y = jiazhi_map[idx]
+        ganWuxing = gan5[y[0]]
+        zhiWuxing = zhi_map[y[1]]
+        item={}
+        if(ganWuxing == zhiWuxing):
+            if (not ganWuxing in wuxingMap) | (wuxingMap.get(ganWuxing,{}).get('status',1) != 1):
+                item['status'] = 1
+                item['year'] = year   
+                wuxingMap[ganWuxing] = item   
+        #干生支
+        elif (ten_deities[y[0]]["生"] == zhiWuxing):
+            if not zhiWuxing in wuxingMap:
+                item['status'] = 2
+                item['year'] = year 
+                wuxingMap[zhiWuxing] = item
+        #支生干
+        elif (ten_deities[y[0]]["生我"] == zhiWuxing):
+            if not ganWuxing in wuxingMap:
+                item['status'] = 3
+                item['year'] = year 
+                wuxingMap[ganWuxing] = item
+        year = year-1
+    return wuxingMap
+
+def get_wuxing_by_selectyear(selectyear):
+    jiazhi_map = ["甲子", "乙丑", "丙寅", "丁卯", "戊辰", "己巳", "庚午", "辛未", "壬申", "癸酉", "甲戌", "乙亥",
+            "丙子", "丁丑", "戊寅", "己卯", "庚辰", "辛巳", "壬午", "癸未", "甲申", "乙酉", "丙戌", "丁亥", "戊子", "己丑", "庚寅", "辛卯", "壬辰", "癸巳",
+            "甲午", "乙未", "丙申", "丁酉", "戊戌", "己亥", "庚子", "辛丑", "壬寅", "癸卯", "甲辰", "乙巳", "丙午", "丁未", "戊申", "己酉", "庚戌", "辛亥",
+            "壬子", "癸丑", "甲寅", "乙卯", "丙辰", "丁巳", "戊午", "己未", "庚申", "辛酉", "壬戌", "癸亥"]
+    zhi_map = {"子":"水",
+           "丑":"土",
+           "寅":"木",
+           "卯":"木",
+           "辰":"土",
+           "巳":"火",
+           "午":"火",
+           "未":"土",
+           "申":"金",
+           "酉":"金",
+           "戌":"土",
+           "亥":"水"}
+    if(selectyear>nowyear):
+        return None
+    nowyear = datetime.date.today().year 
+    selectIdx = (selectyear - 1204) % 60
+    selectZhu = jiazhi_map[selectIdx]
+    selectGanWuxing = gan5[selectZhu[0]]
+    selectZhiWuxing = zhi_map[selectZhu[1]]
+    selectWuxing = selectGanWuxing
+    if (ten_deities[selectZhu[0]]["生"] == selectZhiWuxing):
+        selectWuxing = selectZhiWuxing
+    for syear in range(nowyear,2200):
+        #1204年是甲子年，每隔六十年一个甲子
+        idx = (syear - 1204) % 60
+        y = jiazhi_map[idx]
+        ganWuxing = gan5[y[0]]
+        zhiWuxing = zhi_map[y[1]]
+        if(ganWuxing == zhiWuxing and ganWuxing == selectWuxing):
+            return({"year":syear,"wuxing":ganWuxing})
+

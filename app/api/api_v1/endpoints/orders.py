@@ -112,7 +112,8 @@ def read_orders(
             pic2=pic2,
             pic3=pic3,
             memo=memo,
-            isNorth=o.isNorth
+            isNorth=o.isNorth,
+            beat_info=o.beat_info
 
         ))
     return ret_obj
@@ -195,7 +196,9 @@ def read_orders(
             comment=comment,
             interact_comment_list=comment_ret,
             sizhu=sizhu,
-            isNorth=o.isNorth
+            isNorth=o.isNorth,
+            beat_info=o.beat_info
+            
         ))
     return ret_obj
 
@@ -275,7 +278,8 @@ def read_orders(
         master_rate=util.get_avg_rate(o.master_id),
         comment=comment,
         isNorth=o.isNorth,
-        sizhu=sizhu
+        sizhu=sizhu,
+        beat_info=o.beat_info
     )
     return ret_obj
 
@@ -349,7 +353,8 @@ def get_user_arramge_order(
             pic2=pic2,
             pic3=pic3,
             memo=memo,
-            isNorth=o.isNorth
+            isNorth=o.isNorth,
+            beat_info=o.beat_info
         ))
     return ret_obj
 
@@ -429,7 +434,8 @@ def read_orders_by_favorite(
             comment=comment,
             interact_comment_list=comment_ret,
             sizhu=sizhu,
-            isNorth=o[0].isNorth
+            isNorth=o[0].isNorth,
+            beat_info=o[0].beat_info
         ))
     return ret_obj
 
@@ -491,6 +497,7 @@ def read_orders_master(
             owner=o.owner.user_name,
             comment_rate=o.comment_rate,
             isNorth=o.isNorth,
+            beat_info=o.beat_info,
             isFolder=isFolder
         ))
     return ret_obj
@@ -988,7 +995,8 @@ def master_update_order(
         master_avatar=order.master.avatar,
         owner=order.owner.user_name,
         comment_rate=order.comment_rate,
-        isNorth=order.isNorth
+        isNorth=order.isNorth,
+        beat_info=order.beat_info
     )
 
 
@@ -1038,7 +1046,8 @@ def read_order_by_id(
         master_avatar=order.master.avatar,
         owner=order.owner.user_name,
         comment_rate=order.comment_rate,
-        isNorth=order.isNorth
+        isNorth=order.isNorth,
+        beat_info=order.beat_info
     )
 
 

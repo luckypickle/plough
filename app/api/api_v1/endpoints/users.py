@@ -13,7 +13,7 @@ from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 
 from app.bazi import BaZi
-from app.bazi.bazi import  convert_lunar_to_solar
+from app.bazi.bazi import  convert_lunar_to_solar,get_wuxing_by_selectyear
 import time
 from app.cos_utils import get_read_url
 from  app.im_utils import register_account
@@ -267,12 +267,16 @@ def get_saved_divination(
         run:int =0,
         location: str = '',
         is_north:bool = True,
+        selectyear:int,
         current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """
     Get divination and save to database.
     """
     bazi = BaZi(year, month, day, hour, sex,lunar,run,minute)
+    beat_info = None
+    if(selectyear is not None):
+        beat_info = get_wuxing_by_selectyear(selectyear)
     divination = bazi.get_detail()
     total = crud.history.get_count_by_owner(db, current_user.id)
     if lunar==1:
@@ -285,7 +289,8 @@ def get_saved_divination(
         location=location,
         status=0,
         divination=json.dumps(divination),
-        isNorth=is_north
+        isNorth=is_north,
+        beat_info=beat_info
     )
     crud.history.create_owner_divination(db, history=history)
     return divination
@@ -316,7 +321,8 @@ def get_history(
             location=h.location,
             divination=h.divination,
             create_time=h.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S"),
-            isNorth=h.isNorth
+            isNorth=h.isNorth,
+            beat_info=h.beat_info
         ))
     return rets
 

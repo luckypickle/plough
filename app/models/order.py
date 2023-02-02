@@ -37,3 +37,4 @@ class Order(Base):
     pic3 = Column(Text,default=None,comment="Pic3")
     memo = Column(Text,default=None,comment="memo")
     isNorth = Column(Boolean,default=True,comment="是否北半球")
+    beat_info = Column(String, comment="推算最喜年份信息")

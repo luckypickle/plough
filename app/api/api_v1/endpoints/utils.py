@@ -8,13 +8,14 @@ from app.api import deps
 # from app.core.celery_app import celery_app
 from app.utils import send_test_email
 from app.bazi.citys import cal_zone,cal_zone_and_lat
-from app.bazi.bazi import getYearJieQi,get_birthday_by_bazi,cal_wuxing_color,get_bazi_by_birthday
+from app.bazi.bazi import getYearJieQi,get_birthday_by_bazi,cal_wuxing_color,get_bazi_by_birthday,get_wuxings_by_birthyear
 from app.api.util import make_return
 import hashlib
 import os
 from app.cos_utils import upload_file_to_cos,get_read_url
 from app.im_utils import register_account,query_message_list,query_message_detail,recovery_chat
 import app.im_utils
+import datetime
 router = APIRouter()
 
 
@@ -277,3 +278,22 @@ def register_all_account(
             recovery_chat(one_data.master_id,one_data.owner_id)
 
     return make_return(200,"success")
+
+
+@router.get("/getWuxingYears", response_model=Any)
+def get_wuxing_years(
+        birthyear: int,
+) -> Any:
+    nowyear = datetime.date.today().year 
+    if(nowyear <= birthyear | birthyear<1700):
+        raise HTTPException(
+            status_code=404,
+            detail="Wrong birthyear",
+        ) 
+    wuxings = get_wuxings_by_birthyear(birthyear=birthyear,nowyear=nowyear)
+    if(len(wuxings)<5):
+        raise HTTPException(
+            status_code=404,
+            detail="The birthyear does not conform to the rules",
+        ) 
+    return wuxings

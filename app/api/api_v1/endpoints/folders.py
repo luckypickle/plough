@@ -182,7 +182,8 @@ def read_folder_orders(
             master_avatar=o.master.avatar,
             owner=o.owner.user_name,
             comment_rate=o.comment_rate,
-            isNorth=o.isNorth
+            isNorth=o.isNorth,
+            beat_info=o.beat_info
             
         ))
     return ret_obj
