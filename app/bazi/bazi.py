@@ -497,9 +497,9 @@ def get_wuxing_by_selectyear(selectyear):
            "酉":"金",
            "戌":"土",
            "亥":"水"}
+    nowyear = datetime.date.today().year 
     if(selectyear>nowyear):
         return None
-    nowyear = datetime.date.today().year 
     selectIdx = (selectyear - 1204) % 60
     selectZhu = jiazhi_map[selectIdx]
     selectGanWuxing = gan5[selectZhu[0]]
