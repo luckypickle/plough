@@ -274,9 +274,9 @@ def get_saved_divination(
     Get divination and save to database.
     """
     bazi = BaZi(year, month, day, hour, sex,lunar,run,minute)
-    beat_info = None
+    beatInfo = None
     if(selectyear > 0):
-        beat_info = get_wuxing_by_selectyear(selectyear)
+        beatInfo = get_wuxing_by_selectyear(selectyear)
     divination = bazi.get_detail()
     total = crud.history.get_count_by_owner(db, current_user.id)
     if lunar==1:
@@ -290,9 +290,10 @@ def get_saved_divination(
         status=0,
         divination=json.dumps(divination),
         isNorth=is_north,
-        beat_info=beat_info
+        beat_info=beatInfo
     )
     crud.history.create_owner_divination(db, history=history)
+    divination['beat_info'] = beatInfo
     return divination
 
 
