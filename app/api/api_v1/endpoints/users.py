@@ -299,7 +299,7 @@ def get_saved_divination(
     return divination
    
 
-@router.get("/history", response_model=List[schemas.History])
+@router.get("/history", response_model=List[schemas.HistoryQuery])
 def get_history(
         skip: int = 0,
         limit: int = 100,
@@ -316,7 +316,7 @@ def get_history(
         if user_name!="":
             if h.name.find(user_name)==-1:
                 continue
-        labelName="无"
+        labelName="全部"
         if(h.label_id is not None):
             label=crud.label.get(db, id=h.label_id)
             if(label is not None):
