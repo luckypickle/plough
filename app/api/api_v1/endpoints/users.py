@@ -268,6 +268,7 @@ def get_saved_divination(
         location: str = '',
         is_north:bool = True,
         selectyear:int = 0,
+        label_id:int = None,
         current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
     """
@@ -290,7 +291,8 @@ def get_saved_divination(
         status=0,
         divination=json.dumps(divination),
         isNorth=is_north,
-        beat_info=json.dumps(beatInfo)
+        beat_info=json.dumps(beatInfo),
+        label_id=label_id
     )
     crud.history.create_owner_divination(db, history=history)
     divination['beat_info'] = json.dumps(beatInfo)
@@ -314,7 +316,12 @@ def get_history(
         if user_name!="":
             if h.name.find(user_name)==-1:
                 continue
-        rets.append(schemas.History(
+        labelName="无"
+        if(h.label_id is not None):
+            label=crud.label.get(db, id=h.label_id)
+            if(label is not None):
+                labelName=label.label_name
+        rets.append(schemas.HistoryQuery(
             id=h.id,
             name=h.name,
             birthday=h.birthday,
@@ -323,7 +330,9 @@ def get_history(
             divination=h.divination,
             create_time=h.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S"),
             isNorth=h.isNorth,
-            beat_info=h.beat_info
+            beat_info=h.beat_info,
+            label_id=h.label_id,
+            label_name=labelName
         ))
     return rets
 
@@ -364,6 +373,60 @@ def get_user_statistics(
         total_payed_amount=order_amount
     )
 
+
+@router.post("/createLabel", response_model=schemas.LabelCreate)
+def create_label(
+        *,
+        db: Session = Depends(deps.get_db),
+        label_name: str = '',
+        current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """
+    Create new Label.(only user)
+    """
+    count = crud.label.get_count_by_user_and_name(db=db, user_id=current_user.id,label_name=label_name)
+    if(count > 0):
+        raise HTTPException(
+            status_code=400,
+            detail="label name already exists",
+        )   
+    label = schemas.LabelCreate(
+        label_name=label_name,
+        label_type=1,
+        user_id=current_user.id
+    )
+    crud.label.create_label(db=db, label=label)
+    return label
+
+
+@router.get("/labels", response_model=List[schemas.LabelQuery])
+def get_labels(
+        *,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """
+    Get labels by user.
+    """
+    labels = crud.label.get_multi_by_user(db=db, user_id=current_user.id)
+    rets = []
+    for h in labels:
+        rets.append(schemas.LabelQuery(
+            id=h.id,
+            label_name=h.label_name,
+            user_id=h.user_id
+        ))
+    return rets
+
+@router.delete('/label')
+def delete_label(label_id: int,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user)):
+    res=crud.label.delete_label(db=db,label_id=label_id,user_id=current_user.id)
+    if res:
+        return "success"
+    else:
+        return "failed"
 
 @router.get("/{user_id}", response_model=schemas.User)
 def read_user_by_id(

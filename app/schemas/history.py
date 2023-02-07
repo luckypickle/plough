@@ -13,6 +13,7 @@ class HistoryBase(BaseModel):
     divination: Optional[str] = ''
     isNorth:Optional[bool]=True
     beat_info: Optional[str] = None
+    label_id: Optional[int] = None
 
 # Properties to receive via API on creation
 class HistoryCreate(HistoryBase):
@@ -32,7 +33,10 @@ class HistoryInDBBase(HistoryBase):
     class Config:
         orm_mode = True
 
-
+# Properties to receive via API on creation
+class HistoryQuery(HistoryInDBBase):
+    label_name: Optional[str] = None
+    
 # Additional properties to return via API
 class History(HistoryInDBBase):
     pass

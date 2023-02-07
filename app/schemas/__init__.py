@@ -7,7 +7,7 @@ from .mpcode import MPCode, MPCodeCreate, MPCodeInDB, MPCodeUpdate
 from .product import Product, ProductCreate, ProductUpdate, ProductForOrder,ProductForOrderPrice
 from .comment import Comment, CommentCreate, CommentUpdate,CommentQuery,CommentListQuery,CommentFullData,InteractComment,InteractCommentQuery
 from .version import Version, VersionCreate, VersionUpdate
-from .history import History, HistoryCreate, HistoryUpdate
+from .history import History, HistoryCreate, HistoryUpdate,HistoryQuery
 from .invite import Invite, InviteCreate, InviteUpdate, InviteForInfo, InvitedDetailUsers,InvitedUserDetail,InviteOrder,InviteOrderInfo,InviteSummary
 from .reward import Reward, RewardCreate, RewardUpdate, RewardDetail,RewardDetailInfos,RewardInfo,RewardInfos
 from .withdraw import Withdraw, WithdrawCreate, WithdrawUpdate,WithdrawInfo,WithdrawItems
@@ -20,3 +20,4 @@ from .video import Video,VideoCreate,VideoUpdate,VideoInDBBase,VideoQuery
 
 from .folder import Folder,FolderCreate,FolderUpdate,FolderQuery,FolderIds
 from .folder_order import FolderOrder,FolderOrderCreate,FolderOrderUpdate,FolderOrderIds
+from .label import Label,LabelCreate,LabelUpdate,LabelQuery

@@ -17,3 +17,4 @@ from .video import Video
 
 from .folder import Folder
 from .folder_order import FolderOrder
+from .label import Label
