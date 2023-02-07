@@ -374,7 +374,7 @@ def get_user_statistics(
     )
 
 
-@router.post("/createLabel", response_model=schemas.LabelCreate)
+@router.post("/createLabel")
 def create_label(
         *,
         db: Session = Depends(deps.get_db),
@@ -390,12 +390,12 @@ def create_label(
             status_code=400,
             detail="label name already exists",
         )   
-    label = schemas.LabelCreate(
+    label = schemas.Label(
         label_name=label_name,
         label_type=1,
         user_id=current_user.id
     )
-    crud.label.create_label(db=db, label=label)
+    label = crud.label.create(db=db, obj_in=label)
     return label
 
 
