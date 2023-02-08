@@ -36,6 +36,24 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         return db_obj
 
     @staticmethod
+    def create_divination_order(
+        db: Session, *, obj_in: OrderCreate, owner_id: int, divination:str
+    ) -> Order:
+        obj_in_data = jsonable_encoder(obj_in)
+        db_obj = Order()
+        for k, v in obj_in_data.items():
+            setattr(db_obj, k, v)
+        db_obj.owner_id = owner_id
+        db_obj.arrange_status = 1
+        db_obj.divination = divination
+        db_obj.status = OrderStatus.init.value
+        db_obj.order_number = ''.join(sample(ascii_letters + digits, 16))
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
+
+    @staticmethod
     def updateDivination(db: Session, *, db_obj: Order, obj_in: OrderUpdateDivination) -> Order:
         db_obj.divination = obj_in.divination
         # db_obj.status = OrderStatus.checked

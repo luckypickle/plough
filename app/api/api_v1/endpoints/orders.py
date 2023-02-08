@@ -18,7 +18,7 @@ from app.api import deps
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 from app.api import util
-from app.bazi.bazi import get_bazi_by_birthday
+from app.bazi.bazi import get_bazi_by_birthday, get_dianpan_divination
 from app.models.user import User
 from app.models.master import Master
 from app.im_utils import disable_chat,recovery_chat,pushMsg
@@ -734,15 +734,18 @@ def create_order(
     else:
         order_in.amount = price.price
 
+    order_in.shareRate = master.rate
     if product.name == '点盘':
         limit_time = 1668047054
         obj = crud.order.get_order_by_time(db,time=limit_time, user_id=current_user.id, product_id=order_in.product_id)
         if obj is not None:
             raise HTTPException(status_code=404, detail="您已经下过点盘")
 
-
-    order_in.shareRate = master.rate
-    order = crud.order.create_with_owner(db=db, obj_in=order_in, owner_id=current_user.id)
+        birthday = datetime.datetime.strptime(order_in.birthday, "%Y-%m-%d %H:%M")
+        divination = get_dianpan_divination(birthday.year, birthday.month, birthday.day, birthday.hour, order_in.sex)
+        order = crud.order.create_divination_order(db=db, obj_in=order_in, owner_id=current_user.id, divination=divination)
+    else:
+        order = crud.order.create_with_owner(db=db, obj_in=order_in, owner_id=current_user.id)
     with open(settings.PRIVATE_KEY, "r") as f:
         pkey = f.read()
     wxpay = WeChatPay(
