@@ -313,9 +313,6 @@ def get_history(
     history = crud.history.get_multi_by_owner(db=db, owner_id=current_user.id, skip=skip, limit=limit)
     rets = []
     for h in history:
-        if user_name!="":
-            if h.name.find(user_name)==-1:
-                continue
         labelName="全部"
         if(h.label_id is not None):
             label=crud.label.get(db, id=h.label_id)
@@ -337,6 +334,7 @@ def get_history(
             label_id=h.label_id,
             label_name=labelName
         ))
+    print(labelName.find(user_name))
     return rets
 
 @router.delete('/history')
