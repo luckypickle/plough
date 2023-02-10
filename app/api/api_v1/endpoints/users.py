@@ -321,6 +321,9 @@ def get_history(
             label=crud.label.get(db, id=h.label_id)
             if(label is not None):
                 labelName=label.label_name
+        if user_name!="":
+            if h.name.find(user_name)==-1 and labelName.find(user_name) == -1:
+                continue
         rets.append(schemas.HistoryQuery(
             id=h.id,
             name=h.name,
