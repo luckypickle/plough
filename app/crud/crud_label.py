@@ -18,6 +18,7 @@ class CRUDLabel(CRUDBase[Label, LabelCreate, LabelUpdate]):
     @staticmethod
     def get_multi_by_user(db: Session, user_id: int) -> Label:
         return db.query(Label) \
+            .filter(or_(Label.label_type == 0,Label.user_id == user_id)) \
             .all()
 
     def create_label(self, db: Session, label: LabelCreate) -> Any:
