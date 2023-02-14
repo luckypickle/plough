@@ -516,6 +516,8 @@ def get_wuxing_by_selectyear(selectyear):
         if(ganWuxing == zhiWuxing and ganWuxing == selectWuxing):
             return {"year":syear,"wuxing":ganWuxing}
 
+def get_wuxing_ganzhi(wuxing): 
+    return wuhangs.get(wuxing)
 
 def get_dianpan_divination(year,month,day,hour,sex):
     day_shens = { 

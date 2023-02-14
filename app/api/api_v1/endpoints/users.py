@@ -13,7 +13,7 @@ from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 
 from app.bazi import BaZi
-from app.bazi.bazi import  convert_lunar_to_solar,get_wuxing_by_selectyear
+from app.bazi.bazi import  convert_lunar_to_solar,get_wuxing_by_selectyear,get_wuxing_ganzhi
 import time
 from app.cos_utils import get_read_url
 from  app.im_utils import register_account
@@ -294,16 +294,22 @@ def get_saved_divination(
         beat_info=json.dumps(beatInfo),
         label_id=label_id
     )
-    crud.history.create_owner_divination(db, history=history)
+    history = crud.history.create_owner_divination(db, history=history)
     divination['beat_info'] = json.dumps(beatInfo)
+    divination['id'] = history.id
     return divination
    
 
-@router.get("/history", response_model=List[schemas.HistoryQuery])
+@router.post("/history", response_model=List[schemas.HistoryQuery])
 def get_history(
+        *,
         skip: int = 0,
         limit: int = 100,
-        user_name:str ="",
+        user_name: str ="",
+        label_name: str ="",
+        wuxing: str ="",
+        gans: list = Body([]),
+        zhis: list = Body([]),
         db: Session = Depends(deps.get_db),
         current_user: models.User = Depends(deps.get_current_active_user)
 ) -> Any:
@@ -318,8 +324,22 @@ def get_history(
             label=crud.label.get(db, id=h.label_id)
             if(label is not None):
                 labelName=label.label_name
-        if user_name!="":
-            if h.name.find(user_name)==-1 and labelName.find(user_name) == -1:
+        divination = json.loads(h.divination)
+        if user_name != "":
+            if h.name.find(user_name) == -1:
+                continue
+        if label_name != "":
+            if labelName != label_name:
+                continue
+        if wuxing != "":
+            ganzhi = get_wuxing_ganzhi(wuxing)
+            if ganzhi.find(divination["sizhu"]["gans"][2]) == -1:
+                continue   
+        if len(gans) > 0:
+            if not set(gans).issubset(divination["sizhu"]["gans"]):
+                continue
+        if len(zhis) > 0:
+            if not set(zhis).issubset(divination["sizhu"]["zhis"]):
                 continue
         rets.append(schemas.HistoryQuery(
             id=h.id,
@@ -334,8 +354,65 @@ def get_history(
             label_id=h.label_id,
             label_name=labelName
         ))
-    print(labelName.find(user_name))
     return rets
+
+@router.put("/history/{id}", response_model=schemas.History)
+def update_history(
+        *,
+        db: Session = Depends(deps.get_db),
+        id: int,
+        name: str = '',
+        year: int,
+        month: int,
+        day: int,
+        hour: int,
+        minute: int = 0,
+        sex: int = 0,
+        lunar:int = 0,
+        run:int =0,
+        location: str = '',
+        is_north:bool = True,
+        selectyear:int = 0,
+        label_id:int = None,
+        current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """
+    Update an history.
+    """
+    bazi = BaZi(year, month, day, hour, sex,lunar,run,minute)
+    beatInfo = None
+    if(selectyear > 0):
+        beatInfo = get_wuxing_by_selectyear(selectyear)
+    divination = bazi.get_detail()
+    if lunar==1:
+        year,month,day = convert_lunar_to_solar(year,month,day,run)
+    history_in = schemas.HistoryUpdate(
+        owner_id=current_user.id,
+        name=name,
+        birthday=f"{year}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:00",
+        sex=sex,
+        location=location,
+        divination=json.dumps(divination),
+        isNorth=is_north,
+        beat_info=json.dumps(beatInfo),
+        label_id=label_id
+    )
+    history = crud.history.get(db, id=id)
+    if not history:
+        raise HTTPException(
+            status_code=404,
+            detail="No history exists for the current user",
+        )
+    if(history.uowner_ids != current_user.id):
+        raise HTTPException(
+            status_code=404,
+            detail="The current history does not belong to this user",
+        ) 
+    history = crud.history.update(db, db_obj=history, obj_in=history_in)
+
+    divination['beat_info'] = json.dumps(beatInfo)
+    divination['id'] = id
+    return divination
 
 @router.delete('/history')
 def delete_history( history_id:int ,

@@ -23,7 +23,7 @@ class CRUDHistory(CRUDBase[History, HistoryCreate, HistoryUpdate]):
             .offset(skip).limit(limit) \
             .all()
 
-    def create_owner_divination(self, db: Session, history: HistoryCreate) -> Any:
+    def create_owner_divination(self, db: Session, history: HistoryCreate) -> History:
         total = db.query(History).filter(History.owner_id == history.owner_id, History.status == 0).count()
         if total >= 100:
             first_history = db.query(History) \
@@ -31,7 +31,8 @@ class CRUDHistory(CRUDBase[History, HistoryCreate, HistoryUpdate]):
                 .order_by(History.id).first()
             if first_history:
                 db.query(History).filter(History.id == first_history.id).delete()
-        self.create(db, obj_in=history)
+        history = self.create(db, obj_in=history)
+        return history
 
     @staticmethod
     def delete_history(db: Session,history_id:int,owner_id:int) ->bool:
