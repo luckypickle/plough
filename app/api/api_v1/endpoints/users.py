@@ -308,6 +308,7 @@ def get_history(
         user_name: str ="",
         label_name: str ="",
         wuxing: str ="",
+        sex: int = -1,
         gans: list = Body([]),
         zhis: list = Body([]),
         db: Session = Depends(deps.get_db),
@@ -331,6 +332,8 @@ def get_history(
         if label_name != "":
             if labelName != label_name:
                 continue
+        if sex >= 0 and sex !=h.sex:
+            continue
         if wuxing != "":
             ganzhi = get_wuxing_ganzhi(wuxing)
             if ganzhi.find(divination["sizhu"]["gans"][2]) == -1:
@@ -341,6 +344,7 @@ def get_history(
         if len(zhis) > 0:
             if not set(zhis).issubset(divination["sizhu"]["zhis"]):
                 continue
+
         rets.append(schemas.HistoryQuery(
             id=h.id,
             name=h.name,
