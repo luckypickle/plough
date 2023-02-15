@@ -360,7 +360,7 @@ def get_history(
         ))
     return rets
 
-@router.put("/history/{id}", response_model=schemas.History)
+@router.put("/history/{id}", response_model=Any)
 def update_history(
         *,
         db: Session = Depends(deps.get_db),
