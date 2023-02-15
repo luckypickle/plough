@@ -407,7 +407,7 @@ def update_history(
             status_code=404,
             detail="No history exists for the current user",
         )
-    if(history.uowner_ids != current_user.id):
+    if(history.owner_id != current_user.id):
         raise HTTPException(
             status_code=404,
             detail="The current history does not belong to this user",
