@@ -320,7 +320,7 @@ def get_history(
     history = crud.history.get_multi_by_owner(db=db, owner_id=current_user.id, skip=skip, limit=limit)
     rets = []
     for h in history:
-        labelName="全部"
+        labelName="默认"
         if(h.label_id is not None):
             label=crud.label.get(db, id=h.label_id)
             if(label is not None):
