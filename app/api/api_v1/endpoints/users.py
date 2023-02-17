@@ -327,7 +327,7 @@ def get_history(
                 labelName=label.label_name
         divination = json.loads(h.divination)
         if user_name != "":
-            if h.name.find(user_name) == -1:
+            if h.name.find(user_name)==-1 and labelName.find(user_name) == -1:
                 continue
         if label_name != "":
             if labelName != label_name:
