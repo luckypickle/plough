@@ -336,7 +336,7 @@ def get_history(
             continue
         if wuxing != "":
             ganzhi = get_wuxing_ganzhi(wuxing)
-            if ganzhi.find(divination["sizhu"]["gans"][2]) == -1:
+            if ganzhi.find(divination["sizhu"]["gans"][4]) == -1:
                 continue   
         if len(gans) > 0:
             if not set(gans).issubset(divination["sizhu"]["gans"]):
