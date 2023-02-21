@@ -282,6 +282,8 @@ def get_saved_divination(
     total = crud.history.get_count_by_owner(db, current_user.id)
     if lunar==1:
         year,month,day = convert_lunar_to_solar(year,month,day,run)
+    if name == '':
+        name = "案例"+(total+1)
     history = schemas.HistoryCreate(
         owner_id=current_user.id,
         name=name,
