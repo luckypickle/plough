@@ -283,7 +283,7 @@ def get_saved_divination(
     if lunar==1:
         year,month,day = convert_lunar_to_solar(year,month,day,run)
     if name == '':
-        name = "案例"+(total+1)
+        name = "案例"+str(total+1)
     history = schemas.HistoryCreate(
         owner_id=current_user.id,
         name=name,
