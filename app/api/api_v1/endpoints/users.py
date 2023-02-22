@@ -282,8 +282,10 @@ def get_saved_divination(
     total = crud.history.get_count_by_owner(db, current_user.id)
     if lunar==1:
         year,month,day = convert_lunar_to_solar(year,month,day,run)
+    index = 0
     if name == '':
-        name = "案例"+str(total+1)
+        index = crud.history.get_index_by_owner(db, current_user.id) + 1
+        name = "案例"+str(index)
     history = schemas.HistoryCreate(
         owner_id=current_user.id,
         name=name,
@@ -294,7 +296,8 @@ def get_saved_divination(
         divination=json.dumps(divination),
         isNorth=is_north,
         beat_info=json.dumps(beatInfo),
-        label_id=label_id
+        label_id=label_id,
+        history_index=index
     )
     history = crud.history.create_owner_divination(db, history=history)
     divination['beat_info'] = json.dumps(beatInfo)
@@ -359,7 +362,10 @@ def get_history(
             isNorth=h.isNorth,
             beat_info=h.beat_info,
             label_id=h.label_id,
-            label_name=labelName
+            label_name=labelName,
+            like_str=h.like_str,
+            disdislike_strlike=h.dislike_str,
+            pattern=h.pattern
         ))
     return rets
 
@@ -393,17 +399,6 @@ def update_history(
     divination = bazi.get_detail()
     if lunar==1:
         year,month,day = convert_lunar_to_solar(year,month,day,run)
-    history_in = schemas.HistoryUpdate(
-        owner_id=current_user.id,
-        name=name,
-        birthday=f"{year}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:00",
-        sex=sex,
-        location=location,
-        divination=json.dumps(divination),
-        isNorth=is_north,
-        beat_info=json.dumps(beatInfo),
-        label_id=label_id
-    )
     history = crud.history.get(db, id=id)
     if not history:
         raise HTTPException(
@@ -415,11 +410,56 @@ def update_history(
             status_code=404,
             detail="The current history does not belong to this user",
         ) 
+    index = history.history_index
+    if name == '':
+        index = crud.history.get_index_by_owner(db, current_user.id) + 1
+        name = "案例"+str(index)
+    history_in = schemas.HistoryUpdate(
+        owner_id=current_user.id,
+        name=name,
+        birthday=f"{year}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:00",
+        sex=sex,
+        location=location,
+        divination=json.dumps(divination),
+        isNorth=is_north,
+        beat_info=json.dumps(beatInfo),
+        label_id=label_id,
+        history_index = index
+    )
     history = crud.history.update(db, db_obj=history, obj_in=history_in)
 
     divination['beat_info'] = json.dumps(beatInfo)
     divination['id'] = id
+    divination['name'] = history.name
     return divination
+
+@router.put("/historyNote/{id}", response_model=Any)
+def update_history(
+        *,
+        db: Session = Depends(deps.get_db),
+        id: int,
+        like_str: str = '',
+        dislike_str: str = '',
+        pattern: str = '',
+        current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """
+    Update an historyNote.
+    """
+    history = crud.history.get(db, id=id)
+    if not history:
+        raise HTTPException(
+            status_code=404,
+            detail="No history exists for the current user",
+        )
+    if(history.owner_id != current_user.id):
+        raise HTTPException(
+            status_code=404,
+            detail="The current history does not belong to this user",
+        ) 
+    history_in={"like_str":like_str,"dislike_str":dislike_str,"pattern":pattern}
+    history = crud.history.update(db, db_obj=history, obj_in=history_in)
+    return history
 
 @router.delete('/history')
 def delete_history( history_id:int ,
@@ -508,6 +548,102 @@ def delete_label(label_id: int,
         db: Session = Depends(deps.get_db),
         current_user: models.User = Depends(deps.get_current_active_user)):
     res=crud.label.delete_label(db=db,label_id=label_id,user_id=current_user.id)
+    if res:
+        return "success"
+    else:
+        return "failed"
+
+@router.post("/createHistoryEvent")
+def create_history_event(
+        *,
+        db: Session = Depends(deps.get_db),
+        history_id: int,
+        event_type: str,
+        year: int,
+        year_gz: str,
+        content: str = '',
+        current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """
+    Create new Event.(only user)
+    """
+    event = schemas.HistoryEvent(
+        history_id=history_id,
+        event_type=event_type,
+        year=year,
+        year_gz=year_gz,
+        content=content,
+    )
+    event = crud.history_event.create(db=db, obj_in=event)
+    return event
+
+@router.put("/event/{id}")
+def update_event(
+        *,
+        db: Session = Depends(deps.get_db),
+        id: int,
+        event_type: str,
+        year: int,
+        year_gz: str,
+        content: str = '',
+        current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """
+    Update an event.(only user)
+    """
+    event = crud.history_event.get(db, id=id)
+    if not event:
+        raise HTTPException(
+            status_code=404,
+            detail="No event exists",
+        )
+    history = crud.history.get(db, id=event.history_id)
+    if history is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No history exists",
+        )
+    if current_user.id != history.owner_id:
+        raise HTTPException(
+            status_code=404,
+            detail="The event does not belong to the user",
+        )
+    event_in = schemas.HistoryEventUpdate(
+        history_id=event.history_id,
+        event_type=event_type,
+        year=year,
+        year_gz=year_gz,
+        content=content
+    )
+    event = crud.history_event.update(db, db_obj=event, obj_in=event_in)
+    return event
+
+@router.get("/events")
+def get_events(
+        *,
+        db: Session = Depends(deps.get_db),
+        history_id: int,
+        current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """
+    Get events by user.
+    """
+    events = crud.history_event.get_multi_by_history(db=db, history_id=history_id)
+    return events
+
+@router.delete('/event')
+def delete_event(event_id: int,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user)):
+    event=crud.history_event.get(db, id=event_id)
+    if event is None:
+        return "failed"
+    history = crud.history.get(db, id=event.history_id)
+    if history is None:
+        return "failed"
+    if current_user.id != history.owner_id:
+        return "failed"    
+    res=crud.history_event.delete_history_event(db=db,id=event_id)
     if res:
         return "success"
     else:

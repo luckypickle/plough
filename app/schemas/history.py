@@ -18,11 +18,12 @@ class HistoryBase(BaseModel):
 # Properties to receive via API on creation
 class HistoryCreate(HistoryBase):
     status: Optional[int] = 0
+    history_index: Optional[int] = 0
 
 
 # Properties to receive via API on update
 class HistoryUpdate(HistoryBase):
-    pass
+    history_index: Optional[int] = 0
 
 
 class HistoryInDBBase(HistoryBase):
@@ -36,6 +37,9 @@ class HistoryInDBBase(HistoryBase):
 # Properties to receive via API on creation
 class HistoryQuery(HistoryInDBBase):
     label_name: Optional[str] = None
+    like_str: Optional[str] = None
+    dislike_str: Optional[str] = None
+    pattern: Optional[str] = None
     
 # Additional properties to return via API
 class History(HistoryInDBBase):

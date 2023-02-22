@@ -17,3 +17,7 @@ class History(Base):
     isNorth = Column(Boolean, default=True, comment="是否北半球")
     beat_info = Column(String, comment="推算最喜年份信息")
     label_id = Column(Integer)
+    history_index = Column(Integer, comment="默认名称自增的index")
+    like_str = Column(String, comment="喜")
+    dislike_str = Column(String, comment="忌")
+    pattern = Column(String, comment="格局")

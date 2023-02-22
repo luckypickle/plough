@@ -4,6 +4,7 @@ import time
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app.crud.base import CRUDBase
 from app.models.history import History
@@ -14,6 +15,13 @@ class CRUDHistory(CRUDBase[History, HistoryCreate, HistoryUpdate]):
     @staticmethod
     def get_count_by_owner(db: Session, owner_id: int) -> int:
         return db.query(History).filter(History.owner_id == owner_id, History.status == 0).count()
+
+    @staticmethod
+    def get_index_by_owner(db: Session, owner_id: int) -> int:
+        index = db.query(func.max(History.history_index)).filter(History.owner_id == owner_id, History.status == 0).scalar()
+        if index is None:
+            return 0
+        return index
 
     @staticmethod
     def get_multi_by_owner(db: Session, owner_id: int, skip: int, limit: int) -> History:

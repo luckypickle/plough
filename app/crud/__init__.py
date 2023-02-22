@@ -18,6 +18,7 @@ from .crud_video import video
 from .crud_folder import folder
 from .crud_folder_order import folder_order
 from .crud_label import label
+from .crud_history_event import history_event
 # For a new basic set of CRUD operations you could just do
 
 # from .base import CRUDBase
