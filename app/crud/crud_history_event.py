@@ -20,7 +20,7 @@ class CRUDHistoryEvent(CRUDBase[HistoryEvent, HistoryEventCreate, HistoryEventUp
         return query.order_by(HistoryEvent.create_time.desc()).all()
 
     @staticmethod
-    def delete_history_event(db: Session,id:int,user_id:int) ->bool:
+    def delete_history_event(db: Session,id:int) ->bool:
         obj = db.query(HistoryEvent).get(id)
         if obj is not None:
             db.delete(obj)
