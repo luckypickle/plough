@@ -364,7 +364,7 @@ def get_history(
             label_id=h.label_id,
             label_name=labelName,
             like_str=h.like_str,
-            disdislike_strlike=h.dislike_str,
+            dislike_str=h.dislike_str,
             pattern=h.pattern
         ))
     return rets
