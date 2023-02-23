@@ -11,7 +11,7 @@ class DivinationSettingsBase(BaseModel):
     analysis_isClose:Optional[bool]=False
     taimingshen_isClose:Optional[bool]=False
     xingyun_isClose:Optional[bool]=False
-    liuri_isClose:Optional[bool]=False
+    liuri_isClose:Optional[bool]=True
 
 # Properties to receive via API on creation
 class DivinationSettingsCreate(DivinationSettingsBase):
