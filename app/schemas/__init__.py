@@ -22,3 +22,4 @@ from .folder import Folder,FolderCreate,FolderUpdate,FolderQuery,FolderIds
 from .folder_order import FolderOrder,FolderOrderCreate,FolderOrderUpdate,FolderOrderIds
 from .label import Label,LabelCreate,LabelUpdate,LabelQuery
 from .history_event import HistoryEvent,HistoryEventCreate,HistoryEventUpdate
+from .divination_settings import DivinationSettings,DivinationSettingsCreate,DivinationSettingsUpdate,DivinationSettingsQuery

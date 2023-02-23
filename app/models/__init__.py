@@ -19,3 +19,4 @@ from .folder import Folder
 from .folder_order import FolderOrder
 from .label import Label
 from .history_event import HistoryEvent
+from .divination_settings import DivinationSettings
