@@ -207,7 +207,7 @@ class BaZi():
         xiaoyunAge = round(count / 3)
         xiaoyunYears = []
         brithtime = datetime.datetime(day.getSolarYear(), month = day.getSolarMonth(),day = day.getSolarDay(),hour = self.hour,minute = self.minute)
-        for i in range(1, xiaoyunAge+1):
+        for i in range(0, xiaoyunAge + 1):
             print(i)
             day_xiaoyun = sxtwl.fromSolar(self.year + i, 5, 1)
             yTG_xiaoyun = day_xiaoyun.getYearGZ()
@@ -219,10 +219,10 @@ class BaZi():
                 second_xiaoyun = datas.ten_deities[me][gan]
             # xiaoyunYears[str(self.year + i - 1)] = []
             xiaoyunYears.append(
-                {"age":i,"year": self.year + i - 1, "dayun": gan3_xiaoyun + zhi3_xiaoyun, "first": ten_deities[me][gan3_xiaoyun],
+                {"age":i,"year": self.year + i, "dayun": gan3_xiaoyun + zhi3_xiaoyun, "first": ten_deities[me][gan3_xiaoyun],
                 "second": second_xiaoyun})
-        if len(xiaoyunYears)==0:
-            xiaoyunYears.append(dayunBig[0])
+        # if len(xiaoyunYears)==0:
+        #     xiaoyunYears.append(dayunBig[0])
         lichunTime = getLichunTime(self.year)
         if lichunTime > brithtime:
             day_xiaoyun2 = sxtwl.fromSolar(self.year-1, 5, 1)
