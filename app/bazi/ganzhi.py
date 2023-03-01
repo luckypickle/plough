@@ -4,6 +4,7 @@ from collections import OrderedDict
 from bidict import bidict
 
 import sxtwl
+import datetime
 
 Gan = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 
@@ -316,6 +317,22 @@ zhi3 = {
     "亥":"孤苦怜", }
 
 
+
+siling= {
+ "立春":OrderedDict({"戊":7, "丙":7, "甲":16 }),
+ "惊蛰":OrderedDict({"甲":10, "乙":20}),
+ "清明":OrderedDict({"乙":9, "癸":3, "戊":18 }),
+ "立夏":OrderedDict({"戊":5, "庚":9, "丙":16 }),
+ "芒种":OrderedDict({"丙":10, "己":9, "丁":11 }),
+ "小暑":OrderedDict({"丁":9, "乙":3, "己":18 }),
+ "立秋":OrderedDict({"己":10, "壬":3, "庚":17 }),
+ "白露":OrderedDict({"庚":10, "辛":20}),
+ "寒露":OrderedDict({"辛":9, "丁":3, "戊":18 }),
+ "立冬":OrderedDict({"戊":7, "甲":5, "壬":18 }),
+ "大雪":OrderedDict({"壬":10, "癸":20}),
+ "小寒":OrderedDict({"癸":9, "辛":3, "己":18 })}
+
+
 def getGZ(gzStr):
     tg = -1
     dz = -1
@@ -329,3 +346,80 @@ def getGZ(gzStr):
             dz = i
             break   
     return sxtwl.GZ(tg, dz)
+
+
+#获取下一个节
+def getNextJie(solar,hour,minute):
+    #儒略日数转公历
+    jd = sxtwl.J2000
+    t = sxtwl.JD2DD(jd )
+    #公历转儒略日
+    jd = sxtwl.toJD(t)
+    #如果当天是节气获取准确时间
+    if solar.hasJieQi() and solar.getJieQi()%2==1:
+        # print('节气：%s'% jqmc[solar.getJieQi()])
+         #获取节气的儒略日数， 如果说你要计算什么时间的相距多少，直接比对儒略日要方便，相信我。
+        jd = solar.getJieQiJD()
+        # 将儒略日数转换成年月日时秒
+        t = sxtwl.JD2DD(jd)
+        # 下一个节气
+        if t.h > hour or ( t.h == hour and t.m >= minute):
+            return {"datetime":datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m)),"jieqi":jqmc[solar.getJieQi()]}
+    # 查找某日前后的节气
+    while True:
+        # 这里可以使用after或者before，不用担心速度，这里的计算在底层仅仅是+1这么简单
+        solar = solar.after(1)
+        # hasJieQi的接口比getJieQiJD速度要快，你也可以使用getJieQiJD来判断是否有节气。
+        if solar.hasJieQi() and solar.getJieQi()%2==1:
+            # print('节气：%s'% jqmc[solar.getJieQi()])
+            #获取节气的儒略日数， 如果说你要计算什么时间的相距多少，直接比对儒略日要方便，相信我。
+            jd = solar.getJieQiJD()
+            # 将儒略日数转换成年月日时秒
+            t = sxtwl.JD2DD(jd)
+            # 注意，t.s是小数，需要四舍五入
+            return {"datetime":datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m)),"jieqi":jqmc[solar.getJieQi()]}
+
+#获取上一个节
+def getPrevJie(solar,hour,minute):
+    #儒略日数转公历
+    jd = sxtwl.J2000
+    t = sxtwl.JD2DD(jd )
+    #公历转儒略日
+    jd = sxtwl.toJD(t)
+    #如果当天是节气获取准确时间
+    if solar.hasJieQi() and solar.getJieQi()%2==1:
+         #获取节气的儒略日数， 如果说你要计算什么时间的相距多少，直接比对儒略日要方便，相信我。
+        jd = solar.getJieQiJD()
+        # 将儒略日数转换成年月日时秒
+        t = sxtwl.JD2DD(jd)
+        # 上一个节气
+        if t.h < hour or ( t.h == hour and t.m < minute):
+            # print("节气时间:%d-%d-%d %d:%d:%d"%(t.Y, t.M, t.D, t.h, t.m, round(t.s)))
+            return {"datetime":datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m)),"jieqi":jqmc[solar.getJieQi()]}
+    # 查找某日前后的节气
+    while True:
+        # 这里可以使用after或者before，不用担心速度，这里的计算在底层仅仅是+1这么简单
+        solar = solar.before(1)
+        # hasJieQi的接口比getJieQiJD速度要快，你也可以使用getJieQiJD来判断是否有节。
+        if solar.hasJieQi() and solar.getJieQi()%2==1:
+            #获取节气的儒略日数， 如果说你要计算什么时间的相距多少，直接比对儒略日要方便，相信我。
+            jd = solar.getJieQiJD()
+            # 将儒略日数转换成年月日时秒
+            t = sxtwl.JD2DD(jd)
+            # 注意，t.s是小数，需要四舍五入
+            # print("节气时间:%d-%d-%d %d:%d:%d"%(t.Y, t.M, t.D, t.h, t.m, round(t.s)))
+            return {"datetime":datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m)),"jieqi":jqmc[solar.getJieQi()]}
+
+#获取立春时间
+def getLichunTime(year):
+   # 通过查资料得出立春在每年的二月的三号到八号之间，所以遍历这六天来确定最终的日期
+    for i in [3, 4, 5, 6, 7, 8]:
+        solar = sxtwl.fromSolar(year, 2, i)
+        if solar.hasJieQi():
+            #获取节气的儒略日数， 如果说你要计算什么时间的相距多少，直接比对儒略日要方便，相信我。
+            jd = solar.getJieQiJD()
+            # 将儒略日数转换成年月日时秒
+            t = sxtwl.JD2DD(jd)
+            return datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m))
+        
+        

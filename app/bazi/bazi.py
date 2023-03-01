@@ -203,6 +203,74 @@ class BaZi():
         detail['dayunbig'] = dayunBig
         detail['dayunyear'] = dayunYears
 
+        #小运  在立春前要单独加上去年数据
+        xiaoyunAge = round(count / 3)
+        xiaoyunYears = []
+        brithtime = datetime.datetime(day.getSolarYear(), month = day.getSolarMonth(),day = day.getSolarDay(),hour = self.hour,minute = self.minute)
+        for i in range(1, xiaoyunAge+1):
+            print(i)
+            day_xiaoyun = sxtwl.fromSolar(self.year + i, 5, 1)
+            yTG_xiaoyun = day_xiaoyun.getYearGZ()
+            gan3_xiaoyun = datas.Gan[yTG_xiaoyun.tg]
+            zhi3_xiaoyun = datas.Zhi[yTG_xiaoyun.dz]
+            second_xiaoyun = ''
+            for gan in zhi5[zhi3_xiaoyun]:
+                zhi6_ = zhi6_ + "{}{}{}　".format(gan, gan5[gan], datas.ten_deities[me][gan])
+                second_xiaoyun = datas.ten_deities[me][gan]
+            # xiaoyunYears[str(self.year + i - 1)] = []
+            xiaoyunYears.append(
+                {"age":i,"year": self.year + i - 1, "dayun": gan3_xiaoyun + zhi3_xiaoyun, "first": ten_deities[me][gan3_xiaoyun],
+                "second": second_xiaoyun})
+        if len(xiaoyunYears)==0:
+            xiaoyunYears.append(dayunBig[0])
+        lichunTime = getLichunTime(self.year)
+        if lichunTime > brithtime:
+            day_xiaoyun2 = sxtwl.fromSolar(self.year-1, 5, 1)
+            yTG_xiaoyun2 = day_xiaoyun2.getYearGZ()
+            gan3_xiaoyun2 = datas.Gan[yTG_xiaoyun2.tg]
+            zhi3_xiaoyun2 = datas.Zhi[yTG_xiaoyun2.dz]
+            second_xiaoyun2 = ''
+            for gan in zhi5[zhi3_xiaoyun2]:
+                zhi6_ = zhi6_ + "{}{}{}　".format(gan, gan5[gan], datas.ten_deities[me][gan])
+                second_xiaoyun2 = datas.ten_deities[me][gan]
+            # xiaoyunYears.append(
+            #     {"age":0,"year": self.year, "dayun": gan3_xiaoyun2 + zhi3_xiaoyun2, "first": ten_deities[me][gan3_xiaoyun2],
+            #     "second": second_xiaoyun2})
+            xiaoyunYears.insert(0,{"age":0,"year": self.year, "dayun": gan3_xiaoyun2 + zhi3_xiaoyun2, "first": ten_deities[me][gan3_xiaoyun2],
+                "second": second_xiaoyun2})
+        detail['xiaoyun'] = {"age":xiaoyunAge,"year": self.year}
+        detail['xiaoyunyear'] = xiaoyunYears
+
+        #起运和交运
+        nextJieqi = getNextJie(day,self.hour,self.minute)
+        prevJieqi = getPrevJie(day,self.hour,self.minute)
+        
+        if (datas.Gan.index(gans.day) % 2 == 0 and self.sex == 1) or (datas.Gan.index(gans.day) % 2 == 1 and self.sex == 0):  
+            time = 120 * (nextJieqi.get("datetime")-brithtime).total_seconds()
+        else:
+            time = 120 * (brithtime-prevJieqi.get("datetime")).total_seconds()
+        yuntime = brithtime + datetime.timedelta(seconds=time)
+        days = datetime.timedelta(seconds=time).days
+
+        # print(str(days//365)+"年"+str(days%365//30)+"月"+str(days%365%30)+ "日"+str()+ "时")
+        jiaoyunJieqi = getPrevJie(sxtwl.fromSolar(yuntime.year, yuntime.month, yuntime.day),yuntime.hour,yuntime.minute)
+        # print( jiaoyunJieqi.get("jieqi")+"后"+str(days)+"天")
+        detail['qiyun'] = {"years":days//365, "months":days%365//30, "days":days%365%30, "hour":int(time/3600%24)}
+        detail['jiaoyun'] = {"jieqi":jiaoyunJieqi.get("jieqi"),"days":(yuntime - jiaoyunJieqi.get("datetime")).days}
+        detail['xiaoyunjieqi'] = prevJieqi.get("jieqi")
+        detail['dayunjieqi'] = jiaoyunJieqi.get("jieqi")
+        #司令
+        silingday = (brithtime-prevJieqi.get("datetime")).days
+        silingjieqi = prevJieqi.get("jieqi")
+        siling_gan=""
+        print(siling[silingjieqi])
+        for key in siling[silingjieqi]:
+            silingday -= siling[silingjieqi].get(key)
+            siling_gan = key
+            if silingday < 0: 
+                break
+        detail['siling'] = siling_gan
+
         # 格局
         ge = ''
         if (me, zhis.month) in jianlus:
@@ -969,7 +1037,7 @@ def get_dianpan_divination(year,month,day,hour,sex):
         dianpan_analysis=dianpan_analysis+"月令正财，无冲刑，有贤内助，但是母亲与妻子不和。生活简朴，多为理财人士。"
     if zhi_shens[3] == '财' and len(zhi5[zhis[3]]) == 1:
         dianpan_analysis=dianpan_analysis+"时支正财，一般两个儿子。"
-    if zhus[2] in (('戊','子'),) or zhus[3] in (('戊','子'),) and sex != 0:
+    if (zhus[2] in (('戊','子'),) or zhus[3] in (('戊','子'),)) and sex != 0:
         dianpan_analysis=dianpan_analysis+"日支专位为正财，得勤俭老婆。即戊子。日时专位支正财，又透正官，中年以后发达，独立富贵。"
         
     if zhus[2] in (('壬','午'),('癸','巳'),):
@@ -978,7 +1046,7 @@ def get_dianpan_divination(year,month,day,hour,sex):
     # if zhus[2] in (('甲','戌'),('乙','亥'),):
     #     dianpan_analysis=dianpan_analysis+"女('甲','戌'),('乙','亥'） 晚婚 -- 不准！"
         
-    if '财' == gan_shens[3] or  '财' == zhi_shens[3] and sex != 0:
+    if ('财' == gan_shens[3] or  '财' == zhi_shens[3]) and sex != 0:
         dianpan_analysis=dianpan_analysis+"未必准确：时柱有正财，口快心直，不喜拖泥带水，刑冲则浮躁。阳刃也不佳，反之有美妻佳子。"
     if (not '财' in shens2) and (not '才' in shens2):
         dianpan_analysis=dianpan_analysis+"四柱无财，即便逢财运，也是虚名虚利，男的晚婚。"
@@ -1026,7 +1094,7 @@ def get_dianpan_divination(year,month,day,hour,sex):
             if '财' in gan_shens and '财' in zhi_shens2:
                 dianpan_analysis=dianpan_analysis+"财官印同根透，无刑冲合，吉。"
             
-        if gan_shens[1] == '官' in ten_deities[me][zhis[1]] in ('绝', '墓') and sex == 0:
+        if (gan_shens[1] == '官' in ten_deities[me][zhis[1]] in ('绝', '墓')) and sex == 0:
             dianpan_analysis=dianpan_analysis+"官在月坐墓绝，不是特殊婚姻就是迟婚。如果与天月德同柱，依然不错。丈夫在库中：1，老夫少妻；2，不为外人所知的亲密感情；3，特殊又合法的婚姻。"
         if zhi_shens[1] == '官' and gan_shens[1] == '官':
             dianpan_analysis=dianpan_analysis+"月柱正官坐正官，婚变。月柱不宜通。坐禄的。"
