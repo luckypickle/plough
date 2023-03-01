@@ -255,7 +255,7 @@ class BaZi():
         # print(str(days//365)+"年"+str(days%365//30)+"月"+str(days%365%30)+ "日"+str()+ "时")
         jiaoyunJieqi = getPrevJie(sxtwl.fromSolar(yuntime.year, yuntime.month, yuntime.day),yuntime.hour,yuntime.minute)
         # print( jiaoyunJieqi.get("jieqi")+"后"+str(days)+"天")
-        detail['qiyun'] = {"years":days//365, "months":days%365//30, "days":days%365%30, "hour":int(time/3600%24)}
+        detail['qiyun'] = {"years":days//365, "months":days%365//30, "days":days%365%30, "hours":int(time/3600%24)}
         detail['jiaoyun'] = {"jieqi":jiaoyunJieqi.get("jieqi"),"days":(yuntime - jiaoyunJieqi.get("datetime")).days}
         detail['xiaoyunjieqi'] = prevJieqi.get("jieqi")
         detail['dayunjieqi'] = jiaoyunJieqi.get("jieqi")
