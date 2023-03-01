@@ -238,6 +238,10 @@ class BaZi():
             #     "second": second_xiaoyun2})
             xiaoyunYears.insert(0,{"age":0,"year": self.year, "dayun": gan3_xiaoyun2 + zhi3_xiaoyun2, "first": ten_deities[me][gan3_xiaoyun2],
                 "second": second_xiaoyun2})
+        hindex = jiazhi_map.index(gans.time+zhis.time)
+        for xiaoyunYear in xiaoyunYears:
+            hindex += direction
+            xiaoyunYear["xiaoyunbazi"]=jiazhi_map[(hindex)%60]
         detail['xiaoyun'] = {"age":xiaoyunAge,"year": self.year}
         detail['xiaoyunyear'] = xiaoyunYears
 
@@ -245,7 +249,7 @@ class BaZi():
         nextJieqi = getNextJie(day,self.hour,self.minute)
         prevJieqi = getPrevJie(day,self.hour,self.minute)
         
-        if (datas.Gan.index(gans.day) % 2 == 0 and self.sex == 1) or (datas.Gan.index(gans.day) % 2 == 1 and self.sex == 0):  
+        if (datas.Gan.index(gans.year) % 2 == 0 and self.sex == 1) or (datas.Gan.index(gans.year) % 2 == 1 and self.sex == 0):  
             time = 120 * (nextJieqi.get("datetime")-brithtime).total_seconds()
         else:
             time = 120 * (brithtime-prevJieqi.get("datetime")).total_seconds()
@@ -503,10 +507,6 @@ def cal_wuxing_color(year,month,day_,hour,minute,day_delta:int=0):
 
 
 def get_wuxings_by_birthyear(birthyear,nowyear):
-    jiazhi_map = ["甲子", "乙丑", "丙寅", "丁卯", "戊辰", "己巳", "庚午", "辛未", "壬申", "癸酉", "甲戌", "乙亥",
-            "丙子", "丁丑", "戊寅", "己卯", "庚辰", "辛巳", "壬午", "癸未", "甲申", "乙酉", "丙戌", "丁亥", "戊子", "己丑", "庚寅", "辛卯", "壬辰", "癸巳",
-            "甲午", "乙未", "丙申", "丁酉", "戊戌", "己亥", "庚子", "辛丑", "壬寅", "癸卯", "甲辰", "乙巳", "丙午", "丁未", "戊申", "己酉", "庚戌", "辛亥",
-            "壬子", "癸丑", "甲寅", "乙卯", "丙辰", "丁巳", "戊午", "己未", "庚申", "辛酉", "壬戌", "癸亥"]
     zhi_map = {"子":"水",
            "丑":"土",
            "寅":"木",
