@@ -657,7 +657,13 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                 order = crud.order.get(db=db, id=order_id)
                 if order:
                     order.status = 1
-                    order.pay_time = datetime.datetime.now(),
+                    order.pay_time = datetime.datetime.now()
+                    product = crud.product.get(db=db, id=order.product_id)
+                    if product is not None and product.name == "点盘":
+                        birthday = datetime.datetime.strptime(order.birthday, "%Y-%m-%d %H:%M")
+                        divination = get_dianpan_divination(birthday.year, birthday.month, birthday.day, birthday.hour, order.sex)
+                        order.arrange_status = 1
+                        order.divination = divination
                     db.add(order),
                     db.commit()
                     db.refresh(order)
@@ -741,11 +747,7 @@ def create_order(
         if obj is not None:
             raise HTTPException(status_code=404, detail="您已经下过点盘")
 
-        birthday = datetime.datetime.strptime(order_in.birthday, "%Y-%m-%d %H:%M")
-        divination = get_dianpan_divination(birthday.year, birthday.month, birthday.day, birthday.hour, order_in.sex)
-        order = crud.order.create_divination_order(db=db, obj_in=order_in, owner_id=current_user.id, divination=divination)
-    else:
-        order = crud.order.create_with_owner(db=db, obj_in=order_in, owner_id=current_user.id)
+    order = crud.order.create_with_owner(db=db, obj_in=order_in, owner_id=current_user.id)
     with open(settings.PRIVATE_KEY, "r") as f:
         pkey = f.read()
     wxpay = WeChatPay(
