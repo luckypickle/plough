@@ -204,12 +204,13 @@ class BaZi():
         detail['dayunyear'] = dayunYears
 
         #小运  在立春前要单独加上去年数据
-        xiaoyunAge = round(count / 3)
+        # xiaoyunAge = round(count / 3)
         xiaoyunYears = []
         brithtime = datetime.datetime(day.getSolarYear(), month = day.getSolarMonth(),day = day.getSolarDay(),hour = self.hour,minute = self.minute)
-        for i in range(0, xiaoyunAge + 1):
+        # print(xiaoyunAge)
+        for i in range(self.year, self.year + round(count // 3)+1):
             print(i)
-            day_xiaoyun = sxtwl.fromSolar(self.year + i, 5, 1)
+            day_xiaoyun = sxtwl.fromSolar(i, 5, 1)
             yTG_xiaoyun = day_xiaoyun.getYearGZ()
             gan3_xiaoyun = datas.Gan[yTG_xiaoyun.tg]
             zhi3_xiaoyun = datas.Zhi[yTG_xiaoyun.dz]
@@ -219,7 +220,7 @@ class BaZi():
                 second_xiaoyun = datas.ten_deities[me][gan]
             # xiaoyunYears[str(self.year + i - 1)] = []
             xiaoyunYears.append(
-                {"age":i,"year": self.year + i, "dayun": gan3_xiaoyun + zhi3_xiaoyun, "first": ten_deities[me][gan3_xiaoyun],
+                {"age":round(count / 3)-(self.year + round(count // 3)-i),"year": i, "dayun": gan3_xiaoyun + zhi3_xiaoyun, "first": ten_deities[me][gan3_xiaoyun],
                 "second": second_xiaoyun})
         # if len(xiaoyunYears)==0:
         #     xiaoyunYears.append(dayunBig[0])
@@ -242,7 +243,7 @@ class BaZi():
         for xiaoyunYear in xiaoyunYears:
             hindex += direction
             xiaoyunYear["xiaoyunbazi"]=jiazhi_map[(hindex)%60]
-        detail['xiaoyun'] = {"age":xiaoyunAge,"year": self.year}
+        detail['xiaoyun'] = {"age":round(count / 3),"year": self.year}
         detail['xiaoyunyear'] = xiaoyunYears
 
         #起运和交运
