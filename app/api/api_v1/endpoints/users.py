@@ -649,6 +649,44 @@ def delete_event(event_id: int,
     else:
         return "failed"
 
+@router.post("/createHistoryCombine")
+def create_history_combine(
+        *,
+        db: Session = Depends(deps.get_db),
+        obj_in: schemas.HistoryCombineCreate,
+        current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """
+    Create new HistoryCombine.(only user)
+    """
+    obj_in.owner_id = current_user.id
+    history_combine = crud.history_combine.create(db=db, obj_in=obj_in)
+    return history_combine
+
+@router.get("/combines")
+def get_history_combines(
+        *,
+        db: Session = Depends(deps.get_db),
+        skip: int = 0,
+        limit: int = 100,
+        current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    """
+    Get HistoryCombines by user.
+    """
+    combines = crud.history_combine.get_multi_by_owner(db=db, owner_id=current_user.id,skip=skip,limit=limit)
+    return combines
+
+@router.delete('/combine')
+def delete_history_combine(id: int,
+        db: Session = Depends(deps.get_db),
+        current_user: models.User = Depends(deps.get_current_active_user)):
+    res=crud.history_combine.delete_history_combine(db=db,history_combine_id=id,owner_id=current_user.id)
+    if res:
+        return "success"
+    else:
+        return "failed"
+
 @router.get("/{user_id}", response_model=schemas.User)
 def read_user_by_id(
         user_id: int,

@@ -20,6 +20,7 @@ from .crud_folder_order import folder_order
 from .crud_label import label
 from .crud_history_event import history_event
 from .crud_divination_settings import divination_settings
+from .crud_history_combine import history_combine
 # For a new basic set of CRUD operations you could just do
 
 # from .base import CRUDBase
