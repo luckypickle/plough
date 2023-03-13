@@ -25,7 +25,7 @@ class CRUDFavorite(CRUDBase[Favorite, FavoriteCreate, FavoriteUpdate]):
             .all()
 
     def create_user_favorite(self, db: Session, favorite: FavoriteCreate) -> Any:
-        self.create(db, obj_in=favorite)
+       return self.create(db, obj_in=favorite)
 
     @staticmethod
     def get_by_user_id_order_id(db:Session,user_id:int,order_id:int):
