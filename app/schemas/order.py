@@ -100,9 +100,10 @@ class OpenOrder(Order):
     interact_comment_list: Optional[List[InteractComment]] =None
     sizhu:Optional[Any]=None
     isFavorite: Optional[bool]=False
+    favorite_id:Optional[int]=None
 
 class FavOrder(OpenOrder):
-    favorite_id:Optional[int]=None
+    pass
 
 class OrderQuery(BaseModel):
     total: int = 0

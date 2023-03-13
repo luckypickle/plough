@@ -169,9 +169,11 @@ def read_orders(
         if comment is not None:
             comment.create_time  = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
         fav  = crud.favority.get_by_user_id_order_id(db,current_user.id,o.id)
-        isFavorite = False 
+        isFavorite = False
+        favoriteId = None  
         if fav is not None:
-            isFavorite=True
+            isFavorite = True
+            favoriteId = fav.id
         ret_obj.orders.append(schemas.OpenOrder(
             id=o.id,
             product_id=o.product_id,
@@ -202,7 +204,8 @@ def read_orders(
             sizhu=sizhu,
             isNorth=o.isNorth,
             beat_info=o.beat_info,
-            isFavorite=isFavorite
+            isFavorite=isFavorite,
+            favorite_id=favoriteId
         ))
     return ret_obj
 
