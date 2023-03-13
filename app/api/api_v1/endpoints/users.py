@@ -311,6 +311,7 @@ def get_history(
         *,
         skip: int = 0,
         limit: int = 100,
+        top: int = 0,
         user_name: str ="",
         label_name: str ="",
         wuxing: str ="",
@@ -323,7 +324,7 @@ def get_history(
     """
     Get divination history.
     """
-    history = crud.history.get_multi_by_owner(db=db, owner_id=current_user.id, skip=skip, limit=limit)
+    history = crud.history.get_multi_by_owner(db=db, owner_id=current_user.id, top=top, skip=skip, limit=limit)
     rets = []
     for h in history:
         labelName="默认"
@@ -433,8 +434,62 @@ def update_history(
     divination['name'] = history.name
     return divination
 
+@router.put("/addTopHistory/{id}", response_model=Any)
+def add_top_history(
+        *,
+        db: Session = Depends(deps.get_db),
+        id: int,
+        current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    history = crud.history.get(db, id=id)
+    if not history:
+        raise HTTPException(
+            status_code=404,
+            detail="No history exists for the current user",
+        )
+    if(history.owner_id != current_user.id):
+        raise HTTPException(
+            status_code=404,
+            detail="The current history does not belong to this user",
+        ) 
+    if(history.top == 1):
+        raise HTTPException(
+            status_code=404,
+            detail="The current history has been set to the top",
+        ) 
+    history_in = {"top":1, "top_time":datetime.datetime.now()}
+    history = crud.history.update(db, db_obj=history, obj_in=history_in)
+    return "success"
+
+@router.put("/cancelTopHistory/{id}", response_model=Any)
+def cancel_top_history(
+        *,
+        db: Session = Depends(deps.get_db),
+        id: int,
+        current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    history = crud.history.get(db, id=id)
+    if not history:
+        raise HTTPException(
+            status_code=404,
+            detail="No history exists for the current user",
+        )
+    if(history.owner_id != current_user.id):
+        raise HTTPException(
+            status_code=404,
+            detail="The current history does not belong to this user",
+        ) 
+    if(history.top == 0):
+        raise HTTPException(
+            status_code=404,
+            detail="The current history has been set to the cancel top",
+        ) 
+    history_in = {"top":0}
+    history = crud.history.update(db, db_obj=history, obj_in=history_in)
+    return "success"
+
 @router.put("/historyNote/{id}", response_model=Any)
-def update_history(
+def update_history_note(
         *,
         db: Session = Depends(deps.get_db),
         id: int,

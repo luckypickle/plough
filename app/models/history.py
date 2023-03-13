@@ -21,3 +21,5 @@ class History(Base):
     like_str = Column(String, comment="喜")
     dislike_str = Column(String, comment="忌")
     pattern = Column(String, comment="格局")
+    top = Column(Integer, server_default='0',comment="是否置顶： 0 不置顶  1 置顶")
+    top_time = Column(DateTime, index=True, comment="置顶时间")

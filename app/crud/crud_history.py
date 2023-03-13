@@ -24,18 +24,18 @@ class CRUDHistory(CRUDBase[History, HistoryCreate, HistoryUpdate]):
         return index
 
     @staticmethod
-    def get_multi_by_owner(db: Session, owner_id: int, skip: int, limit: int) -> History:
+    def get_multi_by_owner(db: Session, owner_id: int,top: int, skip: int, limit: int) -> History:
         return db.query(History) \
-            .filter(History.owner_id == owner_id, History.status == 0) \
-            .order_by(History.id.desc()) \
+            .filter(History.owner_id == owner_id, History.status == 0, History.top == top) \
+            .order_by(History.top_time.desc(),History.id.desc()) \
             .offset(skip).limit(limit) \
             .all()
 
     def create_owner_divination(self, db: Session, history: HistoryCreate) -> History:
-        total = db.query(History).filter(History.owner_id == history.owner_id, History.status == 0).count()
+        total = db.query(History).filter(History.owner_id == history.owner_id, History.status == 0, History.top == 0).count()
         if total >= 100:
             first_history = db.query(History) \
-                .filter(History.owner_id == history.owner_id, History.status == 0) \
+                .filter(History.owner_id == history.owner_id, History.status == 0, History.top == 0) \
                 .order_by(History.id).first()
             if first_history:
                 db.query(History).filter(History.id == first_history.id).delete()
