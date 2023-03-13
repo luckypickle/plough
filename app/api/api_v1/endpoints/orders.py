@@ -168,6 +168,10 @@ def read_orders(
         comment = crud.comment.get_by_order_id(db,o.id,type=0)
         if comment is not None:
             comment.create_time  = comment.create_time.strftime("%Y-%m-%d %H:%M:%S")
+        fav  = crud.favority.get_by_user_id_order_id(db,current_user.id,o.id)
+        isFavorite = False 
+        if fav is not None:
+            isFavorite=True
         ret_obj.orders.append(schemas.OpenOrder(
             id=o.id,
             product_id=o.product_id,
@@ -197,8 +201,8 @@ def read_orders(
             interact_comment_list=comment_ret,
             sizhu=sizhu,
             isNorth=o.isNorth,
-            beat_info=o.beat_info
-            
+            beat_info=o.beat_info,
+            isFavorite=isFavorite
         ))
     return ret_obj
 

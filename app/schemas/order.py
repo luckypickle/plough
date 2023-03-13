@@ -99,6 +99,7 @@ class OpenOrder(Order):
     comment:Optional[Comment] =None
     interact_comment_list: Optional[List[InteractComment]] =None
     sizhu:Optional[Any]=None
+    isFavorite: Optional[bool]=False
 
 class FavOrder(OpenOrder):
     favorite_id:Optional[int]=None
