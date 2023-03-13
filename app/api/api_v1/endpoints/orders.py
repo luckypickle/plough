@@ -533,13 +533,13 @@ def set_order_favorite( db: Session = Depends(deps.get_db),
             fav  = crud.favority.get_by_user_id_order_id(db,current_user.id,order_id)
             if fav is not None:
                 return util.make_return(-1, "already favorite")
-            crud.favority.create_user_favorite(db,schemas.FavoriteCreate(
+            fav = crud.favority.create_user_favorite(db,schemas.FavoriteCreate(
                 user_id=current_user.id,
                 order_id=order_id,
                 status=0
             ))
 
-            return util.make_return(0,"success")
+            return util.make_return(0,fav.id)
         else:
             return util.make_return(-1, "not open")
     else:
