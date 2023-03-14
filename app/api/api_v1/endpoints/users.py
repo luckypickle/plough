@@ -484,7 +484,7 @@ def cancel_top_history(
             status_code=404,
             detail="The current history has been set to the cancel top",
         ) 
-    history_in = {"top":0}
+    history_in = {"top":0, "top_time":None}
     history = crud.history.update(db, db_obj=history, obj_in=history_in)
     return "success"
 
