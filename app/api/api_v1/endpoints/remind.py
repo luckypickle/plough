@@ -12,7 +12,7 @@ from app.api.util import get_next_birthday
 
 router = APIRouter()
 
-@router.post("/create_remind_birthday")
+@router.post("/create_remind_birthday",response_model=schemas.RemindBirthdayQuery)
 def create_remind_birthday(
         *,
         db: Session = Depends(deps.get_db),
@@ -20,7 +20,7 @@ def create_remind_birthday(
         year: int,
         month: int,
         day: int,
-        hour: int,
+        hour: int = 0,
         minute: int = 0,
         sex: int = 1,
         location: str = '',
@@ -29,7 +29,7 @@ def create_remind_birthday(
         remind_type:int = 1,
         remind_calendar:int = 1,
         current_user: models.User = Depends(deps.get_current_active_user)
-) -> Any:
+) -> schemas.RemindBirthdayQuery:
     """
     Get remind_birthday and save to database.
     """
@@ -45,9 +45,25 @@ def create_remind_birthday(
         remind_calendar=remind_calendar
     )
     remindBirthday = crud.remind_birthday.create_remind_birthday(db, remindBirthday = remind_birthday)
+    nowTime= datetime.today()
+    birthday = datetime.strptime(remindBirthday.birthday,"%Y-%m-%d %H:%M:%S")
+    nextBirthday = get_next_birthday(nowTime,birthday,remindBirthday.remind_calendar)
+    remindBirthday = schemas.RemindBirthdayQuery(
+            id=remindBirthday.id,
+            name=remindBirthday.name,
+            birthday=remindBirthday.birthday,
+            sex=remindBirthday.sex,
+            location=remindBirthday.location,
+            label=remindBirthday.label,
+            owner_id=remindBirthday.owner_id,
+            remind_days=remindBirthday.remind_days,
+            remind_type=remindBirthday.remind_type,
+            remind_calendar=remindBirthday.remind_calendar,
+            days=(nextBirthday-nowTime).days+1
+        )
     return remindBirthday
 
-@router.put("/remind_birthday/{id}")
+@router.put("/remind_birthday/{id}",response_model=schemas.RemindBirthdayQuery)
 def update_remind_birthday(
         *,
         db: Session = Depends(deps.get_db),
@@ -65,7 +81,7 @@ def update_remind_birthday(
         remind_type:int = 1,
         remind_calendar:int = 1,
         current_user: models.User = Depends(deps.get_current_active_user)
-) -> Any:
+) -> schemas.RemindBirthdayQuery:
     """
     Update an remind_birthday.(only user)
     """
@@ -92,6 +108,22 @@ def update_remind_birthday(
         remind_calendar=remind_calendar
     )
     remindBirthday = crud.remind_birthday.update(db, db_obj=remind_birthday, obj_in=remind_birthday_in)
+    nowTime= datetime.today()
+    birthday = datetime.strptime(remindBirthday.birthday,"%Y-%m-%d %H:%M:%S")
+    nextBirthday = get_next_birthday(nowTime,birthday,remindBirthday.remind_calendar)
+    remindBirthday = schemas.RemindBirthdayQuery(
+            id=remindBirthday.id,
+            name=remindBirthday.name,
+            birthday=remindBirthday.birthday,
+            sex=remindBirthday.sex,
+            location=remindBirthday.location,
+            label=remindBirthday.label,
+            owner_id=remindBirthday.owner_id,
+            remind_days=remindBirthday.remind_days,
+            remind_type=remindBirthday.remind_type,
+            remind_calendar=remindBirthday.remind_calendar,
+            days=(nextBirthday-nowTime).days+1
+        )
     return remindBirthday
 
 @router.get("/remind_birthdays", response_model=List[schemas.RemindBirthdayQuery])
@@ -119,6 +151,7 @@ def get_remind_birthdays(
             remind_calendar=r.remind_calendar,
             days=(nextBirthday-nowTime).days+1
         ))
+    rets.sort(key=lambda k: (k.days), reverse=False)
     return rets
 
 @router.delete('/remind_birthday')
@@ -132,7 +165,7 @@ def delete_remind_birthday( remind_birthday_id:int ,
     else:
         return "failed"
 
-@router.post("/create_remind_day")
+@router.post("/create_remind_day",response_model=schemas.RemindDayQuery)
 def create_remind_day(
         *,
         db: Session = Depends(deps.get_db),
@@ -148,7 +181,7 @@ def create_remind_day(
         remind_type:int = 1,
         remind_calendar:int = 1,
         current_user: models.User = Depends(deps.get_current_active_user)
-) -> Any:
+) -> schemas.RemindDayQuery:
     """
     Get remind_day and save to database.
     """
@@ -163,9 +196,24 @@ def create_remind_day(
         remind_calendar=remind_calendar
     )
     remindDay = crud.remind_day.create_remind_day(db, remindDay=remind_day)
+    nowTime= datetime.today()
+    dayTime = datetime.strptime(remindDay.day_time,"%Y-%m-%d %H:%M:%S")
+    nextDayTime = get_next_birthday(nowTime,dayTime,remindDay.remind_calendar)
+    remindDay = schemas.RemindDayQuery(
+            id=remindDay.id,
+            name=remindDay.name,
+            title=remindDay.title,
+            day_time=remindDay.day_time,
+            content=remindDay.content,
+            owner_id=remindDay.owner_id,
+            remind_days=remindDay.remind_days,
+            remind_type=remindDay.remind_type,
+            remind_calendar=remindDay.remind_calendar,
+            days=(nextDayTime-nowTime).days+1
+        )
     return remindDay
 
-@router.put("/remind_day/{id}")
+@router.put("/remind_day/{id}",response_model=schemas.RemindDayQuery)
 def update_remind_day(
         *,
         db: Session = Depends(deps.get_db),
@@ -182,7 +230,7 @@ def update_remind_day(
         remind_type:int = 1,
         remind_calendar:int = 1,
         current_user: models.User = Depends(deps.get_current_active_user)
-) -> Any:
+) -> schemas.RemindDayQuery:
     """
     Update an remind_day.(only user)
     """
@@ -208,6 +256,21 @@ def update_remind_day(
         remind_calendar=remind_calendar
     )
     remindDay = crud.remind_day.update(db, db_obj=remind_day, obj_in=remind_day_in)
+    nowTime= datetime.today()
+    dayTime = datetime.strptime(remindDay.day_time,"%Y-%m-%d %H:%M:%S")
+    nextDayTime = get_next_birthday(nowTime,dayTime,remindDay.remind_calendar)
+    remindDay = schemas.RemindDayQuery(
+            id=remindDay.id,
+            name=remindDay.name,
+            title=remindDay.title,
+            day_time=remindDay.day_time,
+            content=remindDay.content,
+            owner_id=remindDay.owner_id,
+            remind_days=remindDay.remind_days,
+            remind_type=remindDay.remind_type,
+            remind_calendar=remindDay.remind_calendar,
+            days=(nextDayTime-nowTime).days+1
+        )
     return remindDay
 
 @router.get("/remind_days", response_model=List[schemas.RemindBirthdayQuery])
@@ -234,6 +297,7 @@ def get_remind_days(
             remind_calendar=r.remind_calendar,
             days=(nextDayTime-nowTime).days+1
         ))
+    rets.sort(key=lambda k: (k.days), reverse=False)
     return rets
 
 @router.delete('/remind_day')
