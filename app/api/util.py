@@ -2,6 +2,9 @@
 from sqlalchemy.orm import Session
 from app import crud, models, schemas
 import time
+from datetime import datetime, timedelta
+import sxtwl
+
 def make_return(code,memo):
     return {'code': code, 'result': memo}
 
@@ -40,4 +43,29 @@ def get_avg_rate(master_id):
         return 0
     else:
         return cache_master_rate[str(master_id)]
+
+def get_next_birthday(nowTime,birthday,remind_calendar):
+    if remind_calendar == 1:   
+        nextYear = nowTime.year
+        if nowTime.month>birthday.month or (nowTime.month == birthday.month and nowTime.day > birthday.day):
+            nextYear += 1
+        isRun = nextYear%4==0 and nextYear%100 != 0 or nextYear % 400==0
+        if birthday.month == 2 and birthday.day == 29 and not isRun:
+            while not isRun:
+                nextYear += 1
+                isRun = nextYear%4==0 and nextYear%100 != 0 or nextYear % 400==0
+        return datetime(year = nextYear, month = birthday.month, day = birthday.day)
+    else:
+        birthdayLunar = sxtwl.fromSolar(birthday.year,birthday.month,birthday.day)
+        nowTimeLunar = sxtwl.fromSolar(nowTime.year,nowTime.month,nowTime.day)
+        nextYear = nowTimeLunar.getLunarYear()
+        nowBirthdayLunar = sxtwl.fromLunar(nextYear,birthdayLunar.getLunarMonth(),birthdayLunar.getLunarDay())
+        #生日为农历大月最后一天
+        leap = birthdayLunar.getLunarDay()==30 and nowBirthdayLunar.getLunarDay()!=30
+        while leap:
+            nextYear += 1
+            nowBirthdayLunar = sxtwl.fromLunar(nextYear,birthdayLunar.getLunarMonth(),birthdayLunar.getLunarDay())
+            leap = birthdayLunar.getLunarDay()==30 and nowBirthdayLunar.getLunarDay()!=30
+        return datetime(year = nowBirthdayLunar.getSolarYear(),month = nowBirthdayLunar.getSolarMonth(),day = nowBirthdayLunar.getSolarDay())
+    
 
