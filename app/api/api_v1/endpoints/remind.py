@@ -281,7 +281,8 @@ def remind(
                 continue
             birthday = datetime(year = nowBirthdayLunar.getSolarYear(),month = nowBirthdayLunar.getSolarMonth(),day = nowBirthdayLunar.getSolarDay())
         days = str(r.remind_days).split(";")
-        days.remove('')
+        if days[-1]=='':
+            days.remove('')
         for day in days:
             remindTime = birthday + timedelta(days = -int(day))  
 
