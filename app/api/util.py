@@ -65,9 +65,11 @@ def get_next_birthday(nowTime,birthday,remind_calendar):
             nextYear += 1
         elif nowTimeLunar.getLunarMonth() == birthdayLunar.getLunarMonth() and nowTimeLunar.isLunarLeap() and not birthdayLunar.isLunarLeap():
             nextYear += 1
-        
-        if nowTimeLunar.isLunarLeap() and nextYear == nowTimeLunar.getLunarYear():
+        #当年当月是闰月的算闰月生日 之后的闰月不算
+        if nowTimeLunar.isLunarLeap() and nextYear == nowTimeLunar.getLunarYear() and birthdayLunar.getLunarYear() == nowTimeLunar.getLunarYear():
             nowBirthdayLunar = sxtwl.fromLunar(nextYear,birthdayLunar.getLunarMonth(),birthdayLunar.getLunarDay(),isRun=True)
+        elif nowTimeLunar.isLunarLeap() and nextYear == nowTimeLunar.getLunarYear():
+            nowBirthdayLunar = sxtwl.fromLunar(nextYear+1,birthdayLunar.getLunarMonth(),birthdayLunar.getLunarDay())
         else:
             nowBirthdayLunar = sxtwl.fromLunar(nextYear,birthdayLunar.getLunarMonth(),birthdayLunar.getLunarDay())
         #生日为农历大月最后一天

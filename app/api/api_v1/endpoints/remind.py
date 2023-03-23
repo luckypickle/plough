@@ -273,7 +273,7 @@ def update_remind_day(
         )
     return remindDay
 
-@router.get("/remind_days", response_model=List[schemas.RemindBirthdayQuery])
+@router.get("/remind_days", response_model=List[schemas.RemindDayQuery])
 def get_remind_days(
         db: Session = Depends(deps.get_db),
         title: str = '',
@@ -330,27 +330,26 @@ def remind(
                 continue   
             #该提醒为不重复提醒 
             if r.remind_type == 0 and (nowTime-datetime(year = r.remind_time.year, month = r.remind_time.month, day = r.remind_time.day)).days>30:
-                continue        
-        if r.remind_calendar == 1:   
-            isRun = nowTime.year%4==0 and nowTime.year%100 != 0 or nowTime.year % 400==0
-            if birthday.month == 2 and birthday.day == 29 and not isRun:
-                continue
-            birthday= datetime(year = nowTime.year, month = birthday.month, day = birthday.day)
-        else:
-            birthdayLunar = sxtwl.fromSolar(birthday.year,birthday.month,birthday.day)
-            nowTimeLunar = sxtwl.fromSolar(nowTime.year,nowTime.month,nowTime.day)
-            nowBirthdayLunar = sxtwl.fromLunar(nowTimeLunar.getLunarYear(),birthdayLunar.getLunarMonth(),birthdayLunar.getLunarDay())
-            #生日为农历大月最后一天
-            if birthdayLunar.getLunarDay()==30 and nowBirthdayLunar.getLunarDay()!=30:
-                continue
-            birthday = datetime(year = nowBirthdayLunar.getSolarYear(),month = nowBirthdayLunar.getSolarMonth(),day = nowBirthdayLunar.getSolarDay())
+                continue      
+        birthday = get_next_birthday(nowTime,birthday,r.remind_calendar)      
+        # if r.remind_calendar == 1:   
+        #     isRun = nowTime.year%4==0 and nowTime.year%100 != 0 or nowTime.year % 400==0
+        #     if birthday.month == 2 and birthday.day == 29 and not isRun:
+        #         continue
+        #     birthday= datetime(year = nowTime.year, month = birthday.month, day = birthday.day)
+        # else:
+        #     birthdayLunar = sxtwl.fromSolar(birthday.year,birthday.month,birthday.day)
+        #     nowTimeLunar = sxtwl.fromSolar(nowTime.year,nowTime.month,nowTime.day)
+        #     nowBirthdayLunar = sxtwl.fromLunar(nowTimeLunar.getLunarYear(),birthdayLunar.getLunarMonth(),birthdayLunar.getLunarDay())
+        #     #生日为农历大月最后一天
+        #     if birthdayLunar.getLunarDay()==30 and nowBirthdayLunar.getLunarDay()!=30:
+        #         continue
+        #     birthday = datetime(year = nowBirthdayLunar.getSolarYear(),month = nowBirthdayLunar.getSolarMonth(),day = nowBirthdayLunar.getSolarDay())
         days = str(r.remind_days).split(";")
         if days[-1]=='':
             days.remove('')
         for day in days:
-            remindTime = birthday + timedelta(days = -int(day))  
-
-            if remindTime.month == nowTime.month and remindTime.day == nowTime.day:
+            if (birthday-nowTime).days+1 == int(day):
                 crud.remind_birthday.update(db, db_obj=r, obj_in=remind_in)
                 pushMsg("生日提醒:" + r.name + "还有" + day +"天生日", "user_" + str(current_user.id))
     remind_days = crud.remind_day.get_multi_by_owner(db, owner_id=current_user.id, title='')
@@ -365,26 +364,26 @@ def remind(
                 continue   
             #该提醒为不重复提醒 
             if r.remind_type == 0 and (nowTime-datetime(year = r.remind_time.year, month = r.remind_time.month, day = r.remind_time.day)).days>30:
-                continue        
-        if r.remind_calendar == 1:   
-            isRun = nowTime.year%4==0 and nowTime.year%100 != 0 or nowTime.year % 400==0
-            if birthday.month == 2 and birthday.day == 29 and not isRun:
-                continue
-            birthday= datetime(year = nowTime.year, month = birthday.month, day = birthday.day)
-        else:
-            birthdayLunar = sxtwl.fromSolar(birthday.year,birthday.month,birthday.day)
-            nowTimeLunar = sxtwl.fromSolar(nowTime.year,nowTime.month,nowTime.day)
-            nowBirthdayLunar = sxtwl.fromLunar(nowTimeLunar.getLunarYear(),birthdayLunar.getLunarMonth(),birthdayLunar.getLunarDay())
-            #生日为农历大月最后一天
-            if birthdayLunar.getLunarDay()==30 and nowBirthdayLunar.getLunarDay()!=30:
-                continue
-            birthday = datetime(year = nowBirthdayLunar.getSolarYear(),month = nowBirthdayLunar.getSolarMonth(),day = nowBirthdayLunar.getSolarDay())
+                continue      
+        birthday = get_next_birthday(nowTime,birthday,r.remind_calendar)      
+        # if r.remind_calendar == 1:   
+        #     isRun = nowTime.year%4==0 and nowTime.year%100 != 0 or nowTime.year % 400==0
+        #     if birthday.month == 2 and birthday.day == 29 and not isRun:
+        #         continue
+        #     birthday= datetime(year = nowTime.year, month = birthday.month, day = birthday.day)
+        # else:
+        #     birthdayLunar = sxtwl.fromSolar(birthday.year,birthday.month,birthday.day)
+        #     nowTimeLunar = sxtwl.fromSolar(nowTime.year,nowTime.month,nowTime.day)
+        #     nowBirthdayLunar = sxtwl.fromLunar(nowTimeLunar.getLunarYear(),birthdayLunar.getLunarMonth(),birthdayLunar.getLunarDay())
+        #     #生日为农历大月最后一天
+        #     if birthdayLunar.getLunarDay()==30 and nowBirthdayLunar.getLunarDay()!=30:
+        #         continue
+        #     birthday = datetime(year = nowBirthdayLunar.getSolarYear(),month = nowBirthdayLunar.getSolarMonth(),day = nowBirthdayLunar.getSolarDay())
         days = str(r.remind_days).split(";")
         if days[-1]=='':
             days.remove('')
         for day in days:
-            remindTime = birthday + timedelta(days = -int(day))  
-            if remindTime.month == nowTime.month and remindTime.day == nowTime.day:
+            if (birthday-nowTime).days+1 == int(day):
                 crud.remind_birthday.update(db, db_obj=r, obj_in=remind_in)
                 print("纪念日提醒:" + r.title + "还有" + day +"天", "user_" + str(current_user.id))
                 pushMsg("纪念日提醒:" + r.title + "还有" + day +"天", "user_" + str(current_user.id))
