@@ -59,6 +59,14 @@ def get_next_birthday(nowTime,birthday,remind_calendar):
         birthdayLunar = sxtwl.fromSolar(birthday.year,birthday.month,birthday.day)
         nowTimeLunar = sxtwl.fromSolar(nowTime.year,nowTime.month,nowTime.day)
         nextYear = nowTimeLunar.getLunarYear()
+
+        print(nowTimeLunar.getLunarMonth(),birthdayLunar.getLunarMonth(),nowTimeLunar.getLunarDay(),birthdayLunar.getLunarDay())
+        if nowTimeLunar.getLunarMonth() > birthdayLunar.getLunarMonth() :
+            nextYear += 1
+        elif  nowTimeLunar.getLunarMonth() == birthdayLunar.getLunarMonth() and nowTimeLunar.getLunarDay() > birthdayLunar.getLunarDay() :
+            nextYear += 1
+        elif nowTimeLunar.getLunarMonth() == birthdayLunar.getLunarMonth() and nowTimeLunar.isLunarLeap() and not birthdayLunar.isLunarLeap():
+            nextYear += 1
         nowBirthdayLunar = sxtwl.fromLunar(nextYear,birthdayLunar.getLunarMonth(),birthdayLunar.getLunarDay())
         #生日为农历大月最后一天
         leap = birthdayLunar.getLunarDay()==30 and nowBirthdayLunar.getLunarDay()!=30
