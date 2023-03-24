@@ -328,7 +328,7 @@ def remind(
             if nowTime.month == r.remind_time.month and nowTime.day == r.remind_time.day:
                 print('公历当天已提醒')
                 continue   
-            #该提醒为不重复提醒. 
+            #该提醒为不重复提醒
             if r.remind_type == 0 and (nowTime-datetime(year = r.remind_time.year, month = r.remind_time.month, day = r.remind_time.day)).days>30:
                 continue      
         birthday = get_next_birthday(nowTime,birthday,r.remind_calendar)      
