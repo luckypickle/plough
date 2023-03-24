@@ -332,19 +332,6 @@ def remind(
             if r.remind_type == 0 and (nowTime-datetime(year = r.remind_time.year, month = r.remind_time.month, day = r.remind_time.day)).days>30:
                 continue      
         birthday = get_next_birthday(nowTime,birthday,r.remind_calendar)      
-        # if r.remind_calendar == 1:   
-        #     isRun = nowTime.year%4==0 and nowTime.year%100 != 0 or nowTime.year % 400==0
-        #     if birthday.month == 2 and birthday.day == 29 and not isRun:
-        #         continue
-        #     birthday= datetime(year = nowTime.year, month = birthday.month, day = birthday.day)
-        # else:
-        #     birthdayLunar = sxtwl.fromSolar(birthday.year,birthday.month,birthday.day)
-        #     nowTimeLunar = sxtwl.fromSolar(nowTime.year,nowTime.month,nowTime.day)
-        #     nowBirthdayLunar = sxtwl.fromLunar(nowTimeLunar.getLunarYear(),birthdayLunar.getLunarMonth(),birthdayLunar.getLunarDay())
-        #     #生日为农历大月最后一天
-        #     if birthdayLunar.getLunarDay()==30 and nowBirthdayLunar.getLunarDay()!=30:
-        #         continue
-        #     birthday = datetime(year = nowBirthdayLunar.getSolarYear(),month = nowBirthdayLunar.getSolarMonth(),day = nowBirthdayLunar.getSolarDay())
         days = str(r.remind_days).split(";")
         if days[-1]=='':
             days.remove('')
@@ -368,19 +355,6 @@ def remind(
             if r.remind_type == 0 and (nowTime-datetime(year = r.remind_time.year, month = r.remind_time.month, day = r.remind_time.day)).days>30:
                 continue      
         birthday = get_next_birthday(nowTime,birthday,r.remind_calendar)      
-        # if r.remind_calendar == 1:   
-        #     isRun = nowTime.year%4==0 and nowTime.year%100 != 0 or nowTime.year % 400==0
-        #     if birthday.month == 2 and birthday.day == 29 and not isRun:
-        #         continue
-        #     birthday= datetime(year = nowTime.year, month = birthday.month, day = birthday.day)
-        # else:
-        #     birthdayLunar = sxtwl.fromSolar(birthday.year,birthday.month,birthday.day)
-        #     nowTimeLunar = sxtwl.fromSolar(nowTime.year,nowTime.month,nowTime.day)
-        #     nowBirthdayLunar = sxtwl.fromLunar(nowTimeLunar.getLunarYear(),birthdayLunar.getLunarMonth(),birthdayLunar.getLunarDay())
-        #     #生日为农历大月最后一天
-        #     if birthdayLunar.getLunarDay()==30 and nowBirthdayLunar.getLunarDay()!=30:
-        #         continue
-        #     birthday = datetime(year = nowBirthdayLunar.getSolarYear(),month = nowBirthdayLunar.getSolarMonth(),day = nowBirthdayLunar.getSolarDay())
         days = str(r.remind_days).split(";")
         if days[-1]=='':
             days.remove('')
