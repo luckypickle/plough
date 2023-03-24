@@ -7,6 +7,7 @@ import logging
 from qcloud_cos.cos_exception import CosClientError, CosServiceError
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
+import time
 
 
 settings: AppSettings = get_app_settings()
@@ -30,6 +31,7 @@ def upload_file_to_cos(file_name):
     is_success= False
     global client
     for i in range(0, 10):
+        time.sleep(0.01)
         try:
             response = client.upload_file(
                 Bucket=bucket_name,
