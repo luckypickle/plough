@@ -352,9 +352,9 @@ def remind(
             if (birthday-nowTime).days+1 == int(day):
                 crud.remind_birthday.update(db, db_obj=r, obj_in=remind_in)
                 if int(day)==0:
-                    pushMsg("生日提醒:" + r.name + "今天生日", "user_" + str(current_user.id))
+                    pushMsg("生日提醒:" + "今天" + r.name + "生日", "user_" + str(current_user.id))
                 else:
-                    pushMsg("生日提醒:" + r.name + "还有" + day +"天生日", "user_" + str(current_user.id))
+                    pushMsg("生日提醒:" + "还有" + day +"天" + r.name + "生日", "user_" + str(current_user.id))
     remind_days = crud.remind_day.get_multi_by_owner(db, owner_id=current_user.id, title='')
     for r in remind_days:
         if r.remind_days == "-1":
@@ -388,8 +388,8 @@ def remind(
             if (birthday-nowTime).days+1 == int(day):
                 crud.remind_birthday.update(db, db_obj=r, obj_in=remind_in)
                 if int(day)==0:
-                    pushMsg("纪念日提醒:" + r.title + "今天", "user_" + str(current_user.id))
+                    pushMsg("纪念日提醒:" + "今天" + r.title , "user_" + str(current_user.id))
                 else:
-                    pushMsg("纪念日提醒:" + r.title + "还有" + day +"天", "user_" + str(current_user.id))
+                    pushMsg("纪念日提醒:" + "还有" + day +"天" + r.title, "user_" + str(current_user.id))
 
     return "success"
