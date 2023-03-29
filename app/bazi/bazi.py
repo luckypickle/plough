@@ -316,15 +316,43 @@ def get_birthday_by_bazi(year,month,day,hour):
     jds = sxtwl.siZhu2Year(getGZ(year), getGZ(month), getGZ(day), getGZ(hour),
                            1900, int(2100));
     ret_data=[]
-
+    
     for jd in jds:
         t = sxtwl.JD2DD(jd)
         # print()
-        day=sxtwl.fromSolar(t.Y, t.M, t.D)
-        Lleap = "闰" if day.isLunarLeap() else ""
+        sxt=sxtwl.fromSolar(t.Y, t.M, t.D)
+        Lleap = "闰" if sxt.isLunarLeap() else ""
+
         # print("农历:", end='')
         # print("\t{}年{}{}月{}日 {}时".format(day.getLunarYear(), Lleap, day.getLunarMonth(), day.getLunarDay(),cal_hour(t.h)))
-        ret_data.append({"solar":"%d-%d-%d %d:%d" % (t.Y, t.M, t.D, t.h, t.m),"lunar":"{}年{}{}月{}日 {}时".format(day.getLunarYear(), Lleap, day.getLunarMonth(), day.getLunarDay(),cal_hour(t.h))})
+        ret_data.append({"solar":"%d-%d-%d %d:%d" % (t.Y, t.M, t.D, t.h, t.m),"lunar":"{}年{}{}月{}日 {}时".format(sxt.getLunarYear(), Lleap, sxt.getLunarMonth(), sxt.getLunarDay(),cal_hour(t.h))})
+    #siZhu2Year接口无法根据节气具体时辰切换月柱
+    prevMonth = jiazhi_map[(jiazhi_map.index(month)-1)%60]
+    print(prevMonth)
+    prevJds = sxtwl.siZhu2Year(getGZ(year), getGZ(str(prevMonth)), getGZ(day), getGZ(hour),
+                           1900, 2100)     
+    for jd in prevJds:
+        mGZ=prevMonth
+        t = sxtwl.JD2DD(jd)
+        h=t.h
+        m=t.m
+        # print()
+        sxt=sxtwl.fromSolar(t.Y, t.M, t.D)
+        Lleap = "闰" if sxt.isLunarLeap() else ""
+        if sxt.hasJieQi():
+            jd = sxt.getJieQiJD()
+            jieqi_t = sxtwl.JD2DD(jd)
+            if int(t.h) > jieqi_t.h:
+                tmp_day = sxt.after(1)
+                mGZ = Gan[tmp_day.getMonthGZ().tg]+Zhi[tmp_day.getMonthGZ().dz]
+            if jieqi_t.h > int(h) or (jieqi_t.h == h and jieqi_t.m >= m) and int(h)+2> jieqi_t.h:
+                m=59
+                h=(int(t.h)+1) % 24
+                tmp_day = sxt.after(1)
+                mGZ = Gan[tmp_day.getMonthGZ().tg]+Zhi[tmp_day.getMonthGZ().dz]
+        if mGZ != month:
+            continue
+        ret_data.append({"solar":"%d-%d-%d %d:%d" % (t.Y, t.M, t.D, h, m),"lunar":"{}年{}{}月{}日 {}时".format(sxt.getLunarYear(), Lleap, sxt.getLunarMonth(), sxt.getLunarDay(),cal_hour(t.h))})
     return ret_data
 
 def get_bazi_by_birthday(year,month,day_,hour,minute):
