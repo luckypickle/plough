@@ -23,6 +23,7 @@ from .crud_divination_settings import divination_settings
 from .crud_history_combine import history_combine
 from .crud_remind_birthday import remind_birthday
 from .crud_remind_day import remind_day
+from .crud_meihua import meihua
 # For a new basic set of CRUD operations you could just do
 
 # from .base import CRUDBase

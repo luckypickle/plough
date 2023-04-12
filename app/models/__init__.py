@@ -23,3 +23,4 @@ from .divination_settings import DivinationSettings
 from .history_combine import HistoryCombine
 from .remind_birthday import RemindBirthday
 from .remind_day import RemindDay
+from .meihua import Meihua

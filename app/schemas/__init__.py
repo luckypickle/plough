@@ -26,3 +26,4 @@ from .divination_settings import DivinationSettings,DivinationSettingsCreate,Div
 from .history_combine import HistoryCombine,HistoryCombineCreate,HistoryCombineUpdate
 from .remind_birthday import RemindBirthday,RemindBirthdayCreate,RemindBirthdayUpdate,RemindBirthdayQuery
 from .remind_day import RemindDay,RemindDayCreate,RemindDayUpdate,RemindDayQuery
+from .meihua import Meihua,MeihuaCreate,MeihuaUpdate,MeihuaQuery
