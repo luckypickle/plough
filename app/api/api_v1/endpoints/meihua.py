@@ -64,6 +64,11 @@ def create_meihua(
     )
     result = get_meihua(shanggua,xiagua,dongyao)
     meihua = crud.meihua.create_meihua(db, meihua = meihua)
+    if meihua:
+        meihua.create_time = nowTime,
+        db.add(meihua),
+        db.commit()
+        db.refresh(meihua)
     print(str(meihua.create_time.astimezone().strftime("%Y-%m-%d %H:%M:%S")))
     meihua = schemas.MeihuaQuery(
         id=meihua.id,
