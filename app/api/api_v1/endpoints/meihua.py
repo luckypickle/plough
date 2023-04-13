@@ -64,7 +64,7 @@ def create_meihua(
     )
     result = get_meihua(shanggua,xiagua,dongyao)
     meihua = crud.meihua.create_meihua(db, meihua = meihua)
-    print(str(meihua.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")))
+    print(str(meihua.create_time.astimezone().strftime("%Y-%m-%d %H:%M:%S")))
     meihua = schemas.MeihuaQuery(
         id=meihua.id,
         owner_id=meihua.owner_id,
@@ -73,7 +73,7 @@ def create_meihua(
         shanggua=meihua.shanggua,
         xiagua=meihua.xiagua,
         dongyao=meihua.dongyao,
-        create_time=meihua.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S"),
+        create_time=meihua.create_time.astimezone().strftime("%Y-%m-%d %H:%M:%S"),
         result=json.dumps(result),
     )
     return meihua
@@ -123,7 +123,7 @@ def get_meihuas(
             shanggua=meihua.shanggua,
             xiagua=meihua.xiagua,
             dongyao=meihua.dongyao,
-            create_time=meihua.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            create_time=meihua.create_time.astimezone().strftime("%Y-%m-%d %H:%M:%S"),
             result=json.dumps(result),
             pic=meihua.pic,
         ))

@@ -27,20 +27,40 @@ def change_str(str,pos):
     newStr ="".join(l)
     return newStr
 
-
-def wuxingshengkepanduan(wuxingshuA,wuxingshuB):
-    wuxingzifu = wuxingshuA+wuxingshuB
-
-    shengkejieguo = wuxingshengke[wuxingzifu]
-
-    return shengkejieguo
-
 def baguaguaci(baguashuA,baguashuB):
     guaxiang = str(baguashuA)+str(baguashuB)
     result = baguaguaxiang[guaxiang]
     return result
-
-
+#生体大吉，克体大凶。体克者吉，体生者凶
+def shengke(shangwuxing,xiawuxing,shangtiyong):
+    if shangwuxing == xiawuxing:
+        return {"wuxing":shangwuxing+xiawuxing+"比合","tiyong":"体用比合（吉）"}
+    wuxing=wuxingshengke[wuxingshu[shangwuxing]+wuxingshu[xiawuxing]]
+    tiyong=""
+    if wuxing is not None :
+        if shangtiyong == "体":
+            if "生" in wuxing:
+                tiyong="体生用（凶）"
+            else:
+                tiyong="体克用（吉）"
+        else:
+            if "生" in wuxing:
+                tiyong="用生体（吉）"
+            else:
+                tiyong="用克体（凶）"
+    else:
+        wuxing=wuxingshengke[wuxingshu[xiawuxing]+wuxingshu[shangwuxing]]
+        if shangtiyong == "体":
+            if "生" in wuxing:
+                tiyong="用生体（吉）"
+            else:
+                tiyong="用克体（凶）"
+        else:
+            if "生" in wuxing:
+                tiyong="体生用（凶）"
+            else:
+                tiyong="体克用（吉）"
+    return {"wuxing":wuxing,"tiyong":tiyong}
 
 baguashu = {
     "乾":1,
@@ -212,38 +232,24 @@ wuxingbagua = {
 }
 
 wuxingshu = {
-    "金":"1",
-    "木":"2",
-    "水":"3",
-    "土":"4",
-    "火":"5"
+    "木":"1",
+    "火":"2",
+    "土":"3",
+    "金":"4",
+    "水":"5"
 }
+#金生水，水生木，木生火，火生土，土生金   金克木，木克土，土克水，水克火，火克金
 wuxingshengke = {
-    "11":"比和",
-    "12":"克",
-    "13":"生",
-    "14":"被生",
-    "15":"被克",
-    "21":"被克",
-    "22":"比和",
-    "23":"被生",
-    "24":"克",
-    "25":"生",
-    "31":"被生",
-    "32":"生",
-    "33":"比和",
-    "34":"被克",
-    "35":"克",
-    "41":"生",
-    "42":"被克",
-    "43":"克",
-    "44":"比和",
-    "45":"被生",
-    "51":"克",
-    "52":"被生",
-    "53":"被克",
-    "54":"生",
-    "55":"比和"
+    "12":"木生火",
+    "23":"火生土",
+    "34":"土生金",
+    "45":"金生水",
+    "51":"水生木",
+    "13":"木克土",
+    "35":"土克水",
+    "52":"水克火",
+    "24":"火克金",
+    "41":"金克木",
 }
 
 yuanshubagua = {
@@ -290,12 +296,11 @@ def get_meihua(shanggua,xiagua,dongyao):
     if(shangbengua == shangbiangua):
         shangtiyong = "体"
         xiatiyong = "用"
-        print ("上体下用")
+        # print ("上体下用")
     else:
         shangtiyong = "用"
         xiatiyong = "体"
-        print ("下体上用")
-
+        # print ("下体上用")
     detail = {}
     detail['bengua'] = {
             'shangbengua': shangbengua,
@@ -306,16 +311,18 @@ def get_meihua(shanggua,xiagua,dongyao):
             'xiatiyong': xiatiyong,  
             'guaci': baguaguaci(shanggua,xiagua),  
             'jiedu': baguajiedu[baguaguaci(shanggua,xiagua)],  
+            'shengke':shengke(shangbenguawuxing,xiabenguawuxing,shangtiyong)
         }
     detail['hugua'] = {
             'shanghugua': shanghugua,
             'xiahugua': xiahugua,
             'shanghuguawuxing': shanghuguawuxing,
             'xiahuguawuxing': xiahuguawuxing,
-            'shangtiyong': "用",
-            'xiatiyong': "用",  
+            'shangtiyong': shangtiyong,
+            'xiatiyong': xiatiyong,  
             'guaci': baguaguaci(baguashu[shanghuguaguaming],baguashu[xiahuguaguaming]),  
-            'jiedu': baguajiedu[baguaguaci(baguashu[shanghuguaguaming],baguashu[xiahuguaguaming])],  
+            'jiedu': baguajiedu[baguaguaci(baguashu[shanghuguaguaming],baguashu[xiahuguaguaming])], 
+            'shengke':shengke(shanghuguawuxing,xiahuguawuxing,shangtiyong) 
         }
     detail['biangua'] = {
             'shangbiangua': shangbiangua,
@@ -326,5 +333,6 @@ def get_meihua(shanggua,xiagua,dongyao):
             'xiatiyong': xiatiyong,  
             'guaci': baguaguaci(baguashu[shangbianguaguaming],baguashu[xiabianguaguaming]),  
             'jiedu': baguajiedu[baguaguaci(baguashu[shangbianguaguaming],baguashu[xiabianguaguaming])],  
+            'shengke':shengke(shangbianguawuxing,xiabianguawuxing,shangtiyong) 
         }
     return detail
