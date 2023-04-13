@@ -40,26 +40,26 @@ def shengke(shangwuxing,xiawuxing,shangtiyong):
     if wuxing is not None :
         if shangtiyong == "体":
             if "生" in wuxing:
-                tiyong="体生用（凶）"
+                tiyong="体生用(凶)"
             else:
-                tiyong="体克用（吉）"
+                tiyong="体克用(吉)"
         else:
             if "生" in wuxing:
-                tiyong="用生体（吉）"
+                tiyong="用生体(吉)"
             else:
-                tiyong="用克体（凶）"
+                tiyong="用克体(凶)"
     else:
         wuxing=wuxingshengke[wuxingshu[xiawuxing]+wuxingshu[shangwuxing]]
         if shangtiyong == "体":
             if "生" in wuxing:
-                tiyong="用生体（吉）"
+                tiyong="用生体(吉)"
             else:
-                tiyong="用克体（凶）"
+                tiyong="用克体(凶)"
         else:
             if "生" in wuxing:
-                tiyong="体生用（凶）"
+                tiyong="体生用(凶)"
             else:
-                tiyong="体克用（吉）"
+                tiyong="体克用(吉)"
     return {"wuxing":wuxing,"tiyong":tiyong}
 
 baguashu = {
