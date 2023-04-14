@@ -38,10 +38,10 @@ def create_meihua(
             if jieqi_t.h > int(nowTime.hour) or (jieqi_t.h==nowTime.hour and jieqi_t.m>= nowTime.minute):
                 tmp_day = nowTimeLunar.before(1)
                 yGZ = tmp_day.getYearGZ()
-        year = yGZ.tg+1
-        month = nowTime.month
-        day = nowTime.day
-        hour = hGZ.tg+1
+        year = yGZ.dz+1
+        month = nowTimeLunar.getLunarMonth()
+        day = nowTimeLunar.getLunarDay()
+        hour = hGZ.dz+1
         dongyao = (year+month+day+hour)%6
         shanggua = (year+month+day)%8
         xiagua = (year+month+day+hour)%8
