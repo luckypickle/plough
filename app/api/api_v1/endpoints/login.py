@@ -20,6 +20,7 @@ from app.utils import (
     send_verify_code,
 )
 import pytz
+import logging
 router = APIRouter()
 
 
@@ -34,6 +35,7 @@ def login_access_token(
     """
     entity = None
     if "master" in form_data.scopes:
+        logging.info(f"老师登录: {form_data.username}")
         verified = crud.mpcode.verify_mpcode(
             db=db, 
             phone=form_data.username, 
@@ -57,6 +59,7 @@ def login_access_token(
             raise HTTPException(status_code=400, detail="Inactive master")
         entity = master
     else:
+        logging.info(f"用户登录: {form_data.username}")
         user = crud.user.login_or_register(
             db, phone=form_data.username, verify_code=form_data.password
         )
@@ -66,6 +69,7 @@ def login_access_token(
         elif not crud.user.is_active(user):
             raise HTTPException(status_code=400, detail="Inactive user")
         invite_info = crud.invite.get_invite_info(db, user_id=user.id)
+        logging.info(f"用户登录invite_info: {invite_info.id}")
         if user.phone is None:
             phone = user.email
         else:
@@ -79,10 +83,11 @@ def login_access_token(
                 invite_code=invite_code,
                 register_time=user.create_time.astimezone(tz)
             )
+            logging.info(f"用户登录invite_obj: {invite_obj}")
             crud.invite.create(db, obj_in=invite_obj)
         entity = user
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-
+    logging.info(f"生成token的access_token_expires: {access_token_expires}")
     return {
         "access_token": security.create_access_token(
             data={"sub": str(entity.id), "scopes": form_data.scopes},

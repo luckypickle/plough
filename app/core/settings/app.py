@@ -7,7 +7,10 @@ from pydantic import PostgresDsn, SecretStr, AnyHttpUrl
 
 from app.core.logging import InterceptHandler
 from app.core.settings.base import BaseAppSettings
+import datetime
 
+
+from pathlib import Path
 
 class AppSettings(BaseAppSettings):
     MCHID = ''
@@ -100,5 +103,9 @@ class AppSettings(BaseAppSettings):
         for logger_name in self.loggers:
             logging_logger = logging.getLogger(logger_name)
             logging_logger.handlers = [InterceptHandler(level=self.logging_level)]
-
+        log_name = Path("logs", 'plough-info_'+str(datetime.date.today())+'.log')
+        # 配置日志到标准输出流
         logger.configure(handlers=[{"sink": sys.stderr, "level": self.logging_level}])
+        # 配置日志到输出到文件
+        logger.add(log_name, rotation="500 MB", encoding='utf-8', colorize=False, level='INFO',enqueue=True)
+
