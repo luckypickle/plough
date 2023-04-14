@@ -35,9 +35,10 @@ def baguaguaci(baguashuA,baguashuB):
 def shengke(shangwuxing,xiawuxing,shangtiyong):
     if shangwuxing == xiawuxing:
         return {"wuxing":shangwuxing+xiawuxing+"比合","tiyong":"体用比合（吉）"}
-    wuxing=wuxingshengke[wuxingshu[shangwuxing]+wuxingshu[xiawuxing]]
+    wuxing=""
     tiyong=""
-    if wuxing is not None :
+    if wuxingshu[shangwuxing]+wuxingshu[xiawuxing] in wuxingshengke:
+        wuxing=wuxingshengke[wuxingshu[shangwuxing]+wuxingshu[xiawuxing]]
         if shangtiyong == "体":
             if "生" in wuxing:
                 tiyong="体生用(凶)"
