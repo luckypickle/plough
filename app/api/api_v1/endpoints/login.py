@@ -69,7 +69,7 @@ def login_access_token(
         elif not crud.user.is_active(user):
             raise HTTPException(status_code=400, detail="Inactive user")
         invite_info = crud.invite.get_invite_info(db, user_id=user.id)
-        logging.info(f"用户登录invite_info: {invite_info.id}")
+        logging.info(f"用户登录invite_info.id: {invite_info.id}")
         if user.phone is None:
             phone = user.email
         else:
@@ -181,10 +181,12 @@ def request_mpcode(
             request_time=now, expire_time=now+300,
             status=0
         )
+        logging.info(f"手机号: {phone},验证码: {code}")
         crud.mpcode.create(db, obj_in=mpcodeCreate)
         ret = send_verify_code(phone, code)
         return {"msg": f"code generated successfully: {ret}"}
     else:
+        logging.info(f"手机号: {phone},不能重复请求验证码,剩余时间: {retry_delta}")
         return {"msg": f"please request after {retry_delta} seconds"}
 @router.post("/request-emailcode/", response_model=Any)
 def request_emailcode(
@@ -216,8 +218,10 @@ def request_emailcode(
             request_time=now, expire_time=now + settings.emailcode_request_interval,
             status=0
         )
+        logging.info(f"邮箱: {email},验证码: {code}")
         crud.mpcode.create(db, obj_in=mpcodeCreate)
         ret = utils.send_verify_email(email=email,verify_code=code)
         return {"msg": f"code generated successfully: {ret}"}
     else:
+        logging.info(f"邮箱: {email},不能重复请求验证码,剩余时间: {retry_delta}")
         return {"msg": f"please request after {retry_delta} seconds"}
