@@ -63,6 +63,7 @@ def login_access_token(
         user = crud.user.login_or_register(
             db, phone=form_data.username, verify_code=form_data.password
         )
+
         if not user:
             raise HTTPException(status_code=400, detail="Incorrect username or password")
         elif not crud.user.is_active(user):
@@ -85,7 +86,7 @@ def login_access_token(
             crud.invite.create(db, obj_in=invite_obj)
         entity = user
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    logging.info(f"生成 token的access_token_expires: {access_token_expires}")
+    logging.info(f"生成token的access_token_expires: {access_token_expires}")
     return {
         "access_token": security.create_access_token(
             data={"sub": str(entity.id), "scopes": form_data.scopes},
