@@ -69,7 +69,6 @@ def login_access_token(
         elif not crud.user.is_active(user):
             raise HTTPException(status_code=400, detail="Inactive user")
         invite_info = crud.invite.get_invite_info(db, user_id=user.id)
-        logging.info(f"用户登录invite_info.id: {invite_info.id}")
         if user.phone is None:
             phone = user.email
         else:
