@@ -63,7 +63,6 @@ def login_access_token(
         user = crud.user.login_or_register(
             db, phone=form_data.username, verify_code=form_data.password
         )
-
         if not user:
             raise HTTPException(status_code=400, detail="Incorrect username or password")
         elif not crud.user.is_active(user):
