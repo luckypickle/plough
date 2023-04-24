@@ -83,6 +83,35 @@ def create_meihua(
     )
     return meihua
 
+@router.post("/meihua")
+def meihua(
+        *,
+        year: int,
+        month: int,
+        day: int,
+        hour: int,
+        minute: int = 0,
+        current_user: models.User = Depends(deps.get_current_active_user)
+) -> Any:
+    nowTimeLunar = sxtwl.fromSolar(year,month,day)
+    yGZ = nowTimeLunar.getYearGZ()
+    hGZ = nowTimeLunar.getHourGZ(hour)
+    if nowTimeLunar.hasJieQi():
+        jd = nowTimeLunar.getJieQiJD()
+        jieqi_t = sxtwl.JD2DD(jd)
+        if jieqi_t.h > int(hour) or (jieqi_t.h==hour and jieqi_t.m>= minute):
+            tmp_day = nowTimeLunar.before(1)
+            yGZ = tmp_day.getYearGZ()
+    year = yGZ.dz+1
+    month = nowTimeLunar.getLunarMonth()
+    day = nowTimeLunar.getLunarDay()
+    hour = hGZ.dz+1
+    dongyao = (year+month+day+hour)%6
+    shanggua = (year+month+day)%8
+    xiagua = (year+month+day+hour)%8
+    result = get_meihua(shanggua,xiagua,dongyao)
+    return json.dumps(result)
+
 @router.put("/meihua/{id}")
 def update_meihua(
         *,
