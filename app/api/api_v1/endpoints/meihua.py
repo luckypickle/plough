@@ -91,7 +91,7 @@ def meihua(
         day: int,
         hour: int,
         minute: int = 0,
-        current_user: models.User = Depends(deps.get_current_active_user)
+        current_user: models.User = Depends(deps.get_current_user),
 ) -> Any:
     nowTimeLunar = sxtwl.fromSolar(year,month,day)
     yGZ = nowTimeLunar.getYearGZ()
