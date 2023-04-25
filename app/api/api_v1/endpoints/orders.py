@@ -728,6 +728,7 @@ def create_order(
         task: BackgroundTasks,
         db: Session = Depends(deps.get_db),
         order_in: schemas.OrderCreate,
+        trade_type: str = "app",
         current_user: models.User = Depends(deps.get_current_active_user),
         settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
@@ -757,8 +758,11 @@ def create_order(
     order = crud.order.create_with_owner(db=db, obj_in=order_in, owner_id=current_user.id)
     with open(settings.PRIVATE_KEY, "r") as f:
         pkey = f.read()
+    wechatpay_type=WeChatPayType.APP 
+    if trade_type == "native":
+        wechatpay_type=WeChatPayType.NATIVE 
     wxpay = WeChatPay(
-        wechatpay_type=WeChatPayType.APP,
+        wechatpay_type=wechatpay_type,
         mchid=settings.MCHID,
         private_key=pkey,
         cert_serial_no=settings.CERT_SERIAL_NO,
@@ -781,8 +785,14 @@ def create_order(
         )
     result = json.loads(message)
     if code in range(200, 300):
-
-        prepay_id = result.get('prepay_id')
+        code_url = None
+        prepay_id = None
+        if trade_type == "native":
+            code_url = result.get('code_url')
+            logging.info(f"二维码支付code_url: {code_url},orderId:{order.id}")
+        else:
+            prepay_id = result.get('prepay_id')
+            logging.info(f"App支付prepay_id: {prepay_id},orderId:{order.id}")
         timearray = time.strptime(order_in.create_time, "%Y-%m-%d %H:%M:%S")
         timestamp = int(time.mktime(timearray))
         noncestr = ''.join(sample(ascii_letters + digits, 8))
@@ -794,6 +804,7 @@ def create_order(
             'appid': settings.APPID,
             'partnerid': settings.MCHID,
             'prepayid': prepay_id,
+            'codeurl': code_url,
             'package': package,
             'nonceStr': noncestr,
             'timestamp': timestamp,
@@ -802,6 +813,49 @@ def create_order(
         }}
     else:
         return {'code': -1, 'result': {'reason': result.get('code')}}
+
+@router.get("/getOrderPay")
+def get_order_pay(
+        *,
+        db: Session = Depends(deps.get_db),
+        ordernumber: str,
+        trade_type: str = "app",
+        current_user: models.User = Depends(deps.get_current_active_user),
+        settings: AppSettings = Depends(get_app_settings)
+
+) -> Any:
+    with open(settings.PRIVATE_KEY, "r") as f:
+        pkey = f.read()
+    wechatpay_type=WeChatPayType.APP 
+    if trade_type == "native":
+        wechatpay_type=WeChatPayType.NATIVE 
+    wxpay = WeChatPay(
+        wechatpay_type=wechatpay_type,
+        mchid=settings.MCHID,
+        private_key=pkey,
+        cert_serial_no=settings.CERT_SERIAL_NO,
+        apiv3_key=settings.APIV3_KEY,
+        appid=settings.APPID,
+        notify_url=settings.NOTIFY_URL,
+        cert_dir=settings.CERT_DIR,
+        logger=None,
+        partner_mode=settings.PARTNER_MODE,
+        proxy=None)
+    ret = wxpay.query(out_trade_no=ordernumber, mchid=settings.MCHID)
+    ret_json = json.loads(ret[1])
+    print(ret_json["trade_state"])
+    if ret_json["trade_state"] == "SUCCESS":
+        return {'code': 0, 'result': {
+            'trade_state': ret_json["trade_state"],
+            'trade_state_desc': ret_json["trade_state_desc"],
+            'trade_type': ret_json["trade_type"]
+        }}
+    else:
+        return {'code': -1, 'result': {
+            'trade_state': ret_json["trade_state"],
+            'trade_state_desc': ret_json["trade_state_desc"],
+            'trade_type': ret_json["trade_type"]
+        }}
 
 @router.get("/offOrderInfo", response_model=Any)
 def get_off_order_info(
@@ -834,6 +888,7 @@ def create_free_order(
         task: BackgroundTasks,
         db: Session = Depends(deps.get_db),
         order_in: schemas.OrderCreate,
+        trade_type: str = "app",
         current_user: models.User = Depends(deps.get_current_active_user),
         settings: AppSettings = Depends(get_app_settings)
 ) -> Any:
@@ -884,7 +939,14 @@ def create_free_order(
             )
         result = json.loads(message)
         if code in range(200, 300):
-            prepay_id = result.get('prepay_id')
+            code_url = None
+            prepay_id = None
+            if trade_type == "native":
+                code_url = result.get('code_url')
+                logging.info(f"二维码支付code_url: {code_url},orderId:{order.id}")
+            else:
+                prepay_id = result.get('prepay_id')
+                logging.info(f"App支付prepay_id: {prepay_id},orderId:{order.id}")
             timearray = time.strptime(order_in.create_time, "%Y-%m-%d %H:%M:%S")
             timestamp = int(time.mktime(timearray))
             noncestr = ''.join(sample(ascii_letters + digits, 8))
@@ -896,6 +958,7 @@ def create_free_order(
                 'appid': settings.APPID,
                 'partnerid': settings.MCHID,
                 'prepayid': prepay_id,
+                'codeurl': code_url,
                 'package': package,
                 'nonceStr': noncestr,
                 'timestamp': timestamp,
