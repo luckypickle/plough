@@ -21,7 +21,7 @@ class BaZi():
         self.lunar = int(lunar)
         self.run = run==1
         self.minute = int(minute)
-        self.early_isOpen = int(early_isOpen)
+        self.early_isOpen = early_isOpen
 
     def get_detail(self):
         detail = {}
@@ -255,13 +255,13 @@ class BaZi():
             time = 120 * (nextJieqi.get("datetime")-brithtime).total_seconds()
         else:
             time = 120 * (brithtime-prevJieqi.get("datetime")).total_seconds()
-        yuntime = brithtime + datetime.timedelta(seconds=time)
         days = datetime.timedelta(seconds=time).days
-
+        yuntime = datetime.datetime(year = brithtime.year + days//360,month=brithtime.month + days%360//30,day = brithtime.day,hour = brithtime.hour)
+        yuntime = yuntime + datetime.timedelta(days = days%360%30) + datetime.timedelta(hours = int(time/3600%24))
         # print(str(days//365)+"年"+str(days%365//30)+"月"+str(days%365%30)+ "日"+str()+ "时")
         jiaoyunJieqi = getPrevJie(sxtwl.fromSolar(yuntime.year, yuntime.month, yuntime.day),yuntime.hour,yuntime.minute)
         # print( jiaoyunJieqi.get("jieqi")+"后"+str(days)+"天")
-        detail['qiyun'] = {"years":days//365, "months":days%365//30, "days":days%365%30, "hours":int(time/3600%24)}
+        detail['qiyun'] = {"years":days//360, "months":days%360//30, "days":days%360%30, "hours":int(time/3600%24)}
         detail['jiaoyun'] = {"jieqi":jiaoyunJieqi.get("jieqi"),"days":(yuntime - jiaoyunJieqi.get("datetime")).days}
         detail['xiaoyunjieqi'] = prevJieqi.get("jieqi")
         detail['dayunjieqi'] = jiaoyunJieqi.get("jieqi")

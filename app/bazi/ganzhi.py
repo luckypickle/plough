@@ -367,7 +367,7 @@ def getNextJie(solar,hour,minute):
         t = sxtwl.JD2DD(jd)
         # 下一个节气
         if t.h > hour or ( t.h == hour and t.m >= minute):
-            return {"datetime":datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m)),"jieqi":jqmc[solar.getJieQi()]}
+            return {"datetime":datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m), second=int(t.s)),"jieqi":jqmc[solar.getJieQi()]}
     # 查找某日前后的节气
     while True:
         # 这里可以使用after或者before，不用担心速度，这里的计算在底层仅仅是+1这么简单
@@ -380,7 +380,7 @@ def getNextJie(solar,hour,minute):
             # 将儒略日数转换成年月日时秒
             t = sxtwl.JD2DD(jd)
             # 注意，t.s是小数，需要四舍五入
-            return {"datetime":datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m)),"jieqi":jqmc[solar.getJieQi()]}
+            return {"datetime":datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m), second=int(t.s)),"jieqi":jqmc[solar.getJieQi()]}
 
 #获取上一个节
 def getPrevJie(solar,hour,minute):
@@ -398,7 +398,7 @@ def getPrevJie(solar,hour,minute):
         # 上一个节气
         if t.h < hour or ( t.h == hour and t.m < minute):
             # print("节气时间:%d-%d-%d %d:%d:%d"%(t.Y, t.M, t.D, t.h, t.m, round(t.s)))
-            return {"datetime":datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m)),"jieqi":jqmc[solar.getJieQi()]}
+            return {"datetime":datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m), second=int(t.s)),"jieqi":jqmc[solar.getJieQi()]}
     # 查找某日前后的节气
     while True:
         # 这里可以使用after或者before，不用担心速度，这里的计算在底层仅仅是+1这么简单
@@ -411,7 +411,7 @@ def getPrevJie(solar,hour,minute):
             t = sxtwl.JD2DD(jd)
             # 注意，t.s是小数，需要四舍五入
             # print("节气时间:%d-%d-%d %d:%d:%d"%(t.Y, t.M, t.D, t.h, t.m, round(t.s)))
-            return {"datetime":datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m)),"jieqi":jqmc[solar.getJieQi()]}
+            return {"datetime":datetime.datetime(t.Y, month=t.M, day=t.D, hour=int(t.h), minute=int(t.m), second=int(t.s)),"jieqi":jqmc[solar.getJieQi()]}
 
 #获取立春时间
 def getLichunTime(year):
