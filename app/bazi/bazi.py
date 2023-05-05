@@ -256,8 +256,13 @@ class BaZi():
         else:
             time = 120 * (brithtime-prevJieqi.get("datetime")).total_seconds()
         days = datetime.timedelta(seconds=time).days
-        yuntime = datetime.datetime(year = brithtime.year + days//360,month=brithtime.month + days%360//30,day = brithtime.day,hour = brithtime.hour)
-        yuntime = yuntime + datetime.timedelta(days = days%360%30) + datetime.timedelta(hours = int(time/3600%24))
+        yunyear = brithtime.year + days//360
+        yunmonth = brithtime.month + days%360//30
+        if yunmonth>12:
+            yunyear = yunyear+1
+            yunmonth = yunmonth-12
+        yuntime = datetime.datetime(year = yunyear,month=yunmonth,day = 1,hour = brithtime.hour)
+        yuntime = yuntime + datetime.timedelta(days = brithtime.day-1+days%360%30) + datetime.timedelta(hours = int(time/3600%24))
         # print(str(days//365)+"年"+str(days%365//30)+"月"+str(days%365%30)+ "日"+str()+ "时")
         jiaoyunJieqi = getPrevJie(sxtwl.fromSolar(yuntime.year, yuntime.month, yuntime.day),yuntime.hour,yuntime.minute)
         # print( jiaoyunJieqi.get("jieqi")+"后"+str(days)+"天")
