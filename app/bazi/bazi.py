@@ -12,7 +12,7 @@ Zhis = collections.namedtuple("Zhis", "year month day time")
 
 
 class BaZi():
-    def __init__(self, year: int, month: int, day: int, hour: int, sex: int,lunar:int=0,run:int=0,minute:int=0,early_isClose:bool=False):
+    def __init__(self, year: int, month: int, day: int, hour: int, sex: int,lunar:int=0,run:int=0,minute:int=0,early_isOpen:bool=False):
         self.year = int(year)
         self.month = int(month)
         self.day = int(day)
@@ -21,7 +21,7 @@ class BaZi():
         self.lunar = int(lunar)
         self.run = run==1
         self.minute = int(minute)
-        self.early_isClose = int(early_isClose)
+        self.early_isOpen = int(early_isOpen)
 
     def get_detail(self):
         detail = {}
@@ -52,11 +52,11 @@ class BaZi():
                 tmp_day = day.before(1)
                 yGZ = tmp_day.getYearGZ()
                 mGZ = tmp_day.getMonthGZ()
-            if jieqi_t.h==23 and int(self.hour)>=23 and jieqi_t.m< self.minute and not self.early_isClose:
+            if jieqi_t.h==23 and int(self.hour)>=23 and jieqi_t.m< self.minute and not self.early_isOpen:
                 tmp_day = day.after(1)
                 dGZ = tmp_day.getDayGZ()
         else:
-            if int(self.hour)>=23 and not self.early_isClose:
+            if int(self.hour)>=23 and not self.early_isOpen:
                 tmp_day = day.after(1)
                 dGZ = tmp_day.getDayGZ()
         gans = Gans(

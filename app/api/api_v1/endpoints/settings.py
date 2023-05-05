@@ -20,7 +20,7 @@ def create_or_update_divination_settings(
         taimingshen_isClose: bool = None,
         xingyun_isClose: bool = None,
         liuri_isClose: bool = None,
-        early_isClose: bool = None,
+        early_isOpen: bool = None,
         current_user: models.User = Depends(deps.get_current_user),
 ) -> Any:
     divination_settings_in = {}
@@ -36,8 +36,8 @@ def create_or_update_divination_settings(
         divination_settings_in["xingyun_isClose"]=xingyun_isClose
     if liuri_isClose is not None:
         divination_settings_in["liuri_isClose"]=liuri_isClose
-    if early_isClose is not None:
-        divination_settings_in["early_isClose"]=early_isClose
+    if early_isOpen is not None:
+        divination_settings_in["early_isOpen"]=early_isOpen
     divination_settings = None
     if isinstance(current_user, models.User):
         divination_settings_in["user_id"]=current_user.id

@@ -13,5 +13,5 @@ class DivinationSettings(Base):
     taimingshen_isClose = Column(Boolean, default=False, comment="是否关闭胎命身")
     xingyun_isClose = Column(Boolean, default=False, comment="是否关闭星运")
     liuri_isClose = Column(Boolean, default=True, comment="是否折叠流日")
-    early_isClose = Column(Boolean, default=False, comment="早晚子时")
+    early_isOpen = Column(Boolean, default=False, comment="早晚子时")
     create_time = Column(DateTime, server_default=func.now(), index=True, comment="创建时间")

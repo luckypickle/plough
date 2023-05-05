@@ -230,7 +230,7 @@ def get_divination(
     divination_settings = crud.divination_settings.get_by_user_id(db=db, user_id=current_user.id)
     if divination_settings is None:
         divination_settings=schemas.DivinationSettingsQuery()
-    bazi = BaZi(year, month, day, hour, sex, early_isClose=divination_settings.early_isClose)
+    bazi = BaZi(year, month, day, hour, sex, early_isOpen=divination_settings.early_isOpen)
     divination = bazi.get_detail()
     return divination
 
@@ -280,7 +280,7 @@ def get_saved_divination(
     divination_settings = crud.divination_settings.get_by_user_id(db=db, user_id=current_user.id)
     if divination_settings is None:
         divination_settings=schemas.DivinationSettingsQuery()
-    bazi = BaZi(year, month, day, hour, sex,lunar,run,minute,early_isClose=divination_settings.early_isClose)
+    bazi = BaZi(year, month, day, hour, sex,lunar,run,minute,early_isOpen=divination_settings.early_isOpen)
     beatInfo = None
     if(selectyear > 0):
         beatInfo = get_wuxing_by_selectyear(selectyear)
