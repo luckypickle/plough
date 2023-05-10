@@ -13,6 +13,7 @@ class DivinationSettingsBase(BaseModel):
     xingyun_isClose:Optional[bool]=False
     liuri_isClose:Optional[bool]=True
     early_isOpen:Optional[bool]=False
+    wuxing_time_isOpen:Optional[bool]=False
 # Properties to receive via API on creation
 class DivinationSettingsCreate(DivinationSettingsBase):
     pass

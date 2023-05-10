@@ -4,7 +4,7 @@ import datetime
 import collections
 import sxtwl
 from .common import *
-from . import datas
+from . import datas,citys,sun
 
 
 Gans = collections.namedtuple("Gans", "year month day time")
@@ -12,7 +12,7 @@ Zhis = collections.namedtuple("Zhis", "year month day time")
 
 
 class BaZi():
-    def __init__(self, year: int, month: int, day: int, hour: int, sex: int,lunar:int=0,run:int=0,minute:int=0,early_isOpen:bool=False):
+    def __init__(self, year: int, month: int, day: int, hour: int, sex: int,lunar:int=0,run:int=0,minute:int=0,early_isOpen:bool=False,wuxing_time_isOpen:bool=False, location:str=''):
         self.year = int(year)
         self.month = int(month)
         self.day = int(day)
@@ -22,6 +22,8 @@ class BaZi():
         self.run = run==1
         self.minute = int(minute)
         self.early_isOpen = early_isOpen
+        self.wuxing_time_isOpen = wuxing_time_isOpen
+        self.location = location
 
     def get_detail(self):
         detail = {}
@@ -45,6 +47,22 @@ class BaZi():
         mGZ = day.getMonthGZ()
         dGZ = day.getDayGZ()
         hGZ = day.getHourGZ(self.hour)
+        zi_h = 23
+        zi_m = 0
+        hGZ.tg
+        if self.wuxing_time_isOpen:
+            city = citys.get_lng_and_lat(self.location)
+            dh = sun.get_dh_by_location(datas.Gan[hGZ.tg]+datas.Zhi[hGZ.dz],self.year, self.month, self.day, self.hour, self.minute, city["lng"], city["lat"])
+            print("dh：",dh)
+            zi_h = dh["h"]
+            zi_m = dh["m"]
+            hGZ.tg = datas.Gan.index(dh["hGZ"][0])
+            hGZ.dz = datas.Zhi.index(dh["hGZ"][1])
+            if dh["isbefore"]:
+                tmp_day = day.before(1)
+                yGZ = tmp_day.getYearGZ()
+                mGZ = tmp_day.getMonthGZ()
+                dGZ = tmp_day.getDayGZ()
         if day.hasJieQi():
             jd = day.getJieQiJD()
             jieqi_t = sxtwl.JD2DD(jd)
@@ -52,11 +70,11 @@ class BaZi():
                 tmp_day = day.before(1)
                 yGZ = tmp_day.getYearGZ()
                 mGZ = tmp_day.getMonthGZ()
-            if jieqi_t.h==23 and int(self.hour)>=23 and jieqi_t.m< self.minute and not self.early_isOpen:
+            if (jieqi_t.h > zi_h or (jieqi_t.h == zi_h and jieqi_t.m >= zi_m)) and (int(self.hour) > zi_h or (int(self.hour) == zi_h and int(self.minute) >= zi_m)) and jieqi_t.m< self.minute and not self.early_isOpen:
                 tmp_day = day.after(1)
                 dGZ = tmp_day.getDayGZ()
         else:
-            if int(self.hour)>=23 and not self.early_isOpen:
+            if (int(self.hour) > zi_h or (int(self.hour) == zi_h and int(self.minute) >= zi_m))  and not self.early_isOpen:
                 tmp_day = day.after(1)
                 dGZ = tmp_day.getDayGZ()
         gans = Gans(
@@ -274,7 +292,7 @@ class BaZi():
         silingday = (brithtime-prevJieqi.get("datetime")).days
         silingjieqi = prevJieqi.get("jieqi")
         siling_gan=""
-        print(siling[silingjieqi])
+        # print(siling[silingjieqi])
         for key in siling[silingjieqi]:
             silingday -= siling[silingjieqi].get(key)
             siling_gan = key
@@ -285,10 +303,10 @@ class BaZi():
         # 格局
         ge = ''
         if (me, zhis.month) in jianlus:
-            print(jianlu_desc)
-            print("-" * 120)
-            print(jianlus[(me, zhis.month)])
-            print("-" * 120 + "\n")
+            # print(jianlu_desc)
+            # print("-" * 120)
+            # print(jianlus[(me, zhis.month)])
+            # print("-" * 120 + "\n")
             ge = '建'
         # elif (me == '丙' and ('丙','申') in zhus) or (me == '甲' and ('己','巳') in zhus):
         # print("格局：专财. 运行官旺 财神不背,大发财官。忌行伤官、劫财、冲刑、破禄之运。喜身财俱旺")
@@ -305,7 +323,7 @@ class BaZi():
                 d = datas.zhi5[zhi]
                 ge = datas.ten_deities[me][max(d, key=d.get)]
         detail['geju'] = ge
-        print("格局:", ge, '\t', end=' ')
+        # print("格局:", ge, '\t', end=' ')
 
         return detail
 

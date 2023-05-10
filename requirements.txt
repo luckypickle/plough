@@ -59,3 +59,4 @@ websockets==10.3
 wechatpayv3==1.2.30
 zipp==3.8.1
 pytz==2022.2.1
+astral==3.2
