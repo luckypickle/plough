@@ -149,17 +149,18 @@ def get_dh_by_location(
     else :
         # 子时以0点分隔 卯时以日出时间分隔 酉时以日落时间分隔 
 
-        # print("hour",hour)
-        # print("minute",minute)
+        print("日出时间：",sunrise)
+        print("占卜时间：",dt)
+        print("日落时间：",sunset)
         if dt < sunrise:
             interval = (sunrise - d_datetime).total_seconds()/6
-            if dt > sunrise + timedelta(seconds = -interval):
+            if dt >= sunrise + timedelta(seconds = -interval):
                 hGZ = hgzs[3]
-            elif dt > sunrise + timedelta(seconds = -interval*3):
+            elif dt >= sunrise + timedelta(seconds = -interval*3):
                 hGZ = hgzs[2]
-            elif dt > sunrise + timedelta(seconds = -interval*5):
+            elif dt >= sunrise + timedelta(seconds = -interval*5):
                 hGZ = hgzs[1]
-            elif dt > d_datetime:
+            elif dt >= d_datetime:
                 hGZ = hgzs[0]
             else:
                 #在0点之前
