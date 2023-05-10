@@ -149,11 +149,12 @@ def get_dh_by_location(
     else :
         # 子时以0点分隔 卯时以日出时间分隔 酉时以日落时间分隔 
 
-        print("日出时间：",sunrise)
-        print("占卜时间：",dt)
-        print("日落时间：",sunset)
+        logging.info("日出时间：",sunrise)
+        logging.info("占卜时间：",dt)
+        logging.info("日落时间：",sunset)
         if dt < sunrise:
             interval = (sunrise - d_datetime).total_seconds()/6
+            logging.info("早夜八字间隔时间：",interval)
             if dt >= sunrise + timedelta(seconds = -interval):
                 hGZ = hgzs[3]
             elif dt >= sunrise + timedelta(seconds = -interval*3):
@@ -181,6 +182,7 @@ def get_dh_by_location(
                     hGZ = jiazhi_map[(h_idx//12*12-3)%60]
         elif sunrise < dt < sunset:
             interval = (sunset - sunrise).total_seconds()/12
+            logging.info("白天八字间隔时间：",interval)
             if dt < sunrise + timedelta(seconds = interval):
                 hGZ = hgzs[3]
             elif dt < sunrise + timedelta(seconds = interval*3):
@@ -197,6 +199,7 @@ def get_dh_by_location(
                 hGZ = hgzs[9]
         elif dt > sunset:
             interval = (d_datetime+ timedelta(days=1) - sunset).total_seconds()/6
+            logging.info("早夜八字间隔时间：",interval)
             if dt < sunset + timedelta(seconds = interval):
                 hGZ = hgzs[9]
             elif dt < sunset + timedelta(seconds = interval*3):
