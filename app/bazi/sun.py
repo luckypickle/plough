@@ -105,6 +105,7 @@ def get_dh_by_location(
     d = dt.date()
     if hour == 23:
         d = d + timedelta(days=1)
+        d_datetime = d_datetime + timedelta(days=1)
     s = sun(observer,d)
     s_prev = sun(observer,d + timedelta(days=-1))
     sunrise = s["sunrise"]
@@ -113,7 +114,6 @@ def get_dh_by_location(
     sunset_prev = s_prev["sunset"]
     # print("lat",lat)
     if sunrise is None or sunset is None or sunset_prev is None or (sunset-sunrise).total_seconds() < 720 or (sunset-sunrise).total_seconds() >24*60*60-720:
-
         #极夜22-2为子时 极昼为卯时
         z = zenith(observer, noon(observer, dt.date()))
         logging.info(f"极夜和极昼: {z}")
