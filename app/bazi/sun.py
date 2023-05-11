@@ -168,7 +168,7 @@ def get_dh_by_location(
                 interval = (d_datetime - sunset_prev).total_seconds()/6
                 zi_h = (d_datetime + timedelta(seconds = -interval)).hour
                 zi_m = (d_datetime + timedelta(seconds = -interval)).minute+1
-                isbefore = True
+                # isbefore = True
                 if dt > d_datetime + timedelta(seconds = -interval):
                     hGZ = hgzs[0]
                 elif dt > sunrise + timedelta(seconds = -interval*3):
@@ -208,7 +208,7 @@ def get_dh_by_location(
                 hGZ = hgzs[11]
             else:
                 #下一天的子时
-                hGZ = jiazhi_map[(h_idx//12+1)*12]
+                hGZ = jiazhi_map[(h_idx//12+1)*12%60]
                 zi_h = (sunset + timedelta(seconds = interval*5)).hour
                 zi_m = (sunset + timedelta(seconds = interval*5)).minute+1
     return {
