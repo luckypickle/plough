@@ -171,10 +171,10 @@ def get_dh_by_location(
                 # isbefore = True
                 if dt > d_datetime + timedelta(seconds = -interval):
                     hGZ = hgzs[0]
-                elif dt > sunrise + timedelta(seconds = -interval*3):
+                elif dt > d_datetime + timedelta(seconds = -interval*3):
                     #上一天的亥时
                     hGZ = jiazhi_map[(h_idx//12*12-1)%60]
-                elif dt > sunrise + timedelta(seconds = -interval*5):
+                elif dt > d_datetime + timedelta(seconds = -interval*5):
                     #上一天的戌时
                     hGZ = jiazhi_map[(h_idx//12*12-2)%60]
                 else:
