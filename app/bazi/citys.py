@@ -55,10 +55,4 @@ def get_lng_and_lat(location: str)  -> Dict[str, float]:
         elif s + "_" in datas:
             lng = float(datas[s + "_"]["lng"])
             lat = float(datas[s + "_"]["lat"])
-
-
     return {"lng":lng,"lat":lat}
-
-s =list("___")
-s.insert(1,"_")
-print(''.join(s))
