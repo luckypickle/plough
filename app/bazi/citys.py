@@ -34,6 +34,7 @@ def cal_zone_and_lat(country,province,city,area):
 def get_lng_and_lat(location: str)  -> Dict[str, float]:
     lng = 116.4224009776628
     lat = 39.93482727239599
+
     key = location.replace("-", "_")
     if key in datas:
         lng = float(datas[key]["lng"])
@@ -44,5 +45,20 @@ def get_lng_and_lat(location: str)  -> Dict[str, float]:
     elif key + "_" in datas:
         lng = float(datas[key + "_"]["lng"])
         lat = float(datas[key + "_"]["lat"])
+    else :
+        s = list(key)
+        s.insert(key.find("_"),"_")
+        s = ''.join(s)
+        if s  in datas:
+            lng = float(datas[s]["lng"])
+            lat = float(datas[s]["lat"])
+        elif s + "_" in datas:
+            lng = float(datas[s + "_"]["lng"])
+            lat = float(datas[s + "_"]["lat"])
+
 
     return {"lng":lng,"lat":lat}
+
+s =list("___")
+s.insert(1,"_")
+print(''.join(s))
