@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app import crud, models, schemas
 from app.api import deps
 from app.bazi.char import get_char_wuxing
+from app.bazi.turtle import get_turtle
 
 router = APIRouter()
 
@@ -79,3 +80,17 @@ def delete_character(id: int,
         return "success"
     else:
         return "failed"
+
+@router.get("/turtle")
+def get_turtle_by_date_and_sex(
+        *,
+        year: int,
+        month: int,
+        day: int,
+        hour: int,
+        minute: int = 0,
+        sex: int = 0,
+        current_user: models.User = Depends(deps.get_current_user),
+) -> Any:
+    result = get_turtle(year,month,day,hour,minute,sex)
+    return result
