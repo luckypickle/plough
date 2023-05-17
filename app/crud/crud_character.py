@@ -21,7 +21,7 @@ class CRUDCharacter(CRUDBase[Character, CharacterCreate, CharacterUpdate]):
     ) -> List[Character]:
         return db.query(Character) \
             .filter(Character.owner_id == owner_id) \
-            .order_by(Character.create_time.desc()) \
+            .order_by(Character.update_time.desc()) \
             .offset(skip).limit(limit) \
             .all()
 

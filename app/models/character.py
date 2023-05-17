@@ -7,3 +7,4 @@ class Character(Base):
     chars = Column(String, index=True, comment="字符")
     chars_wuxing = Column(String, index=True, comment="字符五行 0 - 无, 1 - 木, 2 - 火, 3 - 土, 4 - 金, 5 - 水")
     create_time = Column(DateTime, server_default=func.now(), index=True, comment="创建时间")
+    update_time = Column(DateTime, index=True, comment="修改时间")

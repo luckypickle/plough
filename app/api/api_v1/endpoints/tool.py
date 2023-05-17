@@ -29,19 +29,20 @@ def character(
         )
     character = crud.character.get_one_by_char(db, owner_id=current_user.id, chars=chars)
     chars_wuxing = ""
-
+    nowTime= datetime.now()
     if character is None:
         for c in chars:
             chars_wuxing += str(get_char_wuxing(c))
         character = schemas.CharacterCreate(
             owner_id=current_user.id,
             chars=chars,
-            chars_wuxing=chars_wuxing
+            chars_wuxing=chars_wuxing,
+            update_time = nowTime
         )
         character = crud.character.create_character(db, character = character)
     else :
-        nowTime= datetime.now()
-        character_in = {"create_time":nowTime}
+       
+        character_in = {"update_time":nowTime}
         character = crud.meihua.update(db, db_obj=character, obj_in=character_in)
 
     character = schemas.CharacterQuery(
@@ -62,6 +63,7 @@ def get_characters(
     characters = crud.character.get_multi_by_owner(db, owner_id=current_user.id, skip=skip, limit=limit)
     rets = []
     for character in characters:
+        print(character.create_time)
         rets.append(schemas.CharacterQuery(
             id=character.id,
             owner_id=character.owner_id,

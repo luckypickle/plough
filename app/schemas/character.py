@@ -2,7 +2,7 @@ from typing import Optional
 from sqlalchemy import DateTime
 
 from pydantic import BaseModel
-
+from datetime import datetime
 
 # Shared properties
 class CharacterBase(BaseModel):
@@ -12,7 +12,7 @@ class CharacterBase(BaseModel):
 
 # Properties to receive via API on creation
 class CharacterCreate(CharacterBase):
-    pass
+    update_time: Optional[datetime] = None
 
 # Properties to receive via API on update
 class CharacterUpdate(CharacterBase):
