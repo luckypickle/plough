@@ -27,3 +27,4 @@ from .history_combine import HistoryCombine,HistoryCombineCreate,HistoryCombineU
 from .remind_birthday import RemindBirthday,RemindBirthdayCreate,RemindBirthdayUpdate,RemindBirthdayQuery
 from .remind_day import RemindDay,RemindDayCreate,RemindDayUpdate,RemindDayQuery
 from .meihua import Meihua,MeihuaCreate,MeihuaUpdate,MeihuaQuery
+from .character import Character,CharacterCreate,CharacterUpdate,CharacterQuery

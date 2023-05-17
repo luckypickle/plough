@@ -24,3 +24,4 @@ from .history_combine import HistoryCombine
 from .remind_birthday import RemindBirthday
 from .remind_day import RemindDay
 from .meihua import Meihua
+from .character import Character

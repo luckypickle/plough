@@ -24,6 +24,7 @@ from .crud_history_combine import history_combine
 from .crud_remind_birthday import remind_birthday
 from .crud_remind_day import remind_day
 from .crud_meihua import meihua
+from .crud_character import character
 # For a new basic set of CRUD operations you could just do
 
 # from .base import CRUDBase
