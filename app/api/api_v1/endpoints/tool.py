@@ -63,7 +63,6 @@ def get_characters(
     characters = crud.character.get_multi_by_owner(db, owner_id=current_user.id, skip=skip, limit=limit)
     rets = []
     for character in characters:
-        print(character.create_time)
         rets.append(schemas.CharacterQuery(
             id=character.id,
             owner_id=character.owner_id,

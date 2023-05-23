@@ -158,6 +158,8 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         user_res = sql1.first()
         if total_res[1] ==0:
             return "0.00%","0.00%"
+        if user_res[1] == 0:
+            return "0.00%","0.00%"
 
         return ("%.2f"%(float(user_res[1])*100/ total_res[1])+"%","%.2f"%(float(user_res[0])*100/ total_res[0])+"%")
 
