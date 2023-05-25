@@ -856,14 +856,12 @@ def get_order_pay(
     if ret_json["trade_state"] == "SUCCESS":
         return {'code': 0, 'result': {
             'trade_state': ret_json["trade_state"],
-            'trade_state_desc': ret_json["trade_state_desc"],
-            'trade_type': ret_json["trade_type"]
+            'trade_state_desc': ret_json["trade_state_desc"]
         }}
     else:
         return {'code': -1, 'result': {
             'trade_state': ret_json["trade_state"],
-            'trade_state_desc': ret_json["trade_state_desc"],
-            'trade_type': ret_json["trade_type"]
+            'trade_state_desc': ret_json["trade_state_desc"]
         }}
 
 @router.get("/offOrderInfo", response_model=Any)
