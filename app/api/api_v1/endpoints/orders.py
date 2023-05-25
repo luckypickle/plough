@@ -659,8 +659,8 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
         else:
             ret = wxpay.query(out_trade_no=out_trade_no, mchid=mchid)
             ret_json = json.loads(ret[1])
-            print(ret_json["trade_state"])
-            if ret_json["trade_state"] != "NOTPAY":
+            print(ret_json["trade_state"]+"111")
+            if ret_json["trade_state"] == "SUCCESS":
                 order = crud.order.get(db=db, id=order_id)
                 if order:
                     order.status = 1
@@ -787,17 +787,18 @@ def create_order(
     if code in range(200, 300):
         code_url = None
         prepay_id = None
+        paysign = None
+        timearray = time.strptime(order_in.create_time, "%Y-%m-%d %H:%M:%S")
+        timestamp = int(time.mktime(timearray))
+        noncestr = ''.join(sample(ascii_letters + digits, 8))
+        package = 'Sign=WXPay'
         if trade_type == "native":
             code_url = result.get('code_url')
             logging.info(f"二维码支付code_url: {code_url},orderId:{order.id}")
         else:
             prepay_id = result.get('prepay_id')
+            paysign = wxpay.sign([settings.APPID, str(timestamp), noncestr, prepay_id])
             logging.info(f"App支付prepay_id: {prepay_id},orderId:{order.id}")
-        timearray = time.strptime(order_in.create_time, "%Y-%m-%d %H:%M:%S")
-        timestamp = int(time.mktime(timearray))
-        noncestr = ''.join(sample(ascii_letters + digits, 8))
-        package = 'Sign=WXPay'
-        paysign = wxpay.sign([settings.APPID, str(timestamp), noncestr, prepay_id])
         task.add_task(update_order_status, db, wxpay, order.id, order.order_number, settings.MCHID)
         return {'code': 0, 'result': {
             'ordernumber': order.order_number,
@@ -941,17 +942,19 @@ def create_free_order(
         if code in range(200, 300):
             code_url = None
             prepay_id = None
+            paysign = None
+            timearray = time.strptime(order_in.create_time, "%Y-%m-%d %H:%M:%S")
+            timestamp = int(time.mktime(timearray))
+            noncestr = ''.join(sample(ascii_letters + digits, 8))
+            package = 'Sign=WXPay'
+            
             if trade_type == "native":
                 code_url = result.get('code_url')
                 logging.info(f"二维码支付code_url: {code_url},orderId:{order.id}")
             else:
                 prepay_id = result.get('prepay_id')
+                paysign = wxpay.sign([settings.APPID, str(timestamp), noncestr, prepay_id])
                 logging.info(f"App支付prepay_id: {prepay_id},orderId:{order.id}")
-            timearray = time.strptime(order_in.create_time, "%Y-%m-%d %H:%M:%S")
-            timestamp = int(time.mktime(timearray))
-            noncestr = ''.join(sample(ascii_letters + digits, 8))
-            package = 'Sign=WXPay'
-            paysign = wxpay.sign([settings.APPID, str(timestamp), noncestr, prepay_id])
             task.add_task(update_order_status, db, wxpay, order.id, order.order_number, settings.MCHID)
             return {'code': 0, 'result': {
                 'ordernumber': order.order_number,
