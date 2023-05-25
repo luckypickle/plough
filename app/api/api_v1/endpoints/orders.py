@@ -643,8 +643,9 @@ def update_free_order_status(db, order_id):
                     order_time=order.pay_time
                 )
                 crud.reward.create(db, obj_in=reward_obj)
-def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
-    for i in range(12):
+def update_order_status(db, wxpay, order_id, out_trade_no, mchid): 
+    logging.info(f"轮询订单order_id：{order_id}状态开始")
+    for i in range(36):
         if isTestPay():
             order = crud.order.get(db=db, id=order_id)
             if order:
@@ -659,8 +660,9 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
         else:
             ret = wxpay.query(out_trade_no=out_trade_no, mchid=mchid)
             ret_json = json.loads(ret[1])
-            print(ret_json["trade_state"]+"111")
+            print(ret_json["trade_state"])
             if ret_json["trade_state"] == "SUCCESS":
+                logging.info(f"订单order_id：{order_id}支付成功")
                 order = crud.order.get(db=db, id=order_id)
                 if order:
                     order.status = 1
@@ -677,7 +679,13 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                     pushMsg("您有新的排盘订单，请尽快查看", "master_" + str(order.master_id))
                     recovery_chat(order.master_id, order.owner_id,order.memo)
                 break
+            elif i == 35:
+                code, message = wxpay.close(
+                        out_trade_no=out_trade_no
+                    )
+                logging.info(f"订单order_id：{order_id},超时关闭code: {code},message:{message}")
         time.sleep(5)
+    logging.info(f"轮询订单order_id：{order_id}状态结束")
     order = crud.order.get(db=db, id=order_id)
     if order is not None and order.status == 1:
         if order.status == 1:
