@@ -122,7 +122,54 @@ class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
         return (
             query.count(),
             query.order_by(case(whens=[(Order.arrange_status==1,0)] ,else_=1),Order.id.desc()).offset(skip).limit(limit).all()
+        )
 
+    def get_multi_with_condition_by_user(
+            self, db: Session, *,
+            role_id: int,
+            order_number: str = "",
+            name: str = "",
+            user_phone:str= "",
+            master_name: str = "",
+            product_id: int = -1,
+            arrange_status: int = -1,
+            order_min_amount: int = 0,
+            order_max_amount: int = 999999999,
+            role: int = 0,
+            status: int = -1,
+            skip: int = 0, limit: int = 100
+    ) -> (int, List[Order]):
+        query = db.query(self.model)
+        conditions = []
+        if role == 1:
+            conditions.append(Order.owner_id == role_id)
+        elif role == 2:
+            conditions.append(Order.master_id == role_id)
+        if status >= 0:
+            conditions.append(Order.status == status)
+        if order_number != "":
+            conditions.append(Order.order_number == order_number)
+        if name != "":
+            conditions.append(Order.name == name)
+        if user_phone !="":
+            query = query.join(User, User.id == Order.owner_id)
+            conditions.append(or_( User.phone ==user_phone , User.email==user_phone))
+        if master_name != "":
+            query = query.join(Master,Master.id == Order.master_id)
+            conditions.append(Master.name == master_name)
+        if product_id != -1:
+            conditions.append(Order.product_id == product_id)
+        if arrange_status >=0:
+            conditions.append(Order.arrange_status == arrange_status)
+        if order_min_amount !=0 :
+            conditions.append(Order.amount>=order_min_amount)
+        if order_max_amount != 999999999:
+            conditions.append(Order.amount<=order_max_amount)
+
+        query = query.filter(*conditions)
+        return (
+            query.count(),
+            query.order_by(Order.id.desc()).offset(skip).limit(limit).all()
         )
 
     def get_multi_and_sum_with_condition(

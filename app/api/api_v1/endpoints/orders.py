@@ -59,7 +59,7 @@ def read_orders(
             order_max_amount=order_max_amount, role=0, role_id=current_user.id, status=status,
                                                             skip=skip, limit=limit)
     else:
-        total, orders = crud.order.get_multi_with_condition(db, role=1, role_id=current_user.id, status=status,
+        total, orders = crud.order.get_multi_with_condition_by_user(db, role=1, role_id=current_user.id, status=status,
                                                             skip=skip, limit=limit)
     # FIXME, not check count
     ret_obj = schemas.OrderQuery(total=0, orders=[])
