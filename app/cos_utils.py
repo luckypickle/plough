@@ -31,7 +31,7 @@ def upload_file_to_cos(file_name):
     is_success= False
     global client
     for i in range(0, 10):
-        time.sleep(0.01)
+        time.sleep(1)
         try:
             response = client.upload_file(
                 Bucket=bucket_name,
@@ -41,7 +41,7 @@ def upload_file_to_cos(file_name):
             break
         except CosClientError or CosServiceError as e:
             client = CosS3Client(config)
-            print(e)
+            logging.error(f"cos上传失败报错：{e}")
     return is_success
 
 
