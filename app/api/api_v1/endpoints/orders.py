@@ -878,14 +878,52 @@ def get_off_order_info(
     if (not user_exist_dot_order) and user_exist_free_order:
         raise HTTPException(status_code=400, detail="Order State error")
     limit_time = 1668047054
-    obj = crud.order.get_order_by_time(db, time=limit_time, user_id=current_user.id, product_id=dot_product_id)
+    obj = crud.order.get_order_by_time(db, time=limit_time, user_id=current_user.id, product_id=dot_product_id)   
+    recent_dot_order_info = {}
     if obj is not None:
         user_recent_dot_order = True
+        if user_exist_dot_order and (not user_exist_free_order) and obj.arrange_status == 3:
+            create_time = obj.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+            pay_time = obj.pay_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+            recent_dot_order_info = schemas.Order(
+                id=obj.id,
+                product_id=obj.product_id,
+                product='点盘',
+                order_number=obj.order_number,
+                name=obj.name,
+                sex=obj.sex,
+                birthday=obj.birthday,
+                location=obj.location,
+                amount=obj.amount,
+                shareRate=obj.shareRate,
+                owner_id=obj.owner_id,
+                master_id=obj.master_id,
+                divination=obj.divination,
+                reason=obj.reason,
+                create_time=create_time,
+                pay_time=pay_time,
+                arrange_status=obj.arrange_status,
+                status=obj.status,
+                master=obj.master.name,
+                master_avatar=obj.master.avatar,
+                owner=obj.owner.user_name,
+                is_open=obj.is_open,
+                comment_rate=obj.comment_rate,
+                owner_email= obj.owner.email,
+                owner_phone= obj.owner.phone,
+                # pic1=pic1,
+                # pic2=pic2,
+                # pic3=pic3,
+                # memo=memo,
+                isNorth=obj.isNorth,
+                beat_info=obj.beat_info
+            )
     else:
         user_recent_dot_order = False
     return {'exist_dot_order': user_exist_dot_order,
             'exist_free_order': user_exist_free_order,
             'exist_recent_dot_order':user_recent_dot_order,
+            'recent_dot_order_info':recent_dot_order_info,
             'free_product_id':free_product_id,
             'invite_count': invite_count}
 
