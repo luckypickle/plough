@@ -669,7 +669,7 @@ def update_order_status(db, wxpay, order_id, out_trade_no, mchid):
                     order.pay_time = datetime.datetime.now()
                     product = crud.product.get(db=db, id=order.product_id)
                     if product is not None and product.name == "点盘":
-                        birthday = datetime.datetime.strptime(order.birthday, "%Y-%m-%d %H:%M")
+                        birthday = datetime.datetime.strptime(str(order.birthday).split(":")[0], "%Y-%m-%d %H")
                         divination = get_dianpan_divination(birthday.year, birthday.month, birthday.day, birthday.hour, order.sex)
                         order.arrange_status = 1
                         order.divination = divination
