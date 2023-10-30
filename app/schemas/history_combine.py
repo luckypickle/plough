@@ -28,6 +28,9 @@ class HistoryCombineCreate(HistoryCombineBase):
 class HistoryCombineUpdate(HistoryCombineBase):
     pass
 
+class HistoryCombineQuery(HistoryCombineBase):
+    id: Optional[int] = None
+    create_time: Optional[str] = None
 
 class HistoryCombineInDBBase(HistoryCombineBase):
     id: Optional[int] = None

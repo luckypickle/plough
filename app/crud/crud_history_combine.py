@@ -15,7 +15,7 @@ class CRUDHistoryCombine(CRUDBase[HistoryCombine, HistoryCombineCreate, HistoryC
 
 
     @staticmethod
-    def get_multi_by_owner(db: Session, owner_id: int, skip: int, limit: int) -> HistoryCombine:
+    def get_multi_by_owner(db: Session, owner_id: int, skip: int, limit: int) -> List[HistoryCombine]:
         return db.query(HistoryCombine) \
             .filter(HistoryCombine.owner_id == owner_id) \
             .order_by(HistoryCombine.create_time.desc()) \

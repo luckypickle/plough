@@ -739,7 +739,26 @@ def get_history_combines(
     Get HistoryCombines by user.
     """
     combines = crud.history_combine.get_multi_by_owner(db=db, owner_id=current_user.id,skip=skip,limit=limit)
-    return combines
+    rets = []
+    for combine in combines:
+        rets.append(schemas.HistoryCombineQuery(
+            id=combine.id,
+            owner_id=combine.owner_id,
+            name1=combine.name1,
+            birthday1=combine.birthday1,
+            sex1=combine.sex1,
+            location1=combine.location1,
+            divination1=combine.divination1,
+            isNorth1=combine.isNorth1,
+            name2=combine.name2,
+            birthday2=combine.birthday2,
+            sex2=combine.sex2,
+            location2=combine.location2,
+            divination2=combine.divination2,
+            isNorth2=combine.isNorth2,
+            create_time=combine.create_time.astimezone().strftime("%Y-%m-%d %H:%M:%S"),
+        ))
+    return rets
 
 @router.delete('/combine')
 def delete_history_combine(id: int,
