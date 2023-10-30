@@ -740,6 +740,7 @@ def get_history_combines(
     """
     combines = crud.history_combine.get_multi_by_owner(db=db, owner_id=current_user.id,skip=skip,limit=limit)
     rets = []
+    tz = pytz.timezone('Asia/Shanghai')
     for combine in combines:
         rets.append(schemas.HistoryCombineQuery(
             id=combine.id,
@@ -756,7 +757,7 @@ def get_history_combines(
             location2=combine.location2,
             divination2=combine.divination2,
             isNorth2=combine.isNorth2,
-            create_time=combine.create_time.astimezone().strftime("%Y-%m-%d %H:%M:%S"),
+            create_time=combine.create_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S"),
         ))
     return rets
 
