@@ -757,7 +757,7 @@ def get_history_combines(
             location2=combine.location2,
             divination2=combine.divination2,
             isNorth2=combine.isNorth2,
-            create_time=combine.create_time.astimezone(tz).strftime("%Y-%m-%d %H:%M:%S"),
+            create_time=(combine.create_time+datetime.timedelta(hours=8)).astimezone(tz).strftime("%Y-%m-%d %H:%M:%S"),
         ))
     return rets
 
