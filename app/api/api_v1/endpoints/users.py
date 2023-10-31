@@ -126,6 +126,15 @@ def read_user_me(
     """
     return current_user
 
+@router.get("/aaa", response_model=schemas.User)
+def read_user_me(
+        db: Session = Depends(deps.get_db)) -> Any:
+    for i in range(1459,1558):
+        user = crud.user.get(db, id=i)
+        print(i)
+    # register_account(get_read_url("3bf8616fe6c23c0c465527ec80397b24.png"), 0, "user_"+str(user.id), user.phone)
+
+
 
 
 @router.post("/open", response_model=schemas.User)
@@ -357,7 +366,7 @@ def get_history(
         if len(zhis) > 0:
             if not set(zhis).issubset(divination["sizhu"]["zhis"]):
                 continue
-
+        tz = pytz.timezone('Asia/Shanghai')
         rets.append(schemas.HistoryQuery(
             id=h.id,
             name=h.name,
@@ -365,7 +374,7 @@ def get_history(
             sex=h.sex,
             location=h.location,
             divination=h.divination,
-            create_time=h.create_time.astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            create_time=(h.create_time+datetime.timedelta(hours=8)).astimezone(tz).strftime("%Y-%m-%d %H:%M:%S"),
             isNorth=h.isNorth,
             beat_info=h.beat_info,
             label_id=h.label_id,
